@@ -6,7 +6,7 @@ from backend.app.database import get_connection, initialize_database
 from backend.app.detection import analyze_events
 from backend.app.events import SecurityEvent
 from backend.app.risk import calculate_risk
-from backend.app.alerts import get_alerts
+from backend.app.alerts import create_alert, get_alerts
 
 
 @asynccontextmanager
@@ -69,7 +69,9 @@ def ingest_event(event: SecurityEvent):
     )
 
     connection.commit()
+
     event_id = cursor.lastrowid
+
     connection.close()
 
     return {
@@ -140,8 +142,13 @@ def get_detections():
         "CRITICAL": 10,
     }
 
+    created_alerts = []
+
     for alert in detection_result["alerts"]:
-        severity_value = severity_map.get(alert["severity"], 1)
+        severity_value = severity_map.get(
+            alert.get("severity"),
+            1,
+        )
 
         source_ip = alert.get("source_ip")
 
@@ -151,13 +158,35 @@ def get_detections():
             if event.get("source_ip") == source_ip
         )
 
-        alert["risk"] = calculate_risk(
+        risk = calculate_risk(
             severity=severity_value,
             alert_type=alert.get("type"),
             event_count=event_count,
         )
 
-    return detection_result
+        alert["risk"] = risk
+
+        alert_id = create_alert(alert)
+
+        created_alerts.append(
+            {
+                "alert_id": alert_id,
+                "type": alert.get("type"),
+                "severity": alert.get("severity"),
+                "risk": risk,
+            }
+        )
+
+    return {
+        "total_events_analyzed": detection_result[
+            "total_events_analyzed"
+        ],
+        "alerts_generated": detection_result[
+            "alerts_generated"
+        ],
+        "alerts": detection_result["alerts"],
+        "database_alerts_created": created_alerts,
+    }
 
 
 @app.get("/api/v1/alerts")
