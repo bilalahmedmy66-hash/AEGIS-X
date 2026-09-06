@@ -34,5 +34,35 @@ def initialize_database() -> None:
         """
     )
 
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS security_alerts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            alert_type TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            risk_score INTEGER NOT NULL,
+            risk_level TEXT NOT NULL,
+            source_ip TEXT,
+            message TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'NEW',
+            created_at TEXT NOT NULL
+        )
+        """
+    )
+    columns = connection.execute(
+        "PRAGMA table_info(security_alerts)"
+    ).fetchall()
+
+    column_names = [column["name"] for column in columns]
+
+    if "status" not in column_names:
+        connection.execute(
+            """
+            ALTER TABLE security_alerts
+            ADD COLUMN status TEXT NOT NULL DEFAULT 'NEW'
+            """
+        )
+
+
     connection.commit()
     connection.close()
