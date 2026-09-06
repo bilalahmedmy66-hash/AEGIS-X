@@ -19,6 +19,7 @@ def get_connection() -> sqlite3.Connection:
 def initialize_database() -> None:
     connection = get_connection()
 
+    # Security events
     connection.execute(
         """
         CREATE TABLE IF NOT EXISTS security_events (
@@ -34,6 +35,7 @@ def initialize_database() -> None:
         """
     )
 
+    # Security alerts
     connection.execute(
         """
         CREATE TABLE IF NOT EXISTS security_alerts (
@@ -49,6 +51,8 @@ def initialize_database() -> None:
         )
         """
     )
+
+    # Make sure older databases also have the alert status column
     columns = connection.execute(
         "PRAGMA table_info(security_alerts)"
     ).fetchall()
@@ -63,6 +67,23 @@ def initialize_database() -> None:
             """
         )
 
+    # Security incidents
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS security_incidents (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            incident_type TEXT NOT NULL,
+            severity TEXT NOT NULL,
+            risk_score INTEGER NOT NULL,
+            risk_level TEXT NOT NULL,
+            source_ip TEXT,
+            description TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'OPEN',
+            first_seen TEXT NOT NULL,
+            last_seen TEXT NOT NULL
+        )
+        """
+    )
 
     connection.commit()
     connection.close()

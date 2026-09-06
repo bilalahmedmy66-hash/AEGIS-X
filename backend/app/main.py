@@ -11,6 +11,12 @@ from backend.app.alerts import (
     find_active_alert,
     get_alerts,
 )
+from backend.app.incidents import (
+    create_incident,
+    find_open_incident,
+    get_incidents,
+    update_incident_status,
+)
 
 
 @asynccontextmanager
@@ -149,9 +155,14 @@ def get_detections():
     created_alerts = []
     existing_alerts = []
 
+    created_incidents = []
+    existing_incidents = []
+
     for alert in detection_result["alerts"]:
+        severity_name = alert.get("severity", "LOW")
+
         severity_value = severity_map.get(
-            alert.get("severity"),
+            severity_name,
             1,
         )
 
@@ -171,8 +182,22 @@ def get_detections():
 
         alert["risk"] = risk
 
+        alert_type = alert.get(
+            "type",
+            "UNKNOWN",
+        )
+
+        message = alert.get(
+            "message",
+            "",
+        )
+
+        # -------------------------------------------------
+        # ALERT MANAGEMENT
+        # -------------------------------------------------
+
         existing_alert = find_active_alert(
-            alert_type=alert.get("type", "UNKNOWN"),
+            alert_type=alert_type,
             source_ip=source_ip,
         )
 
@@ -188,14 +213,56 @@ def get_detections():
                     },
                 }
             )
+
         else:
             alert_id = create_alert(alert)
 
             created_alerts.append(
                 {
                     "alert_id": alert_id,
-                    "type": alert.get("type"),
-                    "severity": alert.get("severity"),
+                    "type": alert_type,
+                    "severity": severity_name,
+                    "risk": risk,
+                }
+            )
+
+        # -------------------------------------------------
+        # INCIDENT MANAGEMENT
+        # -------------------------------------------------
+
+        existing_incident = find_open_incident(
+            incident_type=alert_type,
+            source_ip=source_ip,
+        )
+
+        if existing_incident:
+            existing_incidents.append(
+                {
+                    "incident_id": existing_incident["id"],
+                    "type": existing_incident["incident_type"],
+                    "status": existing_incident["status"],
+                    "risk": {
+                        "score": existing_incident["risk_score"],
+                        "level": existing_incident["risk_level"],
+                    },
+                }
+            )
+
+        else:
+            incident_id = create_incident(
+                incident_type=alert_type,
+                severity=severity_name,
+                risk_score=risk["score"],
+                risk_level=risk["level"],
+                source_ip=source_ip,
+                description=message,
+            )
+
+            created_incidents.append(
+                {
+                    "incident_id": incident_id,
+                    "type": alert_type,
+                    "severity": severity_name,
                     "risk": risk,
                 }
             )
@@ -210,6 +277,8 @@ def get_detections():
         "alerts": detection_result["alerts"],
         "database_alerts_created": created_alerts,
         "existing_active_alerts": existing_alerts,
+        "database_incidents_created": created_incidents,
+        "existing_open_incidents": existing_incidents,
     }
 
 
@@ -220,4 +289,31 @@ def list_alerts():
     return {
         "total": len(alerts),
         "alerts": alerts,
+    }
+
+
+@app.get("/api/v1/incidents")
+def list_incidents():
+    incidents = get_incidents()
+
+    return {
+        "total": len(incidents),
+        "incidents": incidents,
+    }
+
+
+@app.patch("/api/v1/incidents/{incident_id}/status")
+def change_incident_status(
+    incident_id: int,
+    status: str,
+):
+    updated = update_incident_status(
+        incident_id=incident_id,
+        status=status,
+    )
+
+    return {
+        "updated": updated,
+        "incident_id": incident_id,
+        "status": status,
     }
