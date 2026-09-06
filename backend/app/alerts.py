@@ -34,10 +34,48 @@ def create_alert(alert: dict[str, Any]) -> int:
     )
 
     connection.commit()
+
     alert_id = cursor.lastrowid
+
     connection.close()
 
     return alert_id
+
+
+def find_active_alert(
+    alert_type: str,
+    source_ip: str | None,
+) -> dict[str, Any] | None:
+    connection = get_connection()
+
+    row = connection.execute(
+        """
+        SELECT
+            id,
+            alert_type,
+            severity,
+            risk_score,
+            risk_level,
+            source_ip,
+            message,
+            status,
+            created_at
+        FROM security_alerts
+        WHERE alert_type = ?
+          AND source_ip IS ?
+          AND status IN ('NEW', 'ACKNOWLEDGED')
+        ORDER BY id DESC
+        LIMIT 1
+        """,
+        (alert_type, source_ip),
+    ).fetchone()
+
+    connection.close()
+
+    if row is None:
+        return None
+
+    return dict(row)
 
 
 def get_alerts() -> list[dict[str, Any]]:
@@ -66,7 +104,11 @@ def get_alerts() -> list[dict[str, Any]]:
 
 
 def update_alert_status(alert_id: int, status: str) -> bool:
-    allowed_statuses = {"NEW", "ACKNOWLEDGED", "RESOLVED"}
+    allowed_statuses = {
+        "NEW",
+        "ACKNOWLEDGED",
+        "RESOLVED",
+    }
 
     if status not in allowed_statuses:
         raise ValueError(
@@ -85,7 +127,9 @@ def update_alert_status(alert_id: int, status: str) -> bool:
     )
 
     connection.commit()
+
     updated = cursor.rowcount > 0
+
     connection.close()
 
     return updated

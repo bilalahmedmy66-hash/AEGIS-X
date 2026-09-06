@@ -6,7 +6,11 @@ from backend.app.database import get_connection, initialize_database
 from backend.app.detection import analyze_events
 from backend.app.events import SecurityEvent
 from backend.app.risk import calculate_risk
-from backend.app.alerts import create_alert, get_alerts
+from backend.app.alerts import (
+    create_alert,
+    find_active_alert,
+    get_alerts,
+)
 
 
 @asynccontextmanager
@@ -143,6 +147,7 @@ def get_detections():
     }
 
     created_alerts = []
+    existing_alerts = []
 
     for alert in detection_result["alerts"]:
         severity_value = severity_map.get(
@@ -166,16 +171,34 @@ def get_detections():
 
         alert["risk"] = risk
 
-        alert_id = create_alert(alert)
-
-        created_alerts.append(
-            {
-                "alert_id": alert_id,
-                "type": alert.get("type"),
-                "severity": alert.get("severity"),
-                "risk": risk,
-            }
+        existing_alert = find_active_alert(
+            alert_type=alert.get("type", "UNKNOWN"),
+            source_ip=source_ip,
         )
+
+        if existing_alert:
+            existing_alerts.append(
+                {
+                    "alert_id": existing_alert["id"],
+                    "type": existing_alert["alert_type"],
+                    "status": existing_alert["status"],
+                    "risk": {
+                        "score": existing_alert["risk_score"],
+                        "level": existing_alert["risk_level"],
+                    },
+                }
+            )
+        else:
+            alert_id = create_alert(alert)
+
+            created_alerts.append(
+                {
+                    "alert_id": alert_id,
+                    "type": alert.get("type"),
+                    "severity": alert.get("severity"),
+                    "risk": risk,
+                }
+            )
 
     return {
         "total_events_analyzed": detection_result[
@@ -186,6 +209,7 @@ def get_detections():
         ],
         "alerts": detection_result["alerts"],
         "database_alerts_created": created_alerts,
+        "existing_active_alerts": existing_alerts,
     }
 
 
