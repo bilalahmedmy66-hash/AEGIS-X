@@ -17,6 +17,7 @@ from backend.app.incidents import (
     get_incidents,
     update_incident_status,
 )
+from backend.app.response import determine_response
 
 
 @asynccontextmanager
@@ -174,6 +175,10 @@ def get_detections():
             if event.get("source_ip") == source_ip
         )
 
+        # -------------------------------------------------
+        # RISK CALCULATION
+        # -------------------------------------------------
+
         risk = calculate_risk(
             severity=severity_value,
             alert_type=alert.get("type"),
@@ -191,6 +196,18 @@ def get_detections():
             "message",
             "",
         )
+
+        # -------------------------------------------------
+        # RESPONSE DECISION
+        # -------------------------------------------------
+
+        response = determine_response(
+            risk_score=risk["score"],
+            risk_level=risk["level"],
+            incident_type=alert_type,
+        )
+
+        alert["response"] = response
 
         # -------------------------------------------------
         # ALERT MANAGEMENT
