@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from backend.app.database import get_connection, initialize_database
+from backend.app.detection import analyze_events
 from backend.app.events import SecurityEvent
 
 
@@ -102,3 +103,28 @@ def get_events():
         "total": len(rows),
         "events": [dict(row) for row in rows],
     }
+@app.get("/api/v1/detections")
+def get_detections():
+    connection = get_connection()
+
+    rows = connection.execute(
+        """
+        SELECT
+            id,
+            event_type,
+            source,
+            user,
+            source_ip,
+            description,
+            severity,
+            timestamp
+        FROM security_events
+        ORDER BY id DESC
+        """
+    ).fetchall()
+
+    connection.close()
+
+    events = [dict(row) for row in rows]
+
+    return analyze_events(events)
