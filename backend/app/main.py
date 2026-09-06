@@ -1,25 +1,28 @@
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
-from backend.app.database import (
-    get_connection,
-    initialize_database,
-)
+from backend.app.database import get_connection, initialize_database
 from backend.app.detection import analyze_events
 from backend.app.events import SecurityEvent
 from backend.app.risk import calculate_risk
+
 from backend.app.alerts import (
     create_alert,
     find_active_alert,
     get_alerts,
 )
+
 from backend.app.incidents import (
     create_incident,
     find_open_incident,
     get_incidents,
     update_incident_status,
 )
+
 from backend.app.response import (
     determine_response,
     execute_response,
@@ -27,9 +30,17 @@ from backend.app.response import (
 )
 
 
-# -------------------------------------------------
-# APPLICATION LIFECYCLE
-# -------------------------------------------------
+# ============================================================
+# PATH CONFIGURATION
+# ============================================================
+
+BASE_DIR = Path(__file__).resolve().parents[2]
+FRONTEND_DIR = BASE_DIR / "frontend"
+
+
+# ============================================================
+# APPLICATION LIFESPAN
+# ============================================================
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -37,82 +48,108 @@ async def lifespan(app: FastAPI):
     yield
 
 
-# -------------------------------------------------
+# ============================================================
 # FASTAPI APPLICATION
-# -------------------------------------------------
+# ============================================================
 
 app = FastAPI(
     title="AEGIS X",
     description="Universal Security Intelligence & Defense Platform",
-    version="0.3.0",
+    version="0.4.0",
     lifespan=lifespan,
 )
 
 
-# -------------------------------------------------
+# ============================================================
+# FRONTEND
+# ============================================================
+
+if FRONTEND_DIR.exists():
+    app.mount(
+        "/static",
+        StaticFiles(directory=FRONTEND_DIR),
+        name="static",
+    )
+
+
+@app.get("/dashboard")
+def dashboard():
+    index_file = FRONTEND_DIR / "index.html"
+
+    if not index_file.exists():
+        raise HTTPException(
+            status_code=404,
+            detail="Dashboard frontend not found.",
+        )
+
+    return FileResponse(index_file)
+
+
+# ============================================================
 # ROOT
-# -------------------------------------------------
+# ============================================================
 
 @app.get("/")
 def root():
     return {
         "name": "AEGIS X",
-        "version": "0.3.0",
+        "version": "0.4.0",
         "status": "operational",
+        "dashboard": "/dashboard",
+        "docs": "/docs",
         "message": "AEGIS X security platform is running.",
     }
 
 
-# -------------------------------------------------
+# ============================================================
 # HEALTH
-# -------------------------------------------------
+# ============================================================
 
 @app.get("/health")
 def health():
     return {
         "status": "healthy",
+        "service": "AEGIS X",
     }
 
 
-# -------------------------------------------------
-# EVENT INGESTION
-# -------------------------------------------------
+# ============================================================
+# EVENTS
+# ============================================================
 
 @app.post("/api/v1/events")
 def ingest_event(event: SecurityEvent):
     connection = get_connection()
 
-    try:
-        cursor = connection.execute(
-            """
-            INSERT INTO security_events (
-                event_type,
-                source,
-                user,
-                source_ip,
-                description,
-                severity,
-                timestamp
-            )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                event.event_type.value,
-                event.source,
-                event.user,
-                event.source_ip,
-                event.description,
-                event.severity,
-                event.timestamp.isoformat(),
-            ),
+    cursor = connection.execute(
+        """
+        INSERT INTO security_events (
+            event_type,
+            source,
+            user,
+            source_ip,
+            description,
+            severity,
+            timestamp
         )
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            event.event_type.value,
+            event.source,
+            event.user,
+            event.source_ip,
+            event.description,
+            event.severity,
+            event.timestamp.isoformat(),
+        ),
+    )
 
-        connection.commit()
+    connection.commit()
 
-        event_id = cursor.lastrowid
+    event_id = cursor.lastrowid
 
-    finally:
-        connection.close()
+    connection.close()
 
     return {
         "status": "accepted",
@@ -121,75 +158,63 @@ def ingest_event(event: SecurityEvent):
     }
 
 
-# -------------------------------------------------
-# EVENT LIST
-# -------------------------------------------------
-
 @app.get("/api/v1/events")
 def get_events():
     connection = get_connection()
 
-    try:
-        rows = connection.execute(
-            """
-            SELECT
-                id,
-                event_type,
-                source,
-                user,
-                source_ip,
-                description,
-                severity,
-                timestamp
-            FROM security_events
-            ORDER BY id DESC
-            """
-        ).fetchall()
+    rows = connection.execute(
+        """
+        SELECT
+            id,
+            event_type,
+            source,
+            user,
+            source_ip,
+            description,
+            severity,
+            timestamp
+        FROM security_events
+        ORDER BY id DESC
+        """
+    ).fetchall()
 
-    finally:
-        connection.close()
+    connection.close()
+
+    events = [dict(row) for row in rows]
 
     return {
-        "total": len(rows),
-        "events": [
-            dict(row)
-            for row in rows
-        ],
+        "total": len(events),
+        "events": events,
     }
 
 
-# -------------------------------------------------
-# DETECTION + RISK + ALERT + INCIDENT PIPELINE
-# -------------------------------------------------
+# ============================================================
+# DETECTION PIPELINE
+# ============================================================
 
 @app.get("/api/v1/detections")
 def get_detections():
     connection = get_connection()
 
-    try:
-        rows = connection.execute(
-            """
-            SELECT
-                id,
-                event_type,
-                source,
-                user,
-                source_ip,
-                description,
-                severity,
-                timestamp
-            FROM security_events
-            ORDER BY id DESC
-            """
-        ).fetchall()
+    rows = connection.execute(
+        """
+        SELECT
+            id,
+            event_type,
+            source,
+            user,
+            source_ip,
+            description,
+            severity,
+            timestamp
+        FROM security_events
+        ORDER BY id DESC
+        """
+    ).fetchall()
 
-    finally:
-        connection.close()
+    connection.close()
 
-    events = [
-        dict(row)
-        for row in rows
-    ]
+    events = [dict(row) for row in rows]
 
     detection_result = analyze_events(events)
 
@@ -208,10 +233,6 @@ def get_detections():
 
     for alert in detection_result["alerts"]:
 
-        # ---------------------------------------------
-        # SEVERITY
-        # ---------------------------------------------
-
         severity_name = alert.get(
             "severity",
             "LOW",
@@ -222,27 +243,13 @@ def get_detections():
             1,
         )
 
-        # ---------------------------------------------
-        # SOURCE IP
-        # ---------------------------------------------
-
-        source_ip = alert.get(
-            "source_ip"
-        )
-
-        # ---------------------------------------------
-        # EVENT COUNT
-        # ---------------------------------------------
+        source_ip = alert.get("source_ip")
 
         event_count = sum(
             1
             for event in events
             if event.get("source_ip") == source_ip
         )
-
-        # ---------------------------------------------
-        # RISK CALCULATION
-        # ---------------------------------------------
 
         risk = calculate_risk(
             severity=severity_value,
@@ -252,14 +259,19 @@ def get_detections():
 
         alert["risk"] = risk
 
-        # ---------------------------------------------
-        # RESPONSE DECISION
-        # ---------------------------------------------
-
         alert_type = alert.get(
             "type",
             "UNKNOWN",
         )
+
+        message = alert.get(
+            "message",
+            "",
+        )
+
+        # ----------------------------------------------------
+        # RESPONSE DECISION
+        # ----------------------------------------------------
 
         response = determine_response(
             risk_score=risk["score"],
@@ -269,18 +281,9 @@ def get_detections():
 
         alert["response"] = response
 
-        # ---------------------------------------------
-        # ALERT DETAILS
-        # ---------------------------------------------
-
-        message = alert.get(
-            "message",
-            "",
-        )
-
-        # ---------------------------------------------
+        # ----------------------------------------------------
         # ALERT MANAGEMENT
-        # ---------------------------------------------
+        # ----------------------------------------------------
 
         existing_alert = find_active_alert(
             alert_type=alert_type,
@@ -314,9 +317,9 @@ def get_detections():
                 }
             )
 
-        # ---------------------------------------------
+        # ----------------------------------------------------
         # INCIDENT MANAGEMENT
-        # ---------------------------------------------
+        # ----------------------------------------------------
 
         existing_incident = find_open_incident(
             incident_type=alert_type,
@@ -328,19 +331,11 @@ def get_detections():
             existing_incidents.append(
                 {
                     "incident_id": existing_incident["id"],
-                    "type": existing_incident[
-                        "incident_type"
-                    ],
-                    "status": existing_incident[
-                        "status"
-                    ],
+                    "type": existing_incident["incident_type"],
+                    "status": existing_incident["status"],
                     "risk": {
-                        "score": existing_incident[
-                            "risk_score"
-                        ],
-                        "level": existing_incident[
-                            "risk_level"
-                        ],
+                        "score": existing_incident["risk_score"],
+                        "level": existing_incident["risk_level"],
                     },
                 }
             )
@@ -372,9 +367,7 @@ def get_detections():
         "alerts_generated": detection_result[
             "alerts_generated"
         ],
-        "alerts": detection_result[
-            "alerts"
-        ],
+        "alerts": detection_result["alerts"],
         "database_alerts_created": created_alerts,
         "existing_active_alerts": existing_alerts,
         "database_incidents_created": created_incidents,
@@ -382,9 +375,9 @@ def get_detections():
     }
 
 
-# -------------------------------------------------
-# ALERTS
-# -------------------------------------------------
+# ============================================================
+# ALERT API
+# ============================================================
 
 @app.get("/api/v1/alerts")
 def list_alerts():
@@ -396,9 +389,9 @@ def list_alerts():
     }
 
 
-# -------------------------------------------------
-# INCIDENTS
-# -------------------------------------------------
+# ============================================================
+# INCIDENT API
+# ============================================================
 
 @app.get("/api/v1/incidents")
 def list_incidents():
@@ -410,31 +403,20 @@ def list_incidents():
     }
 
 
-# -------------------------------------------------
-# INCIDENT STATUS
-# -------------------------------------------------
-
 @app.patch("/api/v1/incidents/{incident_id}/status")
 def change_incident_status(
     incident_id: int,
     status: str,
 ):
-    try:
-        updated = update_incident_status(
-            incident_id=incident_id,
-            status=status,
-        )
-
-    except ValueError as exc:
-        raise HTTPException(
-            status_code=400,
-            detail=str(exc),
-        )
+    updated = update_incident_status(
+        incident_id=incident_id,
+        status=status,
+    )
 
     if not updated:
         raise HTTPException(
             status_code=404,
-            detail="Incident not found",
+            detail="Incident not found.",
         )
 
     return {
@@ -444,60 +426,44 @@ def change_incident_status(
     }
 
 
-# -------------------------------------------------
-# EXECUTE INCIDENT RESPONSE
-# -------------------------------------------------
+# ============================================================
+# INCIDENT RESPONSE
+# ============================================================
 
-@app.post("/api/v1/incidents/{incident_id}/response")
+@app.post("/api/v1/incidents/{incident_id}/respond")
 def run_incident_response(
     incident_id: int,
 ):
     connection = get_connection()
 
-    try:
-        row = connection.execute(
-            """
-            SELECT
-                id,
-                incident_type,
-                severity,
-                risk_score,
-                risk_level,
-                source_ip,
-                description,
-                status,
-                first_seen,
-                last_seen
-            FROM security_incidents
-            WHERE id = ?
-            """,
-            (incident_id,),
-        ).fetchone()
+    row = connection.execute(
+        """
+        SELECT
+            id,
+            incident_type,
+            severity,
+            risk_score,
+            risk_level,
+            source_ip,
+            description,
+            status,
+            first_seen,
+            last_seen
+        FROM security_incidents
+        WHERE id = ?
+        """,
+        (incident_id,),
+    ).fetchone()
 
-    finally:
-        connection.close()
+    connection.close()
 
     if row is None:
         raise HTTPException(
             status_code=404,
-            detail="Incident not found",
+            detail="Incident not found.",
         )
 
     incident = dict(row)
-
-    # ---------------------------------------------
-    # RESOLVED INCIDENT PROTECTION
-    # ---------------------------------------------
-
-    if incident["status"] == "RESOLVED":
-        raise HTTPException(
-            status_code=400,
-            detail="Incident is already resolved",
-        )
-
-    # ---------------------------------------------
-    # DETERMINE RESPONSE
-    # ---------------------------------------------
 
     response = determine_response(
         risk_score=incident["risk_score"],
@@ -505,14 +471,11 @@ def run_incident_response(
         incident_type=incident["incident_type"],
     )
 
-    # ---------------------------------------------
-    # EXECUTE RESPONSE
-    # ---------------------------------------------
-
     execution = execute_response(
-        incident_id=incident_id,
+        incident_id=incident["id"],
         action=response["action"],
         source_ip=incident["source_ip"],
+        mode=response["mode"],
     )
 
     return {
@@ -522,9 +485,9 @@ def run_incident_response(
     }
 
 
-# -------------------------------------------------
-# RESPONSE HISTORY
-# -------------------------------------------------
+# ============================================================
+# RESPONSE ACTIONS
+# ============================================================
 
 @app.get("/api/v1/responses")
 def list_response_actions():
