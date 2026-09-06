@@ -19,7 +19,10 @@ def get_connection() -> sqlite3.Connection:
 def initialize_database() -> None:
     connection = get_connection()
 
-    # Security events
+    # -------------------------------------------------
+    # SECURITY EVENTS
+    # -------------------------------------------------
+
     connection.execute(
         """
         CREATE TABLE IF NOT EXISTS security_events (
@@ -35,7 +38,10 @@ def initialize_database() -> None:
         """
     )
 
-    # Security alerts
+    # -------------------------------------------------
+    # SECURITY ALERTS
+    # -------------------------------------------------
+
     connection.execute(
         """
         CREATE TABLE IF NOT EXISTS security_alerts (
@@ -52,22 +58,10 @@ def initialize_database() -> None:
         """
     )
 
-    # Make sure older databases also have the alert status column
-    columns = connection.execute(
-        "PRAGMA table_info(security_alerts)"
-    ).fetchall()
+    # -------------------------------------------------
+    # SECURITY INCIDENTS
+    # -------------------------------------------------
 
-    column_names = [column["name"] for column in columns]
-
-    if "status" not in column_names:
-        connection.execute(
-            """
-            ALTER TABLE security_alerts
-            ADD COLUMN status TEXT NOT NULL DEFAULT 'NEW'
-            """
-        )
-
-    # Security incidents
     connection.execute(
         """
         CREATE TABLE IF NOT EXISTS security_incidents (
@@ -84,6 +78,47 @@ def initialize_database() -> None:
         )
         """
     )
+
+    # -------------------------------------------------
+    # RESPONSE ACTIONS
+    # -------------------------------------------------
+
+    connection.execute(
+        """
+        CREATE TABLE IF NOT EXISTS response_actions (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            incident_id INTEGER NOT NULL,
+            action TEXT NOT NULL,
+            source_ip TEXT,
+            mode TEXT NOT NULL DEFAULT 'SIMULATION',
+            status TEXT NOT NULL DEFAULT 'SIMULATED',
+            executed_at TEXT NOT NULL,
+            FOREIGN KEY (incident_id)
+                REFERENCES security_incidents(id)
+        )
+        """
+    )
+
+    # -------------------------------------------------
+    # DATABASE MIGRATION
+    # -------------------------------------------------
+
+    alert_columns = connection.execute(
+        "PRAGMA table_info(security_alerts)"
+    ).fetchall()
+
+    alert_column_names = [
+        column["name"]
+        for column in alert_columns
+    ]
+
+    if "status" not in alert_column_names:
+        connection.execute(
+            """
+            ALTER TABLE security_alerts
+            ADD COLUMN status TEXT NOT NULL DEFAULT 'NEW'
+            """
+        )
 
     connection.commit()
     connection.close()
