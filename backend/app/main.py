@@ -5,6 +5,8 @@ from fastapi import FastAPI
 from backend.app.database import get_connection, initialize_database
 from backend.app.detection import analyze_events
 from backend.app.events import SecurityEvent
+from backend.app.risk import calculate_risk
+from backend.app.alerts import get_alerts
 
 
 @asynccontextmanager
@@ -103,6 +105,8 @@ def get_events():
         "total": len(rows),
         "events": [dict(row) for row in rows],
     }
+
+
 @app.get("/api/v1/detections")
 def get_detections():
     connection = get_connection()
@@ -127,4 +131,40 @@ def get_detections():
 
     events = [dict(row) for row in rows]
 
-    return analyze_events(events)
+    detection_result = analyze_events(events)
+
+    severity_map = {
+        "LOW": 1,
+        "MEDIUM": 3,
+        "HIGH": 5,
+        "CRITICAL": 10,
+    }
+
+    for alert in detection_result["alerts"]:
+        severity_value = severity_map.get(alert["severity"], 1)
+
+        source_ip = alert.get("source_ip")
+
+        event_count = sum(
+            1
+            for event in events
+            if event.get("source_ip") == source_ip
+        )
+
+        alert["risk"] = calculate_risk(
+            severity=severity_value,
+            alert_type=alert.get("type"),
+            event_count=event_count,
+        )
+
+    return detection_result
+
+
+@app.get("/api/v1/alerts")
+def list_alerts():
+    alerts = get_alerts()
+
+    return {
+        "total": len(alerts),
+        "alerts": alerts,
+    }
