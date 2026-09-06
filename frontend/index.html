@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AEGIS X — Security Operations Center</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand"><span class="brand-mark">A</span><div><strong>AEGIS X</strong><small>Security Intelligence</small></div></div>
+      <nav>
+        <a class="active" href="#overview">Overview</a>
+        <a href="#incidents">Incidents</a>
+        <a href="#alerts">Alerts</a>
+        <a href="#responses">Responses</a>
+        <a href="#events">Events</a>
+      </nav>
+      <div class="sidebar-footer"><span class="dot"></span> Simulation mode</div>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div><div class="eyebrow">SECURITY OPERATIONS CENTER</div><h1>Command Center</h1></div>
+        <div class="top-actions"><span id="lastUpdated">Loading...</span><button id="refreshBtn">Refresh</button></div>
+      </header>
+
+      <section id="overview" class="hero">
+        <div><div class="eyebrow">AEGIS X STATUS</div><h2>Defensive intelligence at a glance.</h2><p>Detection, risk assessment, incident correlation and simulated response in one view.</p></div>
+        <div class="health"><span class="pulse"></span><div><strong id="healthText">Checking</strong><small>API health</small></div></div>
+      </section>
+
+      <section class="metrics">
+        <article class="metric"><span>Events analyzed</span><strong id="eventsCount">—</strong><small>Telemetry records</small></article>
+        <article class="metric danger"><span>Active alerts</span><strong id="activeAlerts">—</strong><small>New / acknowledged</small></article>
+        <article class="metric warning"><span>Open incidents</span><strong id="openIncidents">—</strong><small>Requires attention</small></article>
+        <article class="metric accent"><span>Highest risk</span><strong id="highestRisk">—</strong><small>Current incident score</small></article>
+      </section>
+
+      <section class="grid-two">
+        <article class="panel">
+          <div class="panel-head"><div><h3>Threat detections</h3><p>Latest detection pipeline result</p></div><span class="tag" id="detectionTag">—</span></div>
+          <div id="detections" class="detection-list"><div class="empty">Loading detections...</div></div>
+        </article>
+        <article class="panel">
+          <div class="panel-head"><div><h3>Response activity</h3><p>Simulated defensive actions</p></div></div>
+          <div id="responses" class="activity-list"><div class="empty">Loading responses...</div></div>
+        </article>
+      </section>
+
+      <section id="incidents" class="panel table-panel">
+        <div class="panel-head"><div><h3>Incidents</h3><p>Correlated security incidents</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Source</th><th>Risk</th><th>Status</th><th>Last seen</th><th>Action</th></tr></thead><tbody id="incidentRows"></tbody></table></div>
+      </section>
+
+      <section id="alerts" class="panel table-panel">
+        <div class="panel-head"><div><h3>Alert history</h3><p>Detection alerts stored by AEGIS X</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Type</th><th>Severity</th><th>Risk</th><th>Source</th><th>Status</th><th>Created</th></tr></thead><tbody id="alertRows"></tbody></table></div>
+      </section>
+
+      <section id="events" class="panel table-panel">
+        <div class="panel-head"><div><h3>Recent events</h3><p>Latest security telemetry</p></div></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Event</th><th>Source</th><th>IP</th><th>Severity</th><th>Description</th><th>Time</th></tr></thead><tbody id="eventRows"></tbody></table></div>
+      </section>
+
+      <div id="toast" class="toast"></div>
+      <footer>AEGIS X · Authorized defensive security operations · Response engine currently simulated</footer>
+    </main>
+  </div>
+  <script src="/static/app.js"></script>
+</body>
+</html>
