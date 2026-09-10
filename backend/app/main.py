@@ -33,6 +33,9 @@ from backend.app.response import (
     get_response_actions,
 )
 
+# PHASE 2.1
+from backend.app.timeline import get_incident_timeline
+
 
 # ============================================================
 # PATH CONFIGURATION
@@ -60,7 +63,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title="AEGIS X",
     description="Universal Security Intelligence & Defense Platform",
-    version="0.4.1",
+    version="0.5.0",
     lifespan=lifespan,
 )
 
@@ -98,7 +101,7 @@ def dashboard():
 def root():
     return {
         "name": "AEGIS X",
-        "version": "0.4.1",
+        "version": "0.5.0",
         "status": "operational",
         "dashboard": "/dashboard",
         "docs": "/docs",
@@ -206,10 +209,9 @@ def get_detections():
     """
     Return stored detection results.
 
-    IMPORTANT:
-    This endpoint is READ-ONLY.
+    READ-ONLY endpoint.
 
-    It does NOT:
+    This endpoint does not:
     - analyze events
     - create alerts
     - create incidents
@@ -268,13 +270,10 @@ def analyze_detections():
         Incident Management
               ↓
         Response Decision
-
-    This endpoint is intentionally POST because it performs
-    analysis and may create persistent security objects.
     """
 
     # --------------------------------------------------------
-    # LOAD SECURITY EVENTS
+    # LOAD EVENTS
     # --------------------------------------------------------
 
     connection = get_connection()
@@ -302,7 +301,7 @@ def analyze_detections():
     events = [dict(row) for row in rows]
 
     # --------------------------------------------------------
-    # RUN DETECTION ENGINE
+    # DETECTION ENGINE
     # --------------------------------------------------------
 
     detection_result = analyze_events(events)
@@ -329,14 +328,10 @@ def analyze_detections():
     existing_incidents = []
 
     # --------------------------------------------------------
-    # PROCESS EACH DETECTION
+    # PROCESS DETECTIONS
     # --------------------------------------------------------
 
     for alert in detection_result["alerts"]:
-
-        # ----------------------------------------------------
-        # SEVERITY
-        # ----------------------------------------------------
 
         severity_name = alert.get(
             "severity",
@@ -348,16 +343,9 @@ def analyze_detections():
             1,
         )
 
-        # ----------------------------------------------------
-        # SOURCE IP
-        # ----------------------------------------------------
-
         source_ip = alert.get("source_ip")
 
-        # ----------------------------------------------------
-        # EVENT COUNT
-        # ----------------------------------------------------
-
+        # Count events associated with source
         event_count = sum(
             1
             for event in events
@@ -376,18 +364,10 @@ def analyze_detections():
 
         alert["risk"] = risk
 
-        # ----------------------------------------------------
-        # ALERT TYPE
-        # ----------------------------------------------------
-
         alert_type = alert.get(
             "type",
             "UNKNOWN",
         )
-
-        # ----------------------------------------------------
-        # MESSAGE
-        # ----------------------------------------------------
 
         message = alert.get(
             "message",
@@ -486,7 +466,7 @@ def analyze_detections():
             )
 
     # --------------------------------------------------------
-    # RETURN ANALYSIS RESULT
+    # RETURN RESULT
     # --------------------------------------------------------
 
     return {
@@ -531,6 +511,46 @@ def list_incidents():
         "incidents": incidents,
     }
 
+
+# ============================================================
+# PHASE 2.1 — INCIDENT TIMELINE
+# ============================================================
+
+@app.get("/api/v1/incidents/{incident_id}/timeline")
+def incident_timeline(incident_id: int):
+    """
+    Return the complete investigation timeline
+    for a security incident.
+
+    Correlation:
+
+        EVENT
+          ↓
+        ALERT
+          ↓
+        INCIDENT
+          ↓
+        RESPONSE
+          ↓
+        STATUS
+    """
+
+    result = get_incident_timeline(
+        incident_id=incident_id,
+    )
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Incident not found.",
+        )
+
+    return result
+
+
+# ============================================================
+# INCIDENT STATUS
+# ============================================================
 
 @app.patch("/api/v1/incidents/{incident_id}/status")
 def change_incident_status(

@@ -1,23 +1,13 @@
-const API_BASE = "";
-
-let dashboardData = {
-    events: [],
-    alerts: [],
-    incidents: [],
-    responses: [],
-    detections: []
-};
-
-let refreshInProgress = false;
+const $ = id => document.getElementById(id);
 
 
 // ========================================
 // API
 // ========================================
 
-async function apiRequest(url, options = {}) {
+const api = async (path, options = {}) => {
 
-    const response = await fetch(`${API_BASE}${url}`, {
+    const response = await fetch(path, {
         ...options,
         headers: {
             "Content-Type": "application/json",
@@ -25,1033 +15,148 @@ async function apiRequest(url, options = {}) {
         }
     });
 
+    let data = {};
+
+    try {
+        data = await response.json();
+    } catch (_) {}
+
     if (!response.ok) {
-
-        let message = `HTTP ${response.status}`;
-
-        try {
-            const error = await response.json();
-
-            if (error.detail) {
-                message = error.detail;
-            }
-
-        } catch (_) {}
-
-        throw new Error(message);
+        throw new Error(
+            data.detail ||
+            `HTTP ${response.status}`
+        );
     }
 
-    return await response.json();
-}
+    return data;
+};
 
 
 // ========================================
-// NORMALIZE API RESPONSES
+// HELPERS
 // ========================================
 
-function extractArray(response, key) {
+const esc = value =>
+    String(value ?? "—").replace(
+        /[&<>"']/g,
+        character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        }[character])
+    );
 
-    if (Array.isArray(response)) {
-        return response;
+
+const time = value => {
+
+    if (!value) {
+        return "—";
     }
 
-    if (
-        response &&
-        Array.isArray(response[key])
-    ) {
-        return response[key];
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return esc(value);
     }
 
-    return [];
-}
+    return date.toLocaleString();
+};
 
 
-// ========================================
-// LOAD DASHBOARD
-// ========================================
+const toast = message => {
 
-async function loadDashboard() {
+    const element = $("toast");
 
-    if (refreshInProgress) {
+    if (!element) {
         return;
     }
 
-    refreshInProgress = true;
+    element.textContent = message;
+
+    element.classList.add("show");
+
+    setTimeout(
+        () => {
+            element.classList.remove("show");
+        },
+        2500
+    );
+};
+
+
+// ========================================
+// INCIDENT STATUS
+// ========================================
+
+async function setIncident(id, status) {
 
     try {
 
-        const [
-            healthResponse,
-            eventsResponse,
-            alertsResponse,
-            incidentsResponse,
-            responsesResponse,
-            detectionsResponse
-        ] = await Promise.all([
-
-            apiRequest("/health"),
-
-            apiRequest("/api/v1/events"),
-
-            apiRequest("/api/v1/alerts"),
-
-            apiRequest("/api/v1/incidents"),
-
-            apiRequest("/api/v1/responses"),
-
-            apiRequest("/api/v1/detections")
-
-        ]);
-
-
-        // ========================================
-        // EXTRACT ACTUAL API ARRAYS
-        // ========================================
-
-        dashboardData.events =
-            extractArray(
-                eventsResponse,
-                "events"
-            );
-
-        dashboardData.alerts =
-            extractArray(
-                alertsResponse,
-                "alerts"
-            );
-
-        dashboardData.incidents =
-            extractArray(
-                incidentsResponse,
-                "incidents"
-            );
-
-        dashboardData.responses =
-            extractArray(
-                responsesResponse,
-                "responses"
-            );
-
-
-        // Detection endpoint returns alerts
-        dashboardData.detections =
-            extractArray(
-                detectionsResponse,
-                "alerts"
-            );
-
-
-        console.log(
-            "AEGIS-X dashboard data:",
-            dashboardData
-        );
-
-
-        // ========================================
-        // RENDER
-        // ========================================
-
-        updateHealth(
-            healthResponse
-        );
-
-        updateMetrics();
-
-        renderDetections();
-
-        renderResponses();
-
-        renderIncidents();
-
-        renderAlerts();
-
-        renderEvents();
-
-        updateDetectionTag(
-            detectionsResponse
-        );
-
-        updateLastUpdated();
-
-    } catch (error) {
-
-        console.error(
-            "AEGIS-X dashboard error:",
-            error
-        );
-
-        updateHealthError();
-
-        showToast(
-            `Dashboard error: ${error.message}`,
-            "error"
-        );
-
-    } finally {
-
-        refreshInProgress = false;
-    }
-}
-
-
-// ========================================
-// HEALTH
-// ========================================
-
-function updateHealth(health) {
-
-    const element =
-        document.getElementById(
-            "healthText"
-        );
-
-    if (!element) {
-        return;
-    }
-
-    element.textContent =
-        "Operational";
-
-    element.style.color =
-        "";
-}
-
-
-function updateHealthError() {
-
-    const element =
-        document.getElementById(
-            "healthText"
-        );
-
-    if (!element) {
-        return;
-    }
-
-    element.textContent =
-        "Offline";
-
-    element.style.color =
-        "#ff4d4d";
-}
-
-
-// ========================================
-// METRICS
-// ========================================
-
-function updateMetrics() {
-
-    const events =
-        dashboardData.events;
-
-    const alerts =
-        dashboardData.alerts;
-
-    const incidents =
-        dashboardData.incidents;
-
-
-    const activeAlerts =
-        alerts.filter(
-            alert =>
-                String(
-                    alert.status || "NEW"
-                ).toUpperCase() !==
-                "RESOLVED"
-        );
-
-
-    const openIncidents =
-        incidents.filter(
-            incident =>
-                String(
-                    incident.status || "OPEN"
-                ).toUpperCase() !==
-                "RESOLVED"
-        );
-
-
-    const riskScores =
-        incidents
-            .map(
-                incident =>
-                    Number(
-                        incident.risk_score || 0
-                    )
-            );
-
-
-    const highestRisk =
-        riskScores.length > 0
-            ? Math.max(...riskScores)
-            : 0;
-
-
-    setText(
-        "eventsCount",
-        events.length
-    );
-
-
-    setText(
-        "activeAlerts",
-        activeAlerts.length
-    );
-
-
-    setText(
-        "openIncidents",
-        openIncidents.length
-    );
-
-
-    setText(
-        "highestRisk",
-        highestRisk
-    );
-}
-
-
-// ========================================
-// DETECTION TAG
-// ========================================
-
-function updateDetectionTag(
-    detectionResponse
-) {
-
-    const element =
-        document.getElementById(
-            "detectionTag"
-        );
-
-    if (!element) {
-        return;
-    }
-
-
-    const generated =
-        detectionResponse &&
-        detectionResponse.alerts_generated;
-
-
-    if (generated !== undefined) {
-
-        element.textContent =
-            `${generated} DETECTION${
-                generated === 1 ? "" : "S"
-            }`;
-
-    } else {
-
-        element.textContent =
-            `${dashboardData.detections.length} DETECTION${
-                dashboardData.detections.length === 1
-                    ? ""
-                    : "S"
-            }`;
-    }
-}
-
-
-// ========================================
-// DETECTIONS
-// ========================================
-
-function renderDetections() {
-
-    const container =
-        document.getElementById(
-            "detections"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    if (
-        dashboardData.detections.length === 0
-    ) {
-
-        container.innerHTML = `
-            <div class="empty">
-                No active detections.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        dashboardData.detections
-            .map(
-                detection => {
-
-                    const risk =
-                        detection.risk || {};
-
-
-                    return `
-                        <div class="detection-item">
-
-                            <div class="detection-top">
-
-                                <strong>
-                                    ${escapeHtml(
-                                        detection.type ||
-                                        "UNKNOWN"
-                                    )}
-                                </strong>
-
-                                <span class="severity-badge ${severityClass(
-                                    detection.severity
-                                )}">
-                                    ${escapeHtml(
-                                        detection.severity ||
-                                        "UNKNOWN"
-                                    )}
-                                </span>
-
-                            </div>
-
-
-                            <div class="detection-info">
-
-                                <span>
-                                    Source:
-                                    ${escapeHtml(
-                                        detection.source_ip ||
-                                        "N/A"
-                                    )}
-                                </span>
-
-                                <span>
-                                    Risk:
-                                    ${escapeHtml(
-                                        String(
-                                            risk.score ?? 0
-                                        )
-                                    )}
-                                </span>
-
-                                <span>
-                                    Level:
-                                    ${escapeHtml(
-                                        risk.level ||
-                                        "LOW"
-                                    )}
-                                </span>
-
-                            </div>
-
-
-                            <div class="detection-message">
-
-                                ${escapeHtml(
-                                    detection.message ||
-                                    "Security detection generated."
-                                )}
-
-                            </div>
-
-                        </div>
-                    `;
-                }
-            )
-            .join("");
-}
-
-
-// ========================================
-// RESPONSE ACTIVITY
-// ========================================
-
-function renderResponses() {
-
-    const container =
-        document.getElementById(
-            "responses"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    if (
-        dashboardData.responses.length === 0
-    ) {
-
-        container.innerHTML = `
-            <div class="empty">
-                No response activity.
-            </div>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        dashboardData.responses
-            .slice(0, 20)
-            .map(
-                response => {
-
-                    return `
-                        <div class="activity-item">
-
-                            <div>
-
-                                <strong>
-                                    ${escapeHtml(
-                                        response.action ||
-                                        "UNKNOWN"
-                                    )}
-                                </strong>
-
-                                <small>
-                                    Incident #${escapeHtml(
-                                        response.incident_id
-                                    )}
-                                </small>
-
-                            </div>
-
-
-                            <div class="activity-right">
-
-                                <span class="mode-badge">
-                                    ${escapeHtml(
-                                        response.mode ||
-                                        "SIMULATION"
-                                    )}
-                                </span>
-
-                                <span>
-                                    ${escapeHtml(
-                                        response.status ||
-                                        "SIMULATED"
-                                    )}
-                                </span>
-
-                            </div>
-
-                        </div>
-                    `;
-                }
-            )
-            .join("");
-}
-
-
-// ========================================
-// INCIDENTS
-// ========================================
-
-function renderIncidents() {
-
-    const container =
-        document.getElementById(
-            "incidentRows"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    if (
-        dashboardData.incidents.length === 0
-    ) {
-
-        container.innerHTML = `
-            <tr>
-                <td colspan="7">
-                    No security incidents.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        dashboardData.incidents
-            .map(
-                incident => {
-
-                    const status =
-                        String(
-                            incident.status ||
-                            "OPEN"
-                        ).toUpperCase();
-
-
-                    return `
-                        <tr>
-
-                            <td>
-                                #${incident.id}
-                            </td>
-
-
-                            <td>
-                                <strong>
-                                    ${escapeHtml(
-                                        incident.incident_type ||
-                                        "UNKNOWN"
-                                    )}
-                                </strong>
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(
-                                    incident.source_ip ||
-                                    "N/A"
-                                )}
-                            </td>
-
-
-                            <td>
-                                <strong>
-                                    ${incident.risk_score ?? 0}
-                                </strong>
-
-                                <small>
-                                    ${escapeHtml(
-                                        incident.risk_level ||
-                                        "LOW"
-                                    )}
-                                </small>
-                            </td>
-
-
-                            <td>
-                                <span class="status-badge ${statusClass(
-                                    status
-                                )}">
-                                    ${escapeHtml(
-                                        status
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                ${formatDate(
-                                    incident.last_seen
-                                )}
-                            </td>
-
-
-                            <td>
-
-                                <div class="table-actions">
-
-                                    ${
-                                        status === "OPEN"
-                                        ?
-
-                                        `
-                                        <button
-                                            class="mini-btn"
-                                            onclick="acknowledgeIncident(${incident.id})"
-                                        >
-                                            ACK
-                                        </button>
-                                        `
-
-                                        :
-
-                                        ""
-                                    }
-
-
-                                    ${
-                                        status !== "RESOLVED"
-                                        ?
-
-                                        `
-                                        <button
-                                            class="mini-btn response-btn"
-                                            onclick="respondToIncident(${incident.id})"
-                                        >
-                                            RESPOND
-                                        </button>
-
-                                        <button
-                                            class="mini-btn resolve-btn"
-                                            onclick="resolveIncident(${incident.id})"
-                                        >
-                                            RESOLVE
-                                        </button>
-                                        `
-
-                                        :
-
-                                        `
-                                        <span class="resolved-text">
-                                            ✓ Resolved
-                                        </span>
-                                        `
-                                    }
-
-                                </div>
-
-                            </td>
-
-                        </tr>
-                    `;
-                }
-            )
-            .join("");
-}
-
-
-// ========================================
-// ALERTS
-// ========================================
-
-function renderAlerts() {
-
-    const container =
-        document.getElementById(
-            "alertRows"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    if (
-        dashboardData.alerts.length === 0
-    ) {
-
-        container.innerHTML = `
-            <tr>
-                <td colspan="7">
-                    No alerts available.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        dashboardData.alerts
-            .map(
-                alert => {
-
-                    return `
-                        <tr>
-
-                            <td>
-                                #${alert.id}
-                            </td>
-
-
-                            <td>
-                                <strong>
-                                    ${escapeHtml(
-                                        alert.alert_type ||
-                                        "UNKNOWN"
-                                    )}
-                                </strong>
-                            </td>
-
-
-                            <td>
-                                <span class="severity-badge ${severityClass(
-                                    alert.severity
-                                )}">
-                                    ${escapeHtml(
-                                        alert.severity ||
-                                        "UNKNOWN"
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                <strong>
-                                    ${alert.risk_score ?? 0}
-                                </strong>
-
-                                <small>
-                                    ${escapeHtml(
-                                        alert.risk_level ||
-                                        "LOW"
-                                    )}
-                                </small>
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(
-                                    alert.source_ip ||
-                                    "N/A"
-                                )}
-                            </td>
-
-
-                            <td>
-                                <span class="status-badge ${statusClass(
-                                    alert.status ||
-                                    "NEW"
-                                )}">
-                                    ${escapeHtml(
-                                        alert.status ||
-                                        "NEW"
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                ${formatDate(
-                                    alert.created_at
-                                )}
-                            </td>
-
-                        </tr>
-                    `;
-                }
-            )
-            .join("");
-}
-
-
-// ========================================
-// EVENTS
-// ========================================
-
-function renderEvents() {
-
-    const container =
-        document.getElementById(
-            "eventRows"
-        );
-
-    if (!container) {
-        return;
-    }
-
-
-    if (
-        dashboardData.events.length === 0
-    ) {
-
-        container.innerHTML = `
-            <tr>
-                <td colspan="7">
-                    No security events available.
-                </td>
-            </tr>
-        `;
-
-        return;
-    }
-
-
-    container.innerHTML =
-        dashboardData.events
-            .slice(0, 50)
-            .map(
-                event => {
-
-                    return `
-                        <tr>
-
-                            <td>
-                                #${event.id}
-                            </td>
-
-
-                            <td>
-                                <strong>
-                                    ${escapeHtml(
-                                        event.event_type ||
-                                        "UNKNOWN"
-                                    )}
-                                </strong>
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(
-                                    event.source ||
-                                    "N/A"
-                                )}
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(
-                                    event.source_ip ||
-                                    "N/A"
-                                )}
-                            </td>
-
-
-                            <td>
-                                <span class="severity-badge ${severityClass(
-                                    event.severity
-                                )}">
-                                   ${escapeHtml(
-                                      String(
-                                          event.severity ??
-                                          "N/A"
-                                      )
-                                    )}
-                                </span>
-                            </td>
-
-
-                            <td>
-                                ${escapeHtml(
-                                    event.description ||
-                                    "N/A"
-                                )}
-                            </td>
-
-
-                            <td>
-                                ${formatDate(
-                                    event.timestamp
-                                )}
-                            </td>
-
-                        </tr>
-                    `;
-                }
-            )
-            .join("");
-}
-
-
-// ========================================
-// INCIDENT ACTIONS
-// ========================================
-
-async function acknowledgeIncident(id) {
-
-    try {
-
-        await apiRequest(
+        await api(
             `/api/v1/incidents/${id}/status`,
             {
                 method: "PATCH",
 
                 body: JSON.stringify({
-                    status: "ACKNOWLEDGED"
+                    status: status
                 })
             }
         );
 
-
-        showToast(
-            `Incident #${id} acknowledged.`,
-            "success"
+        toast(
+            `Incident #${id} → ${status}`
         );
 
-
-        await loadDashboard();
+        await load();
 
     } catch (error) {
 
         console.error(
-            "Acknowledge error:",
+            "Incident status error:",
             error
         );
+
+        toast(error.message);
     }
 }
 
 
-async function resolveIncident(id) {
+// ========================================
+// SIMULATED RESPONSE
+// ========================================
 
-    const confirmed =
-        window.confirm(
-            `Resolve incident #${id}?`
-        );
-
-
-    if (!confirmed) {
-        return;
-    }
-
-
-    try {
-
-        await apiRequest(
-            `/api/v1/incidents/${id}/status`,
-            {
-                method: "PATCH",
-
-                body: JSON.stringify({
-                    status: "RESOLVED"
-                })
-            }
-        );
-
-
-        showToast(
-            `Incident #${id} resolved.`,
-            "success"
-        );
-
-
-        await loadDashboard();
-
-    } catch (error) {
-
-        console.error(
-            "Resolve error:",
-            error
-        );
-    }
-}
-
-
-async function respondToIncident(id) {
+async function respond(id) {
 
     const confirmed =
         window.confirm(
             `Run simulated response for incident #${id}?\n\n` +
-            `AEGIS-X will remain in SIMULATION mode.`
+            `AEGIS X will remain in SIMULATION mode.`
         );
-
 
     if (!confirmed) {
         return;
     }
 
-
     try {
 
-        await apiRequest(
-            `/api/v1/incidents/${id}/respond`,
-            {
-                method: "POST"
-            }
+        const data =
+            await api(
+                `/api/v1/incidents/${id}/respond`,
+                {
+                    method: "POST"
+                }
+            );
+
+        toast(
+            `Response ${
+                data.execution?.action ||
+                "action"
+            } simulated`
         );
 
-
-        showToast(
-            `Simulated response executed for incident #${id}.`,
-            "success"
-        );
-
-
-        await loadDashboard();
+        await load();
 
     } catch (error) {
 
@@ -1059,258 +164,1446 @@ async function respondToIncident(id) {
             "Response error:",
             error
         );
+
+        toast(error.message);
     }
 }
 
 
 // ========================================
-// TOAST
+// INVESTIGATION PANEL
 // ========================================
 
-function showToast(
-    message,
-    type = "info"
-) {
+function createInvestigationPanel() {
 
-    const toast =
-        document.getElementById(
-            "toast"
-        );
-
-    if (!toast) {
+    if ($("investigationOverlay")) {
         return;
     }
 
+    const overlay =
+        document.createElement("div");
 
-    toast.textContent =
-        message;
+    overlay.id =
+        "investigationOverlay";
+
+    overlay.innerHTML = `
+
+        <div
+            class="investigation-backdrop"
+            onclick="closeInvestigation()"
+        ></div>
 
 
-    toast.className =
-        `toast ${type}`;
+        <aside class="investigation-panel">
+
+            <div class="investigation-header">
+
+                <div>
+
+                    <div class="investigation-eyebrow">
+                        AEGIS X · SECURITY INVESTIGATION
+                    </div>
+
+                    <h2 id="investigationTitle">
+                        Incident Investigation
+                    </h2>
+
+                    <p id="investigationSubtitle">
+                        Attack story and correlated security activity
+                    </p>
+
+                </div>
 
 
-    toast.classList.add(
-        "show"
-    );
+                <button
+                    class="investigation-close"
+                    onclick="closeInvestigation()"
+                    aria-label="Close investigation"
+                >
+                    ×
+                </button>
+
+            </div>
 
 
-    setTimeout(
-        () => {
+            <div
+                id="investigationContent"
+                class="investigation-content"
+            >
 
-            toast.classList.remove(
-                "show"
+                <div class="investigation-loading">
+                    Loading investigation...
+                </div>
+
+            </div>
+
+        </aside>
+    `;
+
+    document.body.appendChild(overlay);
+}
+
+
+// ========================================
+// OPEN INVESTIGATION
+// ========================================
+
+async function investigate(id) {
+
+    createInvestigationPanel();
+
+    const overlay =
+        $("investigationOverlay");
+
+    const content =
+        $("investigationContent");
+
+    const title =
+        $("investigationTitle");
+
+    const subtitle =
+        $("investigationSubtitle");
+
+
+    overlay.classList.add("open");
+
+
+    title.textContent =
+        `Incident #${id}`;
+
+
+    subtitle.textContent =
+        "Loading attack story...";
+
+
+    content.innerHTML = `
+
+        <div class="investigation-loading">
+
+            <div class="investigation-spinner"></div>
+
+            <span>
+                Correlating events, alerts,
+                incident and response activity...
+            </span>
+
+        </div>
+    `;
+
+
+    try {
+
+        const data =
+            await api(
+                `/api/v1/incidents/${id}/timeline`
             );
 
-        },
-        3000
-    );
+        renderInvestigation(data);
+
+    } catch (error) {
+
+        console.error(
+            "Investigation error:",
+            error
+        );
+
+        content.innerHTML = `
+
+            <div class="investigation-error">
+
+                <strong>
+                    Investigation unavailable
+                </strong>
+
+                <p>
+                    ${esc(error.message)}
+                </p>
+
+                <button
+                    class="action-btn"
+                    onclick="investigate(${id})"
+                >
+                    RETRY
+                </button>
+
+            </div>
+        `;
+    }
 }
 
 
 // ========================================
-// REFRESH
+// CLOSE INVESTIGATION
 // ========================================
 
-function updateLastUpdated() {
+function closeInvestigation() {
 
-    const element =
-        document.getElementById(
-            "lastUpdated"
-        );
+    const overlay =
+        $("investigationOverlay");
 
-    if (!element) {
+    if (!overlay) {
+        return;
+    }
+
+    overlay.classList.remove("open");
+}
+
+
+// ========================================
+// RENDER INVESTIGATION
+// ========================================
+
+function renderInvestigation(data) {
+
+    const incident =
+        data.incident || {};
+
+    const timeline =
+        Array.isArray(data.timeline)
+            ? data.timeline
+            : [];
+
+
+    const title =
+        $("investigationTitle");
+
+    const subtitle =
+        $("investigationSubtitle");
+
+    const content =
+        $("investigationContent");
+
+
+    if (!content) {
         return;
     }
 
 
-    element.textContent =
-        `Updated ${new Date().toLocaleTimeString()}`;
-}
+    if (title) {
 
-
-function setupRefreshButton() {
-
-    const button =
-        document.getElementById(
-            "refreshBtn"
-        );
-
-    if (!button) {
-        return;
+        title.textContent =
+            `Incident #${incident.id ?? "—"}`;
     }
 
 
-    button.addEventListener(
-        "click",
-        async () => {
+    if (subtitle) {
 
-            button.disabled =
-                true;
-
-            button.textContent =
-                "Refreshing...";
+        subtitle.textContent =
+            `${incident.incident_type || "UNKNOWN"} · Attack Story`;
+    }
 
 
-            try {
+    content.innerHTML = `
 
-                await loadDashboard();
+        <!-- INCIDENT SUMMARY -->
 
-            } finally {
+        <section class="investigation-summary">
 
-                button.disabled =
-                    false;
+            <div class="investigation-summary-head">
 
-                button.textContent =
-                    "Refresh";
-            }
-        }
-    );
+                <div>
+
+                    <span class="investigation-label">
+                        INCIDENT TYPE
+                    </span>
+
+                    <h3>
+                        ${esc(
+                            incident.incident_type ||
+                            "UNKNOWN"
+                        )}
+                    </h3>
+
+                </div>
+
+
+                <span class="
+                    status
+                    ${esc(
+                        incident.status ||
+                        "OPEN"
+                    )}
+                ">
+                    ${esc(
+                        incident.status ||
+                        "OPEN"
+                    )}
+                </span>
+
+            </div>
+
+
+            <div class="investigation-risk">
+
+                <div>
+
+                    <span>
+                        RISK SCORE
+                    </span>
+
+                    <strong>
+                        ${incident.risk_score ?? 0}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        RISK LEVEL
+                    </span>
+
+                    <strong>
+                        ${esc(
+                            incident.risk_level ||
+                            "LOW"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        SEVERITY
+                    </span>
+
+                    <strong>
+                        ${esc(
+                            incident.severity ||
+                            "UNKNOWN"
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="investigation-details">
+
+                <div>
+
+                    <span>
+                        SOURCE IP
+                    </span>
+
+                    <strong>
+                        ${esc(
+                            incident.source_ip ||
+                            "N/A"
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        FIRST SEEN
+                    </span>
+
+                    <strong>
+                        ${time(
+                            incident.first_seen
+                        )}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        LAST SEEN
+                    </span>
+
+                    <strong>
+                        ${time(
+                            incident.last_seen
+                        )}
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <div class="investigation-description">
+
+                ${esc(
+                    incident.description ||
+                    "No incident description available."
+                )}
+
+            </div>
+
+        </section>
+
+
+        <!-- ATTACK STORY -->
+
+        <section class="attack-story">
+
+            <div class="attack-story-head">
+
+                <div>
+
+                    <div class="investigation-label">
+                        ATTACK STORY
+                    </div>
+
+                    <h3>
+                        Correlated Security Timeline
+                    </h3>
+
+                </div>
+
+
+                <span class="timeline-count">
+                    ${timeline.length} ACTIVITIES
+                </span>
+
+            </div>
+
+
+            <div class="timeline">
+
+                ${
+                    timeline.length > 0
+
+                        ? timeline
+                            .map(
+                                (item, index) =>
+                                    renderTimelineItem(
+                                        item,
+                                        index,
+                                        timeline.length
+                                    )
+                            )
+                            .join("")
+
+                        : `
+                            <div class="empty">
+                                No timeline activity available.
+                            </div>
+                        `
+                }
+
+            </div>
+
+        </section>
+    `;
 }
 
 
 // ========================================
-// HELPERS
+// TIMELINE ITEM
 // ========================================
 
-function setText(
-    id,
-    value
+function renderTimelineItem(
+    item,
+    index,
+    total
 ) {
 
-    const element =
-        document.getElementById(id);
-
-    if (element) {
-        element.textContent =
-            value;
-    }
-}
-
-
-function escapeHtml(value) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-        return "";
-    }
-
-
-    return String(value)
-        .replaceAll(
-            "&",
-            "&amp;"
-        )
-        .replaceAll(
-            "<",
-            "&lt;"
-        )
-        .replaceAll(
-            ">",
-            "&gt;"
-        )
-        .replaceAll(
-            '"',
-            "&quot;"
-        )
-        .replaceAll(
-            "'",
-            "&#039;"
-        );
-}
-
-
-function formatDate(value) {
-
-    if (!value) {
-        return "N/A";
-    }
-
-
-    const date =
-        new Date(value);
-
-
-    if (
-        Number.isNaN(
-            date.getTime()
-        )
-    ) {
-        return escapeHtml(
-            value
-        );
-    }
-
-
-    return date.toLocaleString();
-}
-
-
-function severityClass(
-    severity
-) {
-
-    const value =
+    const type =
         String(
-            severity || ""
+            item.type ||
+            "EVENT"
         ).toUpperCase();
 
 
-    if (
-        value === "CRITICAL" ||
-        value === "HIGH" ||
-        Number(value) >= 7
-    ) {
-        return "high";
+    const title =
+        item.title ||
+        type;
+
+
+    const description =
+        item.description ||
+        "No description available.";
+
+
+    let metadata = "";
+
+
+    if (item.source_ip) {
+
+        metadata += `
+            <span>
+                IP: ${esc(
+                    item.source_ip
+                )}
+            </span>
+        `;
     }
 
 
     if (
-        value === "MEDIUM" ||
-        Number(value) >= 4
+        item.risk_score !== undefined &&
+        item.risk_score !== null
     ) {
-        return "medium";
+
+        metadata += `
+            <span>
+                Risk: ${esc(
+                    item.risk_score
+                )}
+            </span>
+        `;
     }
 
 
-    return "low";
-}
+    if (item.risk_level) {
+
+        metadata += `
+            <span>
+                Level: ${esc(
+                    item.risk_level
+                )}
+            </span>
+        `;
+    }
 
 
-function statusClass(
-    status
-) {
+    if (item.severity) {
 
-    return String(
-        status || "NEW"
-    )
-        .toLowerCase()
-        .replaceAll(
-            " ",
-            "-"
-        );
+        metadata += `
+            <span>
+                Severity: ${esc(
+                    item.severity
+                )}
+            </span>
+        `;
+    }
+
+
+    if (item.status) {
+
+        metadata += `
+            <span>
+                Status: ${esc(
+                    item.status
+                )}
+            </span>
+        `;
+    }
+
+
+    if (item.mode) {
+
+        metadata += `
+            <span>
+                Mode: ${esc(
+                    item.mode
+                )}
+            </span>
+        `;
+    }
+
+
+    return `
+
+        <div class="
+            timeline-item
+            ${timelineClass(type)}
+        ">
+
+            <div class="timeline-marker">
+
+                <div class="timeline-node">
+                    ${timelineIcon(type)}
+                </div>
+
+
+                ${
+                    index < total - 1
+
+                        ? `
+                            <div
+                                class="timeline-connector"
+                            ></div>
+                        `
+
+                        : ""
+                }
+
+            </div>
+
+
+            <div class="timeline-card">
+
+                <div class="timeline-card-head">
+
+                    <div>
+
+                        <span class="timeline-type">
+                            ${esc(type)}
+                        </span>
+
+                        <h4>
+                            ${esc(title)}
+                        </h4>
+
+                    </div>
+
+
+                    <time>
+                        ${time(
+                            item.timestamp
+                        )}
+                    </time>
+
+                </div>
+
+
+                <p>
+                    ${esc(description)}
+                </p>
+
+
+                ${
+                    metadata
+
+                        ? `
+                            <div class="timeline-meta">
+                                ${metadata}
+                            </div>
+                        `
+
+                        : ""
+                }
+
+            </div>
+
+        </div>
+    `;
 }
 
 
 // ========================================
-// START
+// TIMELINE STYLE CLASS
+// ========================================
+
+function timelineClass(type) {
+
+    return {
+
+        EVENT:
+            "timeline-event",
+
+        DETECTION:
+            "timeline-detection",
+
+        ALERT:
+            "timeline-alert",
+
+        RISK:
+            "timeline-risk",
+
+        INCIDENT:
+            "timeline-incident",
+
+        RESPONSE:
+            "timeline-response",
+
+        STATUS:
+            "timeline-status"
+
+    }[type] || "timeline-event";
+}
+
+
+// ========================================
+// TIMELINE ICON
+// ========================================
+
+function timelineIcon(type) {
+
+    return {
+
+        EVENT: "E",
+
+        DETECTION: "D",
+
+        ALERT: "A",
+
+        RISK: "R",
+
+        INCIDENT: "I",
+
+        RESPONSE: "↗",
+
+        STATUS: "✓"
+
+    }[type] || "•";
+}
+
+
+// ========================================
+// DASHBOARD LOAD
+// ========================================
+
+async function load() {
+
+    try {
+
+        const [
+            health,
+            events,
+            alerts,
+            incidents,
+            responses,
+            detections
+        ] = await Promise.all([
+
+            api("/health"),
+
+            api(
+                "/api/v1/events"
+            ),
+
+            api(
+                "/api/v1/alerts"
+            ),
+
+            api(
+                "/api/v1/incidents"
+            ),
+
+            api(
+                "/api/v1/responses"
+            ),
+
+            api(
+                "/api/v1/detections"
+            )
+
+        ]);
+
+
+        // ========================================
+        // HEALTH
+        // ========================================
+
+        $("healthText").textContent =
+            health.status === "healthy"
+                ? "Operational"
+                : "Degraded";
+
+
+        // ========================================
+        // METRICS
+        // ========================================
+
+        $("eventsCount").textContent =
+            events.total;
+
+
+        const active =
+            (alerts.alerts || [])
+                .filter(
+                    alert =>
+                        String(
+                            alert.status ||
+                            "NEW"
+                        ).toUpperCase() !==
+                        "RESOLVED"
+                );
+
+
+        $("activeAlerts").textContent =
+            active.length;
+
+
+        const open =
+            (incidents.incidents || [])
+                .filter(
+                    incident =>
+                        String(
+                            incident.status ||
+                            "OPEN"
+                        ).toUpperCase() !==
+                        "RESOLVED"
+                );
+
+
+        $("openIncidents").textContent =
+            open.length;
+
+
+        const riskScores =
+            open.map(
+                incident =>
+                    Number(
+                        incident.risk_score ||
+                        0
+                    )
+            );
+
+
+        $("highestRisk").textContent =
+            riskScores.length
+                ? Math.max(...riskScores)
+                : "0";
+
+
+        $("detectionTag").textContent =
+            `${detections.alerts_generated ?? 0} detected`;
+
+
+        $("lastUpdated").textContent =
+            `Updated ${
+                new Date()
+                    .toLocaleTimeString()
+            }`;
+
+
+        // ========================================
+        // DETECTIONS
+        // ========================================
+
+        $("detections").innerHTML =
+            detections.alerts?.length
+
+                ? detections.alerts
+                    .map(
+                        alert => `
+
+                            <div class="detection">
+
+                                <div class="rowline">
+
+                                    <span class="type">
+                                        ${esc(
+                                            alert.type ||
+                                            alert.alert_type ||
+                                            "UNKNOWN"
+                                        )}
+                                    </span>
+
+
+                                    <span class="
+                                        risk
+                                        ${esc(
+                                            alert.severity ||
+                                            alert.risk?.level ||
+                                            "LOW"
+                                        )}
+                                    ">
+
+                                        ${esc(
+                                            alert.risk?.level ||
+                                            alert.risk_level ||
+                                            "LOW"
+                                        )}
+
+                                        ·
+
+                                        ${esc(
+                                            alert.risk?.score ??
+                                            alert.risk_score ??
+                                            0
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <div class="meta">
+
+                                    ${esc(
+                                        alert.source_ip
+                                    )}
+
+                                    ·
+
+                                    ${esc(
+                                        alert.message ||
+                                        "Security detection generated."
+                                    )}
+
+                                </div>
+
+
+                                <div class="meta">
+
+                                    Response:
+
+                                    ${esc(
+                                        alert.response?.action ||
+                                        "N/A"
+                                    )}
+
+                                    ·
+
+                                    ${esc(
+                                        alert.response?.mode ||
+                                        "SIMULATION"
+                                    )}
+
+                                </div>
+
+                            </div>
+                        `
+                    )
+                    .join("")
+
+                : `
+                    <div class="empty">
+                        No detections.
+                    </div>
+                `;
+
+
+        // ========================================
+        // RESPONSE ACTIVITY
+        // ========================================
+
+        $("responses").innerHTML =
+            responses.responses?.length
+
+                ? responses.responses
+                    .slice(0, 8)
+                    .map(
+                        response => `
+
+                            <div class="activity">
+
+                                <div class="rowline">
+
+                                    <strong>
+                                        ${esc(
+                                            response.action
+                                        )}
+                                    </strong>
+
+
+                                    <span class="status">
+
+                                        ${esc(
+                                            response.status
+                                        )}
+
+                                    </span>
+
+                                </div>
+
+
+                                <small>
+
+                                    Incident #
+                                    ${esc(
+                                        response.incident_id
+                                    )}
+
+                                    ·
+
+                                    ${esc(
+                                        response.source_ip
+                                    )}
+
+                                    ·
+
+                                    ${time(
+                                        response.executed_at
+                                    )}
+
+                                </small>
+
+                            </div>
+                        `
+                    )
+                    .join("")
+
+                : `
+                    <div class="empty">
+                        No response actions recorded.
+                    </div>
+                `;
+
+
+        // ========================================
+        // INCIDENTS
+        // ========================================
+
+        $("incidentRows").innerHTML =
+            incidents.incidents?.length
+
+                ? incidents.incidents
+                    .map(
+                        incident => {
+
+                            const status =
+                                String(
+                                    incident.status ||
+                                    "OPEN"
+                                ).toUpperCase();
+
+
+                            return `
+
+                                <tr>
+
+                                    <td>
+                                        #${incident.id}
+                                    </td>
+
+
+                                    <td>
+                                        ${esc(
+                                            incident.incident_type ||
+                                            "UNKNOWN"
+                                        )}
+                                    </td>
+
+
+                                    <td>
+                                        ${esc(
+                                            incident.source_ip ||
+                                            "N/A"
+                                        )}
+                                    </td>
+
+
+                                    <td>
+
+                                        <b class="
+                                            risk
+                                            ${esc(
+                                                incident.risk_level ||
+                                                "LOW"
+                                            )}
+                                        ">
+                                            ${incident.risk_score ?? 0}
+                                        </b>
+
+                                        ${esc(
+                                            incident.risk_level ||
+                                            "LOW"
+                                        )}
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="
+                                            status
+                                            ${esc(status)}
+                                        ">
+
+                                            ${esc(status)}
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+                                        ${time(
+                                            incident.last_seen
+                                        )}
+                                    </td>
+
+
+                                    <td>
+
+                                        <div
+                                            class="table-actions"
+                                        >
+
+                                            <!-- INVESTIGATE -->
+
+                                            <button
+                                                class="
+                                                    action-btn
+                                                    investigate-btn
+                                                "
+                                                onclick="
+                                                    investigate(
+                                                        ${incident.id}
+                                                    )
+                                                "
+                                            >
+                                                INVESTIGATE
+                                            </button>
+
+
+                                            <!-- RESPOND -->
+
+                                            ${
+                                                status !==
+                                                "RESOLVED"
+
+                                                    ? `
+
+                                                        <button
+                                                            class="action-btn"
+                                                            onclick="
+                                                                respond(
+                                                                    ${incident.id}
+                                                                )
+                                                            "
+                                                        >
+                                                            RESPOND
+                                                        </button>
+
+                                                    `
+
+                                                    : ""
+                                            }
+
+
+                                            <!-- ACKNOWLEDGE -->
+
+                                            ${
+                                                status ===
+                                                "OPEN"
+
+                                                    ? `
+
+                                                        <button
+                                                            class="action-btn"
+                                                            onclick="
+                                                                setIncident(
+                                                                    ${incident.id},
+                                                                    'ACKNOWLEDGED'
+                                                                )
+                                                            "
+                                                        >
+                                                            ACK
+                                                        </button>
+
+                                                    `
+
+                                                    : ""
+                                            }
+
+
+                                            <!-- RESOLVE -->
+
+                                            ${
+                                                status ===
+                                                "ACKNOWLEDGED"
+
+                                                    ? `
+
+                                                        <button
+                                                            class="action-btn"
+                                                            onclick="
+                                                                setIncident(
+                                                                    ${incident.id},
+                                                                    'RESOLVED'
+                                                                )
+                                                            "
+                                                        >
+                                                            RESOLVE
+                                                        </button>
+
+                                                    `
+
+                                                    : ""
+                                            }
+
+
+                                            ${
+                                                status ===
+                                                "RESOLVED"
+
+                                                    ? `
+                                                        <span>
+                                                            ✓ Resolved
+                                                        </span>
+                                                    `
+
+                                                    : ""
+                                            }
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            `;
+                        }
+                    )
+                    .join("")
+
+                : `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty"
+                        >
+                            No incidents.
+                        </td>
+
+                    </tr>
+
+                `;
+
+
+        // ========================================
+        // ALERTS
+        // ========================================
+
+        $("alertRows").innerHTML =
+            alerts.alerts?.length
+
+                ? alerts.alerts
+                    .map(
+                        alert => `
+
+                            <tr>
+
+                                <td>
+                                    #${alert.id}
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        alert.alert_type ||
+                                        "UNKNOWN"
+                                    )}
+                                </td>
+
+
+                                <td class="
+                                    risk
+                                    ${esc(
+                                        alert.severity ||
+                                        "LOW"
+                                    )}
+                                ">
+
+                                    ${esc(
+                                        alert.severity ||
+                                        "UNKNOWN"
+                                    )}
+
+                                </td>
+
+
+                                <td>
+
+                                    ${alert.risk_score ?? 0}
+
+                                    ·
+
+                                    ${esc(
+                                        alert.risk_level ||
+                                        "LOW"
+                                    )}
+
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        alert.source_ip ||
+                                        "N/A"
+                                    )}
+                                </td>
+
+
+                                <td>
+
+                                    <span class="status">
+
+                                        ${esc(
+                                            alert.status ||
+                                            "NEW"
+                                        )}
+
+                                    </span>
+
+                                </td>
+
+
+                                <td>
+                                    ${time(
+                                        alert.created_at
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `
+                    )
+                    .join("")
+
+                : `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty"
+                        >
+                            No alerts.
+                        </td>
+
+                    </tr>
+
+                `;
+
+
+        // ========================================
+        // EVENTS
+        // ========================================
+
+        $("eventRows").innerHTML =
+            events.events?.length
+
+                ? events.events
+                    .slice(0, 30)
+                    .map(
+                        event => `
+
+                            <tr>
+
+                                <td>
+                                    #${event.id}
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        event.event_type ||
+                                        "UNKNOWN"
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        event.source ||
+                                        "N/A"
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        event.source_ip ||
+                                        "N/A"
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        event.severity
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${esc(
+                                        event.description ||
+                                        "N/A"
+                                    )}
+                                </td>
+
+
+                                <td>
+                                    ${time(
+                                        event.timestamp
+                                    )}
+                                </td>
+
+                            </tr>
+
+                        `
+                    )
+                    .join("")
+
+                : `
+
+                    <tr>
+
+                        <td
+                            colspan="7"
+                            class="empty"
+                        >
+                            No events.
+                        </td>
+
+                    </tr>
+
+                `;
+
+    } catch (error) {
+
+        console.error(
+            "AEGIS X dashboard error:",
+            error
+        );
+
+        const healthText =
+            $("healthText");
+
+        if (healthText) {
+            healthText.textContent =
+                "Unavailable";
+        }
+
+        toast(error.message);
+    }
+}
+
+
+// ========================================
+// KEYBOARD CONTROL
+// ========================================
+
+document.addEventListener(
+    "keydown",
+    event => {
+
+        if (event.key === "Escape") {
+            closeInvestigation();
+        }
+
+    }
+);
+
+
+// ========================================
+// INITIALIZATION
 // ========================================
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        setupRefreshButton();
+        createInvestigationPanel();
 
-        loadDashboard();
+        const refresh =
+            $("refreshBtn");
 
+        if (refresh) {
 
-        // Auto refresh every 15 seconds
+            refresh.addEventListener(
+                "click",
+                load
+            );
+        }
+
+        load();
+
         setInterval(
-            loadDashboard,
+            load,
             15000
         );
+
     }
 );
