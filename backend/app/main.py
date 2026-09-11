@@ -35,6 +35,7 @@ from backend.app.response import (
 
 # PHASE 2.1
 from backend.app.timeline import get_incident_timeline
+from backend.app.graph import build_security_graph
 
 
 # ============================================================
@@ -658,3 +659,14 @@ def list_response_actions():
         "total": len(responses),
         "responses": responses,
     }
+@app.get("/api/v1/incidents/{incident_id}/graph")
+def get_incident_graph(incident_id: int):
+    graph = build_security_graph(incident_id)
+
+    if graph is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Incident {incident_id} not found",
+        )
+
+    return graph

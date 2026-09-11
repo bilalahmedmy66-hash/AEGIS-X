@@ -3,28 +3,30 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>AEGIS X — Security Operations Center</title>
 
-    <!-- AEGIS X Stylesheet -->
     <link
         rel="stylesheet"
-        href="/static/style.css?v=3"
+        href="/static/style.css?v=4"
     >
 </head>
 
 <body>
 
-    <!-- =====================================================
+    <!-- =========================================================
          AEGIS X APPLICATION
-         ===================================================== -->
+         ========================================================= -->
 
     <div class="app-shell">
 
-        <!-- =================================================
+        <!-- =====================================================
              SIDEBAR
-             ================================================= -->
+             ===================================================== -->
 
         <aside class="sidebar">
 
@@ -35,9 +37,7 @@
                 </span>
 
                 <div>
-                    <strong>
-                        AEGIS X
-                    </strong>
+                    <strong>AEGIS X</strong>
 
                     <small>
                         Security Intelligence
@@ -86,13 +86,15 @@
         </aside>
 
 
-        <!-- =================================================
+        <!-- =====================================================
              MAIN CONTENT
-             ================================================= -->
+             ===================================================== -->
 
         <main class="main">
 
-            <!-- TOP BAR -->
+            <!-- =================================================
+                 TOP BAR
+                 ================================================= -->
 
             <header class="topbar">
 
@@ -569,7 +571,7 @@
 
 
             <!-- =================================================
-                 TOAST NOTIFICATION
+                 TOAST
                  ================================================= -->
 
             <div
@@ -578,7 +580,9 @@
             ></div>
 
 
-            <!-- FOOTER -->
+            <!-- =================================================
+                 FOOTER
+                 ================================================= -->
 
             <footer>
 
@@ -610,7 +614,9 @@
         ></div>
 
 
-        <!-- INVESTIGATION DRAWER -->
+        <!-- =====================================================
+             INVESTIGATION DRAWER
+             ===================================================== -->
 
         <aside
             class="investigation-panel"
@@ -619,7 +625,9 @@
             aria-labelledby="investigationTitle"
         >
 
-            <!-- HEADER -->
+            <!-- =================================================
+                 INVESTIGATION HEADER
+                 ================================================= -->
 
             <div class="investigation-header">
 
@@ -655,23 +663,167 @@
             </div>
 
 
-            <!-- CONTENT -->
+            <!-- =================================================
+                 INVESTIGATION CONTENT
+                 ================================================= -->
 
             <div
                 id="investigationContent"
                 class="investigation-content"
             >
 
-                <div class="investigation-loading">
+                <!-- =================================================
+                     ATTACK STORY
+                     ================================================= -->
 
-                    <div class="investigation-spinner"></div>
+                <section
+                    id="attackStorySection"
+                    class="investigation-section"
+                >
 
-                    <span>
-                        Select INVESTIGATE on an incident
-                        to begin analysis.
-                    </span>
+                    <div class="investigation-section-head">
 
-                </div>
+                        <div>
+
+                            <div class="section-eyebrow">
+                                ATTACK STORY
+                            </div>
+
+                            <h3>
+                                Security Investigation
+                            </h3>
+
+                            <p>
+                                Correlated evidence,
+                                detection, risk and response.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="attackStory">
+                        <div class="investigation-loading">
+
+                            <div class="investigation-spinner"></div>
+
+                            <span>
+                                Select INVESTIGATE on an incident
+                                to begin analysis.
+                            </span>
+
+                        </div>
+                    </div>
+
+                </section>
+
+
+                <!-- =================================================
+                     SECURITY GRAPH
+                     ================================================= -->
+
+                <section
+                    id="securityGraphSection"
+                    class="investigation-section"
+                >
+
+                    <div class="graph-section-header">
+
+                        <div>
+
+                            <div class="section-eyebrow">
+                                SECURITY GRAPH
+                            </div>
+
+                            <h3>
+                                Attack Relationship Map
+                            </h3>
+
+                            <p>
+                                Visual correlation of security
+                                evidence and response.
+                            </p>
+
+                        </div>
+
+
+                        <div
+                            id="graphStats"
+                            class="graph-stats"
+                        ></div>
+
+                    </div>
+
+
+                    <div
+                        id="securityGraph"
+                        class="security-graph"
+                    >
+
+                        <div class="graph-loading">
+                            Loading security graph...
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="graphLegend"
+                        class="graph-legend"
+                    ></div>
+
+                </section>
+
+
+                <!-- =================================================
+                     INVESTIGATION TIMELINE
+                     ================================================= -->
+
+                <section
+                    id="investigationTimelineSection"
+                    class="investigation-section"
+                >
+
+                    <div class="timeline-section-header">
+
+                        <div>
+
+                            <div class="section-eyebrow">
+                                INVESTIGATION TIMELINE
+                            </div>
+
+                            <h3>
+                                Evidence & Response History
+                            </h3>
+
+                            <p>
+                                Chronological investigation activity.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="investigationTimeline"
+                        class="timeline"
+                    >
+
+                        <div class="investigation-loading">
+
+                            <div class="investigation-spinner"></div>
+
+                            <span>
+                                Loading investigation timeline...
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
 
             </div>
 
@@ -685,7 +837,7 @@
          ========================================================= -->
 
     <script
-        src="/static/app.js?v=3"
+        src="/static/app.js?v=4"
     ></script>
 
 </body>
