@@ -36,7 +36,7 @@ from backend.app.response import (
 # PHASE 2.1
 from backend.app.timeline import get_incident_timeline
 from backend.app.graph import build_security_graph
-
+from .attack_chain import build_attack_chain
 
 # ============================================================
 # PATH CONFIGURATION
@@ -670,3 +670,14 @@ def get_incident_graph(incident_id: int):
         )
 
     return graph
+@app.get("/api/v1/incidents/{incident_id}/attack-chain")
+def get_attack_chain(incident_id: int):
+    result = build_attack_chain(incident_id)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Incident {incident_id} not found",
+        )
+
+    return result
