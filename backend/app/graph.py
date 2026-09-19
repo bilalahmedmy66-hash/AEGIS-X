@@ -3,9 +3,23 @@ from typing import Any
 from backend.app.database import get_connection
 
 
+EVENT_TYPE_TO_DETECTION = {
+    "LOGIN_FAILED": "BRUTE_FORCE",
+    "SUSPICIOUS_IP": "SUSPICIOUS_LOGIN",
+    "PRIVILEGE_CHANGE": "PRIVILEGE_ESCALATION",
+    "MALWARE_DETECTED": "MALWARE_DETECTED",
+    "FILE_MODIFIED": "SUSPICIOUS_FILE_MODIFICATION",
+    "UNUSUAL_ACCESS": "UNUSUAL_ACCESS",
+}
+
+
 def build_security_graph(incident_id: int) -> dict[str, Any] | None:
     """
     Build a read-only security relationship graph for an incident.
+
+    Evidence is isolated to the incident's detection type so that
+    multiple incidents from the same source IP do not contaminate
+    each other's graph.
 
     Relationship model:
 
@@ -13,7 +27,7 @@ def build_security_graph(incident_id: int) -> dict[str, Any] | None:
           ↓
         EVENT
           ↓
-      DETECTION
+       DETECTION
           ↓
         ALERT
           ↓
@@ -62,8 +76,8 @@ def build_security_graph(incident_id: int) -> dict[str, Any] | None:
 
         nodes: list[dict[str, Any]] = []
         edges: list[dict[str, Any]] = []
-
         node_ids: set[str] = set()
+        edge_ids: set[tuple[str, str, str]] = set()
 
         # =========================================================
         # HELPERS
@@ -94,6 +108,13 @@ def build_security_graph(incident_id: int) -> dict[str, Any] | None:
             target: str,
             relationship: str,
         ) -> None:
+            edge_key = (source, target, relationship)
+
+            if edge_key in edge_ids:
+                return
+
+            edge_ids.add(edge_key)
+
             edges.append(
                 {
                     "source": source,
@@ -117,25 +138,45 @@ def build_security_graph(incident_id: int) -> dict[str, Any] | None:
 
         # =========================================================
         # EVENTS
+        #
+        # IMPORTANT:
+        # Only include events whose event type actually maps to
+        # this incident's detection type.
+        #
+        # Example:
+        # SUSPICIOUS_LOGIN only gets SUSPICIOUS_IP events.
+        # PRIVILEGE_ESCALATION only gets PRIVILEGE_CHANGE events.
         # =========================================================
 
-        event_rows = connection.execute(
-            """
-            SELECT
-                id,
-                event_type,
-                source,
-                user,
-                source_ip,
-                description,
-                severity,
-                timestamp
-            FROM security_events
-            WHERE source_ip IS ?
-            ORDER BY timestamp ASC, id ASC
-            """,
-            (source_ip,),
-        ).fetchall()
+        matching_event_types = [
+            event_type
+            for event_type, detection_type in EVENT_TYPE_TO_DETECTION.items()
+            if detection_type == incident_type
+        ]
+
+        event_rows = []
+
+        if matching_event_types:
+            placeholders = ",".join("?" for _ in matching_event_types)
+
+            event_rows = connection.execute(
+                f"""
+                SELECT
+                    id,
+                    event_type,
+                    source,
+                    user,
+                    source_ip,
+                    description,
+                    severity,
+                    timestamp
+                FROM security_events
+                WHERE source_ip IS ?
+                  AND event_type IN ({placeholders})
+                ORDER BY timestamp ASC, id ASC
+                """,
+                [source_ip, *matching_event_types],
+            ).fetchall()
 
         event_node_ids: list[str] = []
 
@@ -179,6 +220,7 @@ def build_security_graph(incident_id: int) -> dict[str, Any] | None:
             incident_type,
             detection_type=incident_type,
             source_ip=source_ip,
+            evidence_event_count=len(event_node_ids),
         )
 
         for event_node_id in event_node_ids:
@@ -190,6 +232,10 @@ def build_security_graph(incident_id: int) -> dict[str, Any] | None:
 
         # =========================================================
         # ALERTS
+        #
+        # Isolated using:
+        #   1. source IP
+        #   2. incident/detection type
         # =========================================================
 
         alert_rows = connection.execute(

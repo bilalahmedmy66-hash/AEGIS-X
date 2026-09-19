@@ -1,11 +1,45 @@
-/* =========================================================
-   AEGIS X — SECURITY OPERATIONS DASHBOARD
-   Complete Dashboard + Investigation + Security Graph
-   ========================================================= */
+﻿/* ============================================================
+   AEGIS X â€” NEXT-GEN SECURITY OPERATIONS CENTER
+   PREMIUM SOC INTERFACE
+   ============================================================ */
 
-/* =========================================================
-   GLOBAL
-   ========================================================= */
+:root {
+    --bg: #05080d;
+    --bg-soft: #080d14;
+    --panel: rgba(12, 18, 28, 0.88);
+    --panel-solid: #0c121c;
+    --panel-hover: #101a27;
+
+    --border: rgba(120, 150, 185, 0.13);
+    --border-bright: rgba(90, 170, 255, 0.28);
+
+    --text: #f1f6fc;
+    --text-soft: #c3cfdd;
+    --muted: #718198;
+    --dim: #455367;
+
+    --blue: #4da6ff;
+    --blue-bright: #79c2ff;
+    --cyan: #40d9ff;
+    --purple: #9c7cff;
+
+    --green: #48df9a;
+    --yellow: #ffc857;
+    --red: #ff5f6d;
+
+    --shadow:
+        0 20px 70px rgba(0, 0, 0, .45);
+
+    --glow-blue:
+        0 0 30px rgba(77, 166, 255, .10);
+
+    --radius: 14px;
+}
+
+
+/* ============================================================
+   RESET
+   ============================================================ */
 
 * {
     box-sizing: border-box;
@@ -17,2183 +51,6937 @@ html {
 
 body {
     margin: 0;
-    background: #071018;
-    color: #e7eef5;
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 15% 0%,
+            rgba(48, 133, 220, .10),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(112, 76, 210, .08),
+            transparent 25%
+        ),
+        linear-gradient(
+            180deg,
+            #05080d 0%,
+            #070b12 45%,
+            #05080d 100%
+        );
+
+    color: var(--text);
+
     font-family:
         Inter,
         "Segoe UI",
+        Roboto,
         Arial,
         sans-serif;
+
+    overflow-x: hidden;
+}
+
+body::before {
+    content: "";
+
+    position: fixed;
+    inset: 0;
+
+    pointer-events: none;
+
+    opacity: .025;
+
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.5) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.5) 1px,
+            transparent 1px
+        );
+
+    background-size: 45px 45px;
+
+    mask-image:
+        linear-gradient(
+            to bottom,
+            black,
+            transparent 75%
+        );
+
+    z-index: -1;
 }
 
 button {
-    font: inherit;
-}
-
-button:focus-visible,
-a:focus-visible {
-    outline: 2px solid #6fd7f3;
-    outline-offset: 2px;
+    font-family: inherit;
 }
 
 
-/* =========================================================
-   APPLICATION
-   ========================================================= */
+/* ============================================================
+   APP
+   ============================================================ */
 
-.app-shell {
-    display: flex;
+.app {
     min-height: 100vh;
 }
 
 
-/* =========================================================
-   SIDEBAR
-   ========================================================= */
+/* ============================================================
+   TOP NAVIGATION
+   ============================================================ */
 
-.sidebar {
-    position: fixed;
-    width: 240px;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    padding: 24px 18px;
-    background: #09131d;
-    border-right: 1px solid #182735;
+.topbar {
+    height: 78px;
+
+    padding: 0 38px;
+
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+
+    position: sticky;
+    top: 0;
+
     z-index: 100;
+
+    background:
+        rgba(5, 8, 13, .82);
+
+    border-bottom:
+        1px solid var(--border);
+
+    backdrop-filter:
+        blur(22px);
+
+    box-shadow:
+        0 8px 40px rgba(0,0,0,.18);
 }
+
+
+/* BRAND */
 
 .brand {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin: 4px 8px 42px;
+    gap: 14px;
 }
 
 .brand-mark {
-    width: 38px;
-    height: 38px;
-    border: 1px solid #2c93b7;
-    border-radius: 10px;
+    width: 42px;
+    height: 42px;
+
     display: grid;
     place-items: center;
-    color: #7fe4ff;
+
+    border-radius: 11px;
+
+    color: white;
+
+    font-size: 19px;
+    font-weight: 900;
+
+    background:
+        linear-gradient(
+            145deg,
+            #162c45,
+            #09131f
+        );
+
+    border:
+        1px solid rgba(77,166,255,.45);
+
+    box-shadow:
+        inset 0 0 18px rgba(77,166,255,.08),
+        0 0 24px rgba(77,166,255,.12);
+}
+
+.brand h1 {
+    margin: 0;
+
+    font-size: 17px;
     font-weight: 800;
-    background: #0c2430;
+
+    letter-spacing: .14em;
 }
 
-.brand strong {
+.brand span {
     display: block;
-    font-size: 15px;
-    letter-spacing: 1.5px;
-}
 
-.brand small {
-    display: block;
-    color: #708292;
-    font-size: 10px;
     margin-top: 3px;
-}
 
+    color: var(--dim);
 
-/* =========================================================
-   NAVIGATION
-   ========================================================= */
-
-nav {
-    display: grid;
-    gap: 7px;
-}
-
-nav a {
-    padding: 11px 12px;
-    border-radius: 8px;
-    color: #8ea1b1;
-    text-decoration: none;
-    font-size: 13px;
-    transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        transform 0.2s ease;
-}
-
-nav a:hover,
-nav a.active {
-    background: #102432;
-    color: #d9f7ff;
-    transform: translateX(2px);
-}
-
-
-/* =========================================================
-   SIDEBAR FOOTER
-   ========================================================= */
-
-.sidebar-footer {
-    margin-top: auto;
-    color: #728594;
-    font-size: 11px;
-    padding: 12px 8px;
-}
-
-.dot,
-.pulse {
-    display: inline-block;
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: #43d69b;
-    box-shadow: 0 0 12px #43d69b;
-    margin-right: 8px;
-}
-
-
-/* =========================================================
-   MAIN
-   ========================================================= */
-
-.main {
-    margin-left: 240px;
-    width: calc(100% - 240px);
-    padding: 28px 34px 40px;
-}
-
-
-/* =========================================================
-   TOP BAR
-   ========================================================= */
-
-.topbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    margin-bottom: 24px;
-}
-
-.eyebrow {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: #5e8799;
+    font-size: 8px;
     font-weight: 700;
+
+    letter-spacing: .16em;
 }
 
-.topbar h1 {
-    font-size: 28px;
-    margin: 6px 0 0;
-}
 
-.top-actions {
+/* TOP RIGHT */
+
+.topbar-right {
     display: flex;
     align-items: center;
     gap: 14px;
-    color: #718696;
-    font-size: 11px;
 }
-
-.top-actions button {
-    border: 1px solid #294252;
-    background: #0d202d;
-    color: #cdeef7;
-    padding: 8px 14px;
-    border-radius: 7px;
-    cursor: pointer;
-    transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
-}
-
-.top-actions button:hover {
-    background: #12313f;
-    border-color: #35677c;
-    transform: translateY(-1px);
-}
-
-
-/* =========================================================
-   HERO
-   ========================================================= */
-
-.hero {
-    border: 1px solid #183342;
-    background:
-        linear-gradient(
-            120deg,
-            #0b1b26,
-            #0b151f
-        );
-    border-radius: 13px;
-    padding: 24px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.hero h2 {
-    font-size: 21px;
-    margin: 8px 0;
-}
-
-.hero p {
-    color: #8396a6;
-    margin: 0;
-    font-size: 13px;
-}
-
-
-/* =========================================================
-   HEALTH
-   ========================================================= */
 
 .health {
     display: flex;
     align-items: center;
-    gap: 7px;
-    border: 1px solid #234c43;
-    background: #0b211d;
-    padding: 10px 14px;
-    border-radius: 9px;
-}
+    gap: 8px;
 
-.health strong {
-    font-size: 12px;
-    display: block;
-}
+    padding: 8px 11px;
 
-.health small {
+    border:
+        1px solid var(--border);
+
+    border-radius: 8px;
+
+    background:
+        rgba(255,255,255,.025);
+
+    color: var(--muted);
+
     font-size: 10px;
-    color: #76968c;
+}
+
+.health i {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: var(--yellow);
+
+    box-shadow:
+        0 0 12px rgba(255,200,87,.65);
+}
+
+.health i.healthy {
+    background: var(--green);
+
+    box-shadow:
+        0 0 14px rgba(72,223,154,.7);
+}
+
+.refresh-btn {
+    border:
+        1px solid var(--border-bright);
+
+    background:
+        rgba(77,166,255,.06);
+
+    color: var(--blue-bright);
+
+    border-radius: 8px;
+
+    padding: 9px 13px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        .2s ease;
+}
+
+.refresh-btn:hover {
+    background:
+        rgba(77,166,255,.13);
+
+    border-color:
+        rgba(77,166,255,.5);
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        var(--glow-blue);
 }
 
 
-/* =========================================================
+/* ============================================================
+   MAIN
+   ============================================================ */
+
+.main {
+    width:
+        min(
+            1500px,
+            calc(100% - 60px)
+        );
+
+    margin:
+        0 auto;
+
+    padding:
+        42px 0 90px;
+}
+
+
+/* ============================================================
+   HERO
+   ============================================================ */
+
+.hero {
+    min-height: 155px;
+
+    padding:
+        28px 30px;
+
+    margin-bottom: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        linear-gradient(
+            120deg,
+            rgba(14,25,39,.95),
+            rgba(8,13,21,.82)
+        );
+
+    box-shadow:
+        var(--shadow);
+
+    position: relative;
+
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+
+    width: 300px;
+    height: 300px;
+
+    right: -130px;
+    top: -180px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(64,217,255,.08);
+
+    filter:
+        blur(45px);
+}
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 3px;
+    height: 100%;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--cyan),
+            var(--blue),
+            transparent
+        );
+
+    box-shadow:
+        0 0 22px rgba(64,217,255,.5);
+}
+
+.eyebrow {
+    color: var(--blue-bright);
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: .19em;
+}
+
+.hero h2 {
+    margin:
+        8px 0 8px;
+
+    font-size:
+        clamp(
+            27px,
+            3vw,
+            39px
+        );
+
+    line-height: 1.05;
+
+    letter-spacing:
+        -.045em;
+}
+
+.hero p {
+    margin: 0;
+
+    max-width: 730px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    line-height: 1.65;
+}
+
+.last-updated {
+    color: var(--dim);
+
+    font-size: 9px;
+
+    white-space: nowrap;
+
+    padding:
+        8px 10px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+
+    background:
+        rgba(255,255,255,.02);
+}
+
+
+/* ============================================================
    METRICS
-   ========================================================= */
+   ============================================================ */
 
 .metrics {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
     gap: 13px;
-    margin: 16px 0;
+
+    margin-bottom: 18px;
 }
 
-.metric,
-.panel {
-    background: #0a151f;
-    border: 1px solid #172936;
-    border-radius: 11px;
+.metric-card {
+    position: relative;
+
+    min-height: 142px;
+
+    padding: 21px;
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14,23,35,.95),
+            rgba(8,13,20,.92)
+        );
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
 }
 
-.metric {
-    padding: 17px;
+.metric-card::after {
+    content: "";
+
+    position: absolute;
+
+    width: 90px;
+    height: 90px;
+
+    right: -45px;
+    bottom: -45px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(77,166,255,.07);
+
+    filter:
+        blur(20px);
 }
 
-.metric span {
+.metric-card:hover {
+    transform:
+        translateY(-2px);
+
+    border-color:
+        rgba(77,166,255,.28);
+
+    box-shadow:
+        var(--glow-blue);
+}
+
+.metric-card span {
+    color: var(--dim);
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: .15em;
+}
+
+.metric-card strong {
     display: block;
-    color: #718594;
-    font-size: 11px;
+
+    margin:
+        12px 0 5px;
+
+    font-size: 34px;
+    line-height: 1;
+
+    letter-spacing: -.04em;
 }
 
-.metric strong {
-    display: block;
-    font-size: 27px;
-    margin: 9px 0 2px;
-}
+.metric-card small {
+    color: var(--muted);
 
-.metric small {
-    color: #516675;
-    font-size: 10px;
-}
-
-.metric.danger strong {
-    color: #ff7580;
-}
-
-.metric.warning strong {
-    color: #f4c76a;
-}
-
-.metric.accent strong {
-    color: #6fd7f3;
+    font-size: 9px;
 }
 
 
-/* =========================================================
-   GRID
-   ========================================================= */
+/* ============================================================
+   TWO COLUMN
+   ============================================================ */
 
-.grid-two {
+.two-column {
     display: grid;
-    grid-template-columns: 1.35fr 0.85fr;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
     gap: 16px;
-    margin-bottom: 16px;
 }
 
 
-/* =========================================================
+/* ============================================================
    PANELS
-   ========================================================= */
+   ============================================================ */
 
-.panel-head {
+.panel {
+    margin-bottom: 17px;
+
+    overflow: hidden;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,18,28,.95),
+            rgba(8,13,20,.96)
+        );
+
+    box-shadow:
+        0 12px 45px rgba(0,0,0,.20);
+}
+
+.panel-header {
+    min-height: 72px;
+
+    padding:
+        17px 20px;
+
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 17px 18px;
-    border-bottom: 1px solid #162833;
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid var(--border);
+
+    background:
+        rgba(255,255,255,.012);
 }
 
-.panel-head h3 {
-    margin: 0;
+.panel-header h3 {
+    margin:
+        5px 0 0;
+
     font-size: 14px;
-}
 
-.panel-head p {
-    margin: 5px 0 0;
-    color: #617583;
-    font-size: 10px;
+    letter-spacing:
+        -.01em;
 }
 
 .tag {
-    font-size: 10px;
-    color: #75d9f4;
-    border: 1px solid #245365;
-    padding: 5px 8px;
-    border-radius: 20px;
+    padding:
+        5px 8px;
+
+    color: var(--blue-bright);
+
+    border:
+        1px solid rgba(77,166,255,.20);
+
+    border-radius: 5px;
+
+    background:
+        rgba(77,166,255,.055);
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: .1em;
 }
 
 
-/* =========================================================
-   DETECTIONS
-   ========================================================= */
+/* ============================================================
+   ACTIVITY
+   ============================================================ */
 
-.detection-list,
 .activity-list {
-    padding: 8px 18px 12px;
+    min-height: 130px;
 }
 
-.detection {
-    padding: 12px 0;
-    border-bottom: 1px solid #14232d;
+.detection,
+.activity {
+    padding:
+        15px 20px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    transition:
+        background .18s ease;
 }
 
-.detection:last-child {
+.detection:hover,
+.activity:hover {
+    background:
+        rgba(77,166,255,.025);
+}
+
+.detection:last-child,
+.activity:last-child {
     border-bottom: 0;
 }
 
 .rowline {
     display: flex;
-    justify-content: space-between;
+
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
+
+    gap: 15px;
 }
 
-.type {
-    font-size: 12px;
-    font-weight: 700;
-}
+.rowline strong {
+    color: var(--text-soft);
 
-.meta {
-    color: #6d8290;
     font-size: 10px;
-    margin-top: 5px;
 }
-
-
-/* =========================================================
-   RISK COLORS
-   ========================================================= */
 
 .risk {
-    font-size: 11px;
-    font-weight: 700;
+    color: var(--yellow);
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: .06em;
 }
 
-.HIGH {
-    color: #ffb45e;
-}
-
-.CRITICAL {
-    color: #ff6875;
-}
-
-.MEDIUM {
-    color: #f1cf70;
-}
-
-.LOW {
-    color: #69d5a3;
-}
-
-
-/* =========================================================
-   ACTIVITY
-   ========================================================= */
-
-.activity {
-    padding: 11px 0;
-    border-bottom: 1px solid #14232d;
-}
-
-.activity:last-child {
-    border-bottom: 0;
-}
-
-.activity strong {
-    font-size: 11px;
-}
-
+.meta,
 .activity small {
     display: block;
-    color: #657987;
-    margin-top: 4px;
+
+    margin-top: 7px;
+
+    color: var(--muted);
+
+    font-size: 8px;
+}
+
+.loading,
+.empty {
+    padding: 30px;
+
+    color: var(--dim);
+
+    text-align: center;
+
+    font-size: 9px;
 }
 
 
-/* =========================================================
+/* ============================================================
    TABLES
-   ========================================================= */
-
-.table-panel {
-    margin-bottom: 16px;
-}
+   ============================================================ */
 
 .table-wrap {
+    width: 100%;
+
     overflow-x: auto;
 }
 
 table {
     width: 100%;
-    border-collapse: collapse;
-    min-width: 760px;
-}
 
-th,
-td {
-    text-align: left;
-    padding: 12px 15px;
-    border-bottom: 1px solid #14232d;
-    font-size: 10px;
-    white-space: nowrap;
+    min-width: 920px;
+
+    border-collapse:
+        collapse;
 }
 
 th {
-    color: #627785;
-    font-size: 9px;
-    letter-spacing: 0.8px;
-    text-transform: uppercase;
+    padding:
+        11px 14px;
+
+    color: var(--dim);
+
+    background:
+        rgba(255,255,255,.015);
+
+    border-bottom:
+        1px solid var(--border);
+
+    text-align: left;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: .14em;
 }
 
 td {
-    color: #b8c6cf;
+    padding:
+        13px 14px;
+
+    color: var(--text-soft);
+
+    border-bottom:
+        1px solid var(--border);
+
+    font-size: 9px;
 }
 
+tbody tr {
+    transition:
+        background .15s ease;
+}
 
-/* =========================================================
-   TABLE ACTIONS
-   ========================================================= */
+tbody tr:hover {
+    background:
+        rgba(77,166,255,.035);
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+td strong {
+    color: var(--text);
+}
+
+.risk-badge {
+    color: var(--yellow);
+
+    font-weight: 800;
+}
+
+.status {
+    color: var(--muted);
+
+    font-size: 8px;
+    font-weight: 700;
+
+    letter-spacing: .05em;
+}
 
 .table-actions {
     display: flex;
+
     flex-wrap: wrap;
-    align-items: center;
+
     gap: 5px;
 }
 
 .action-btn {
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 6px;
-    padding: 6px 9px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #b9eefa;
+    padding:
+        5px 8px;
+
+    color: var(--muted);
+
+    background:
+        rgba(255,255,255,.015);
+
+    border:
+        1px solid var(--border-bright);
+
+    border-radius: 5px;
+
     cursor: pointer;
-    font-size: 9px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: .05em;
+
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
+        .18s ease;
 }
 
 .action-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-1px);
+    color: white;
+
+    border-color:
+        rgba(77,166,255,.55);
+
+    background:
+        rgba(77,166,255,.09);
+
+    transform:
+        translateY(-1px);
 }
 
-.action-btn.investigate-btn {
-    color: #75d9f4;
-    border-color: rgba(111, 215, 243, 0.35);
-}
+.investigate-btn {
+    color:
+        var(--blue-bright);
 
-.action-btn.investigate-btn:hover {
-    background: rgba(111, 215, 243, 0.08);
-    border-color: rgba(111, 215, 243, 0.6);
-}
-
-.action-btn.respond {
-    border-color: rgba(98, 216, 143, 0.4);
-}
-
-.action-btn.acknowledge {
-    border-color: rgba(255, 200, 87, 0.4);
-}
-
-.action-btn.resolve {
-    border-color: rgba(98, 216, 143, 0.4);
+    border-color:
+        rgba(77,166,255,.32);
 }
 
 
-/* =========================================================
-   STATUS
-   ========================================================= */
+/* ============================================================
+   INVESTIGATION OVERLAY
+   ============================================================ */
 
-.status {
-    padding: 4px 7px;
-    border-radius: 5px;
-    background: #17262f;
-    font-size: 9px;
-}
-
-.status.OPEN {
-    color: #ffbe68;
-}
-
-.status.ACKNOWLEDGED {
-    color: #70d8f2;
-}
-
-.status.RESOLVED {
-    color: #65d59d;
-}
-
-
-/* =========================================================
-   EMPTY STATES
-   ========================================================= */
-
-.empty {
-    padding: 20px 0;
-    color: #526876;
-    font-size: 11px;
-}
-
-.empty-state {
-    padding: 25px;
-    text-align: center;
-    opacity: 0.5;
-    font-size: 13px;
-}
-
-.muted {
-    opacity: 0.55;
-    font-size: 12px;
-}
-
-
-/* =========================================================
-   LEGACY PHASE 1 CARDS
-   ========================================================= */
-
-.incident-card {
-    padding: 18px;
-    margin-bottom: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.025);
-    transition: 0.2s ease;
-}
-
-.incident-card:hover {
-    border-color: rgba(255, 255, 255, 0.18);
-    transform: translateY(-1px);
-}
-
-.incident-header {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;
-    align-items: flex-start;
-}
-
-.incident-title {
-    font-size: 17px;
-    font-weight: 700;
-    letter-spacing: 0.3px;
-}
-
-.incident-id {
-    opacity: 0.5;
-    margin-right: 6px;
-}
-
-.incident-source {
-    margin-top: 7px;
-    font-size: 13px;
-    opacity: 0.7;
-}
-
-.incident-risk {
-    text-align: right;
-}
-
-.risk-score {
-    display: block;
-    font-size: 25px;
-    font-weight: 800;
-}
-
-.risk-level {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.8px;
-}
-
-.risk-critical {
-    color: #ff4d4d;
-}
-
-.risk-high {
-    color: #ff7b54;
-}
-
-.risk-medium {
-    color: #ffc857;
-}
-
-.risk-low {
-    color: #62d88f;
-}
-
-.incident-description {
-    margin-top: 15px;
-    padding: 12px;
-    border-radius: 8px;
-    background: rgba(0, 0, 0, 0.15);
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.incident-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 18px;
-    margin-top: 14px;
-    font-size: 12px;
-    opacity: 0.75;
-}
-
-.status-open {
-    color: #ff7b54;
-}
-
-.status-acknowledged {
-    color: #ffc857;
-}
-
-.status-resolved {
-    color: #62d88f;
-}
-
-.incident-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 16px;
-}
-
-.resolved-label {
-    font-size: 11px;
-    font-weight: 700;
-    opacity: 0.7;
-    padding: 8px 0;
-}
-
-
-/* =========================================================
-   DETECTION CARDS
-   ========================================================= */
-
-.detection-card {
-    padding: 13px;
-    margin-bottom: 8px;
-    border-radius: 9px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background: rgba(255, 255, 255, 0.025);
-}
-
-.detection-main {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 10px;
-}
-
-.detection-details {
-    display: flex;
-    gap: 15px;
-    margin-top: 8px;
-    font-size: 11px;
-    opacity: 0.65;
-    flex-wrap: wrap;
-}
-
-.severity {
-    font-size: 10px;
-    font-weight: 800;
-    letter-spacing: 0.5px;
-}
-
-.severity-high {
-    color: #ff7b54;
-}
-
-.severity-medium {
-    color: #ffc857;
-}
-
-.severity-low {
-    color: #62d88f;
-}
-
-
-/* =========================================================
-   LEGACY ROWS
-   ========================================================= */
-
-.alert-row,
-.response-row,
-.event-row {
-    display: grid;
-    gap: 12px;
-    align-items: center;
-    padding: 11px;
-    margin-bottom: 6px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.alert-row {
-    grid-template-columns: 1fr auto auto;
-}
-
-.response-row {
-    grid-template-columns: 1fr auto auto auto;
-}
-
-.event-row {
-    grid-template-columns:
-        40px
-        1fr
-        130px
-        100px
-        50px
-        160px;
-    font-size: 12px;
-}
-
-.alert-risk {
-    display: flex;
-    gap: 8px;
-    align-items: center;
-    font-weight: 700;
-}
-
-.alert-status {
-    font-size: 10px;
-    opacity: 0.65;
-}
-
-.simulation-badge {
-    padding: 4px 7px;
-    border-radius: 5px;
-    font-size: 9px;
-    font-weight: 800;
-    letter-spacing: 0.6px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-}
-
-
-/* =========================================================
-   TOAST
-   ========================================================= */
-
-#toast-container {
+.investigation-overlay {
     position: fixed;
-    right: 22px;
-    bottom: 22px;
-    z-index: 999999;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
 
-.toast {
-    min-width: 250px;
-    max-width: 380px;
-    padding: 13px 16px;
-    border-radius: 9px;
-    background: rgba(20, 20, 25, 0.96);
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow:
-        0 10px 35px rgba(0, 0, 0, 0.4);
-    font-size: 13px;
-    animation: toastIn 0.2s ease;
-}
-
-.toast-success {
-    border-color: rgba(98, 216, 143, 0.5);
-}
-
-.toast-error {
-    border-color: rgba(255, 77, 77, 0.5);
-}
-
-.toast-info {
-    border-color: rgba(255, 255, 255, 0.2);
-}
-
-.toast-hide {
-    opacity: 0;
-    transform: translateX(20px);
-    transition: 0.3s ease;
-}
-
-@keyframes toastIn {
-    from {
-        opacity: 0;
-        transform: translateX(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-
-/* =========================================================
-   AEGIS X — INCIDENT INVESTIGATION
-   ========================================================= */
-
-#investigationOverlay {
-    position: fixed;
     inset: 0;
-    z-index: 99999;
+
+    z-index: 1000;
+
+    background:
+        rgba(1,4,8,.78);
+
+    backdrop-filter:
+        blur(7px);
+
+    opacity: 0;
+
     visibility: hidden;
+
     pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.2s ease;
+
+    transition:
+        opacity .25s ease;
 }
 
-#investigationOverlay.open {
-    visibility: visible;
-    pointer-events: auto;
+.investigation-overlay.open {
     opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
 }
 
-
-/* =========================================================
-   BACKDROP
-   ========================================================= */
-
-.investigation-backdrop {
+.investigation-drawer {
     position: absolute;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.74);
-    backdrop-filter: blur(5px);
-}
 
-
-/* =========================================================
-   DRAWER
-   ========================================================= */
-
-.investigation-panel {
-    position: absolute;
-    top: 0;
     right: 0;
-    width: min(980px, 96vw);
-    height: 100vh;
-    overflow-y: auto;
-    background: #080d12;
-    border-left: 1px solid rgba(255, 255, 255, 0.09);
+    top: 0;
+    bottom: 0;
+
+    width:
+        min(
+            940px,
+            94vw
+        );
+
+    display: flex;
+
+    flex-direction: column;
+
+    background:
+        linear-gradient(
+            180deg,
+            #080e17,
+            #050a11
+        );
+
+    border-left:
+        1px solid rgba(77,166,255,.20);
+
     box-shadow:
-        -25px 0 70px rgba(0, 0, 0, 0.55);
-    transform: translateX(100%);
-    transition: transform 0.28s ease;
+        -30px 0 100px rgba(0,0,0,.55);
+
+    transform:
+        translateX(100%);
+
+    transition:
+        transform .3s
+        cubic-bezier(.2,.8,.2,1);
 }
 
-#investigationOverlay.open .investigation-panel {
-    transform: translateX(0);
+.investigation-overlay.open
+.investigation-drawer {
+    transform:
+        translateX(0);
 }
 
 
-/* =========================================================
+/* ============================================================
    INVESTIGATION HEADER
-   ========================================================= */
+   ============================================================ */
 
 .investigation-header {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 20px;
-    padding: 24px;
-    background: rgba(8, 13, 18, 0.97);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(12px);
-}
+    flex: 0 0 auto;
 
-.investigation-eyebrow {
-    font-size: 10px;
-    letter-spacing: 1.5px;
-    font-weight: 800;
-    color: #6fd7f3;
-    opacity: 0.75;
-    margin-bottom: 7px;
+    padding:
+        21px 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    border-bottom:
+        1px solid var(--border);
+
+    background:
+        rgba(9,15,24,.96);
 }
 
 .investigation-header h2 {
-    margin: 0;
-    font-size: 23px;
+    margin:
+        6px 0 3px;
+
+    font-size: 21px;
+
+    letter-spacing:
+        -.03em;
 }
 
 .investigation-header p {
-    margin: 7px 0 0;
-    font-size: 12px;
-    color: #718696;
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 9px;
 }
 
-.investigation-close {
+.close-btn {
+    width: 34px;
+    height: 34px;
+
     flex-shrink: 0;
-    width: 38px;
-    height: 38px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
+
+    display: grid;
+    place-items: center;
+
+    color: var(--muted);
+
+    background:
+        rgba(255,255,255,.025);
+
+    border:
+        1px solid var(--border);
+
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #dce9ef;
-    font-size: 26px;
-    line-height: 1;
+
+    font-size: 22px;
+
     cursor: pointer;
+
     transition:
-        background 0.2s ease,
-        border-color 0.2s ease,
-        transform 0.2s ease;
+        .18s ease;
 }
 
-.investigation-close:hover {
-    background: rgba(255, 255, 255, 0.1);
-    border-color: rgba(255, 255, 255, 0.22);
-    transform: rotate(3deg);
+.close-btn:hover {
+    color: white;
+
+    border-color:
+        rgba(255,95,109,.4);
+
+    background:
+        rgba(255,95,109,.07);
 }
 
 
-/* =========================================================
+/* ============================================================
    INVESTIGATION CONTENT
-   ========================================================= */
+   ============================================================ */
 
 .investigation-content {
-    padding: 24px;
+    flex: 1;
+
+    overflow-y: auto;
+
+    padding:
+        20px;
 }
 
-
-/* =========================================================
-   INVESTIGATION SUMMARY
-   ========================================================= */
-
-.investigation-summary {
-    padding: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.025);
+.investigation-content::-webkit-scrollbar {
+    width: 7px;
 }
 
-.investigation-summary-head {
+.investigation-content::-webkit-scrollbar-track {
+    background: #050910;
+}
+
+.investigation-content::-webkit-scrollbar-thumb {
+    background: #1b2a3b;
+
+    border-radius: 10px;
+}
+
+.investigation-section {
+    margin-bottom: 15px;
+
+    padding:
+        19px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(12,19,29,.95),
+            rgba(8,13,20,.95)
+        );
+
+    box-shadow:
+        0 10px 35px rgba(0,0,0,.16);
+}
+
+.investigation-section-header {
     display: flex;
-    justify-content: space-between;
+
     align-items: flex-start;
+
+    justify-content: space-between;
+
     gap: 20px;
+
+    margin-bottom: 17px;
 }
 
-.investigation-label {
-    display: block;
+.investigation-section-header h3 {
+    margin:
+        5px 0;
+
+    font-size: 14px;
+}
+
+.investigation-section-header p {
+    margin: 0;
+
+    color: var(--muted);
+
     font-size: 9px;
-    letter-spacing: 1.5px;
+
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   AI INVESTIGATION
+   ============================================================ */
+
+.ai-investigation-section {
+    border-color:
+        rgba(156,124,255,.16);
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(25,19,42,.72),
+            rgba(10,14,22,.96)
+        );
+}
+
+.ai-engine-badge {
+    flex-shrink: 0;
+
+    padding:
+        6px 9px;
+
+    color:
+        #c4b4ff;
+
+    border:
+        1px solid rgba(156,124,255,.28);
+
+    border-radius: 5px;
+
+    background:
+        rgba(156,124,255,.06);
+
+    font-size: 7px;
     font-weight: 800;
-    color: #64808e;
-    opacity: 0.9;
+
+    letter-spacing: .09em;
 }
 
-.investigation-summary h3 {
-    margin: 6px 0 0;
-    font-size: 21px;
-}
-
-
-/* =========================================================
-   INVESTIGATION RISK
-   ========================================================= */
-
-.investigation-risk {
+.ai-threat-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 18px;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 7px;
 }
 
-.investigation-risk > div {
-    padding: 13px;
-    border: 1px solid rgba(255, 255, 255, 0.07);
+.ai-threat-card {
+    min-height: 75px;
+
+    padding:
+        12px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.025);
+
+    transition:
+        .18s ease;
 }
 
-.investigation-risk span,
-.investigation-details span {
+.ai-threat-card:hover {
+    border-color:
+        rgba(156,124,255,.25);
+
+    background:
+        rgba(156,124,255,.035);
+}
+
+.ai-threat-card span {
     display: block;
-    margin-bottom: 5px;
-    font-size: 9px;
-    letter-spacing: 0.8px;
-    color: #667b89;
+
+    color: var(--dim);
+
+    font-size: 7px;
+    font-weight: 800;
+
+    letter-spacing: .12em;
 }
 
-.investigation-risk strong,
-.investigation-details strong {
+.ai-threat-card strong {
+    display: block;
+
+    margin-top: 8px;
+
+    color: var(--text);
+
+    font-size: 13px;
+}
+
+.ai-threat-card .risk-HIGH {
+    color: var(--red);
+}
+
+.ai-threat-card .risk-MEDIUM {
+    color: var(--yellow);
+}
+
+.ai-threat-card .risk-LOW {
+    color: var(--green);
+}
+
+.ai-assessment,
+.ai-attack-progression,
+.ai-evidence,
+.ai-recommendations,
+.ai-analysis-summary,
+.ai-conclusion {
+    margin-top: 16px;
+
+    padding-top: 16px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.ai-assessment p,
+.ai-conclusion p {
+    margin:
+        8px 0 0;
+
+    color: var(--text-soft);
+
+    font-size: 9px;
+
+    line-height: 1.65;
+}
+
+.ai-stage-flow {
+    display: flex;
+
+    align-items: center;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+
+    margin-top: 9px;
+}
+
+.ai-stage {
+    padding:
+        7px 9px;
+
+    color: #c4dfff;
+
+    background:
+        rgba(77,166,255,.055);
+
+    border:
+        1px solid rgba(77,166,255,.18);
+
+    border-radius: 6px;
+
+    font-size: 8px;
+    font-weight: 700;
+}
+
+.ai-stage b {
+    margin-right: 4px;
+
+    color: var(--cyan);
+}
+
+.ai-stage-arrow {
+    color: var(--dim);
+}
+
+
+/* ============================================================
+   MITRE
+   ============================================================ */
+
+.mitre-status {
+    padding:
+        5px 8px;
+
+    color: var(--green);
+
+    background:
+        rgba(72,223,154,.045);
+
+    border:
+        1px solid rgba(72,223,154,.20);
+
+    border-radius: 5px;
+
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.mitre-tactics {
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 6px;
+}
+
+.mitre-tag {
+    padding:
+        6px 8px;
+
+    color:
+        #c7baff;
+
+    background:
+        rgba(156,124,255,.055);
+
+    border:
+        1px solid rgba(156,124,255,.18);
+
+    border-radius: 5px;
+
+    font-size: 8px;
+}
+
+.mitre-technique {
+    margin-top: 7px;
+
+    padding:
+        11px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+}
+
+.mitre-technique > div:first-child {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+.mitre-technique strong {
+    color: #b7a1ff;
+
+    font-size: 9px;
+}
+
+.mitre-technique span {
+    color: var(--text-soft);
+
+    font-size: 9px;
+}
+
+.mitre-confidence {
+    margin-top: 6px;
+
+    color: var(--green);
+
+    font-size: 8px;
+}
+
+.mitre-technique p {
+    margin:
+        6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   EVIDENCE / RECOMMENDATIONS
+   ============================================================ */
+
+.evidence-item,
+.recommendation-item {
+    margin-top: 7px;
+
+    padding:
+        10px 11px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+}
+
+.evidence-header,
+.recommendation-header {
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 10px;
+}
+
+.evidence-header strong,
+.recommendation-header strong {
+    color: var(--text-soft);
+
+    font-size: 8px;
+}
+
+.evidence-strength,
+.recommendation-priority {
+    color: var(--yellow);
+
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.evidence-item p,
+.recommendation-item p {
+    margin:
+        6px 0 0;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    line-height: 1.5;
+}
+
+
+/* ============================================================
+   ANALYSIS
+   ============================================================ */
+
+.analysis-stat-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 7px;
+
+    margin-top: 9px;
+}
+
+.analysis-stat-grid div {
+    padding:
+        10px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 6px;
+}
+
+.analysis-stat-grid span {
+    display: block;
+
+    color: var(--dim);
+
+    font-size: 6px;
+    font-weight: 800;
+
+    letter-spacing: .1em;
+}
+
+.analysis-stat-grid strong {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--text);
+
     font-size: 14px;
 }
 
 
-/* =========================================================
-   INVESTIGATION DETAILS
-   ========================================================= */
-
-.investigation-details {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.investigation-details > div {
-    padding: 13px;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.025);
-}
-
-.investigation-description {
-    margin-top: 16px;
-    padding-top: 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.07);
-    font-size: 13px;
-    line-height: 1.6;
-    color: #9caeb9;
-}
-
-
-/* =========================================================
+/* ============================================================
    ATTACK STORY
-   ========================================================= */
+   ============================================================ */
 
-.attack-story {
-    margin-top: 28px;
+.attack-story-summary {
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 7px;
 }
 
-.attack-story-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 20px;
-    margin-bottom: 18px;
+.attack-story-card {
+    padding:
+        11px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
 }
 
-.attack-story-head h3 {
-    margin: 5px 0 0;
-    font-size: 18px;
+.attack-story-card .investigation-label {
+    color: var(--dim);
+
+    font-size: 6px;
 }
 
-.timeline-count {
+.attack-story-card strong {
+    display: block;
+
+    margin-top: 7px;
+
+    color: var(--text);
+
     font-size: 9px;
-    letter-spacing: 1px;
-    color: #607583;
-    white-space: nowrap;
+
+    word-break: break-word;
 }
 
+.attack-story-progression {
+    margin-top: 17px;
+}
 
-/* =========================================================
-   ATTACK STORY FLOW
-   ========================================================= */
+.attack-stage-list {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    flex-wrap: wrap;
+
+    gap: 5px;
+
+    margin-top: 9px;
+}
+
+.attack-stage {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding:
+        8px 10px;
+
+    background:
+        rgba(77,166,255,.04);
+
+    border:
+        1px solid rgba(77,166,255,.15);
+
+    border-radius: 6px;
+}
+
+.attack-stage-number {
+    width: 19px;
+    height: 19px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 50%;
+
+    color: var(--blue-bright);
+
+    background:
+        rgba(77,166,255,.08);
+
+    font-size: 7px;
+    font-weight: 800;
+}
+
+.attack-stage-content strong {
+    color: var(--text-soft);
+
+    font-size: 8px;
+}
+
+.attack-stage-connector {
+    color: var(--dim);
+
+    font-size: 11px;
+}
 
 .attack-story-flow {
     display: flex;
+
     align-items: center;
-    gap: 8px;
-    overflow-x: auto;
-    padding: 5px 2px 15px;
-    scrollbar-width: thin;
-}
 
-.story-step {
-    flex: 0 0 auto;
-    min-width: 105px;
-    padding: 11px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 9px;
-    background: rgba(255, 255, 255, 0.025);
-}
+    justify-content: center;
 
-.story-number {
-    display: block;
-    font-size: 8px;
-    color: #58717f;
-    letter-spacing: 1px;
-    margin-bottom: 5px;
-}
-
-.story-step strong {
-    display: block;
-    font-size: 10px;
-    color: #c9d9e0;
-}
-
-.story-step small {
-    display: block;
-    margin-top: 4px;
-    font-size: 8px;
-    color: #647b89;
-}
-
-.story-arrow {
-    flex: 0 0 auto;
-    color: #355666;
-    font-size: 14px;
-}
-
-
-/* =========================================================
-   TIMELINE
-   ========================================================= */
-
-.timeline {
-    width: 100%;
-}
-
-.timeline-item {
-    display: grid;
-    grid-template-columns: 40px 1fr;
-    gap: 14px;
-}
-
-.timeline-marker {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.timeline-node {
-    width: 32px;
-    height: 32px;
-    display: grid;
-    place-items: center;
-    flex-shrink: 0;
-    border: 1px solid rgba(255, 255, 255, 0.18);
-    border-radius: 50%;
-    background: #111820;
-    color: #cfe9f1;
-    font-size: 10px;
-    font-weight: 800;
-    box-shadow:
-        0 0 0 4px rgba(255, 255, 255, 0.015);
-}
-
-.timeline-connector {
-    width: 1px;
-    flex: 1;
-    min-height: 35px;
-    margin: 3px 0;
-    background: rgba(255, 255, 255, 0.12);
-}
-
-
-/* =========================================================
-   TIMELINE CARD
-   ========================================================= */
-
-.timeline-card {
-    margin-bottom: 16px;
-    padding: 16px;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.025);
-    transition:
-        border-color 0.2s ease,
-        background 0.2s ease,
-        transform 0.2s ease;
-}
-
-.timeline-card:hover {
-    border-color: rgba(255, 255, 255, 0.14);
-    background: rgba(255, 255, 255, 0.035);
-    transform: translateX(2px);
-}
-
-.timeline-card-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 15px;
-}
-
-.timeline-type {
-    display: block;
-    font-size: 8px;
-    letter-spacing: 1.4px;
-    font-weight: 800;
-    color: #6b8593;
-}
-
-.timeline-card h4 {
-    margin: 4px 0 0;
-    font-size: 14px;
-    color: #dce8ee;
-}
-
-.timeline-card time {
-    font-size: 9px;
-    color: #5c707e;
-    white-space: nowrap;
-}
-
-.timeline-card p {
-    margin: 11px 0 0;
-    font-size: 12px;
-    line-height: 1.55;
-    color: #8396a3;
-}
-
-
-/* =========================================================
-   TIMELINE METADATA
-   ========================================================= */
-
-.timeline-meta {
-    display: flex;
-    flex-wrap: wrap;
     gap: 6px;
-    margin-top: 12px;
+
+    margin-top: 17px;
+
+    overflow-x: auto;
+
+    padding-bottom: 4px;
 }
 
-.timeline-meta span {
-    padding: 5px 8px;
-    border-radius: 5px;
-    background: rgba(255, 255, 255, 0.05);
-    color: #8297a5;
-    font-size: 9px;
+.attack-flow-node {
+    min-width: 105px;
+
+    padding:
+        10px;
+
+    text-align: center;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
 }
 
-
-/* =========================================================
-   TIMELINE TYPES
-   ========================================================= */
-
-.timeline-event .timeline-node {
-    border-color: rgba(120, 160, 255, 0.45);
-    color: #91b0ff;
-}
-
-.timeline-detection .timeline-node {
-    border-color: rgba(180, 120, 255, 0.45);
-    color: #c39bff;
-}
-
-.timeline-alert .timeline-node {
-    border-color: rgba(255, 170, 80, 0.5);
-    color: #ffb86b;
-}
-
-.timeline-risk .timeline-node {
-    border-color: rgba(255, 100, 100, 0.5);
-    color: #ff8585;
-}
-
-.timeline-incident .timeline-node {
-    border-color: rgba(255, 80, 80, 0.6);
-    color: #ff7777;
-}
-
-.timeline-response .timeline-node {
-    border-color: rgba(100, 210, 150, 0.5);
-    color: #75dda4;
-}
-
-.timeline-status .timeline-node {
-    border-color: rgba(100, 210, 150, 0.6);
-    color: #75dda4;
-}
-
-
-/* =========================================================
-   =========================================================
-   SECURITY GRAPH
-   =========================================================
-   ========================================================= */
-
-.security-graph-section {
-    margin-top: 30px;
-}
-
-.graph-section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-end;
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-.graph-section-header h3 {
-    margin: 5px 0 0;
-    font-size: 18px;
-}
-
-.section-eyebrow {
+.attack-flow-node span {
     display: block;
-    color: #6fd7f3;
-    font-size: 9px;
+
+    color: var(--dim);
+
+    font-size: 6px;
     font-weight: 800;
-    letter-spacing: 1.5px;
+
+    letter-spacing: .1em;
+}
+
+.attack-flow-node strong {
+    display: block;
+
+    margin-top: 5px;
+
+    color: var(--text);
+
+    font-size: 8px;
+
+    word-break: break-word;
+}
+
+.attack-flow-arrow {
+    color: var(--cyan);
+
+    font-size: 12px;
+}
+
+.attack-response-list {
+    margin-top: 17px;
+}
+
+.attack-response {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-top: 6px;
+
+    padding:
+        9px 11px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 6px;
+}
+
+.attack-response strong {
+    display: block;
+
+    color: var(--text-soft);
+
+    font-size: 8px;
+}
+
+.attack-response small {
+    display: block;
+
+    margin-top: 3px;
+
+    color: var(--dim);
+
+    font-size: 7px;
+}
+
+.attack-response > span {
+    color: var(--green);
+
+    font-size: 7px;
+    font-weight: 800;
 }
 
 
-/* =========================================================
-   GRAPH STATS
-   ========================================================= */
+/* ============================================================
+   SECURITY GRAPH
+   ============================================================ */
 
 .graph-stats {
     display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
+
+    gap: 6px;
 }
 
 .graph-stat {
-    min-width: 70px;
-    padding: 8px 10px;
-    border: 1px solid rgba(255, 255, 255, 0.07);
-    border-radius: 7px;
-    background: rgba(255, 255, 255, 0.025);
-}
+    min-width: 62px;
 
-.graph-stat span {
-    display: block;
-    color: #607582;
-    font-size: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
+    padding:
+        7px 9px;
+
+    text-align: center;
+
+    background:
+        rgba(77,166,255,.035);
+
+    border:
+        1px solid rgba(77,166,255,.15);
+
+    border-radius: 6px;
 }
 
 .graph-stat strong {
     display: block;
-    margin-top: 3px;
-    color: #cfe7ee;
-    font-size: 13px;
+
+    color: var(--cyan);
+
+    font-size: 12px;
 }
 
+.graph-stat span {
+    display: block;
 
-/* =========================================================
-   GRAPH CANVAS
-   ========================================================= */
+    margin-top: 2px;
+
+    color: var(--dim);
+
+    font-size: 6px;
+
+    text-transform: uppercase;
+}
 
 .security-graph {
-    position: relative;
-    width: 100%;
-    min-height: 470px;
-    overflow: hidden;
-    border: 1px solid rgba(111, 215, 243, 0.12);
-    border-radius: 13px;
-    background:
-        radial-gradient(
-            circle at 50% 30%,
-            rgba(39, 87, 105, 0.12),
-            transparent 40%
-        ),
-        linear-gradient(
-            180deg,
-            #071118,
-            #060c12
+    overflow-x: auto;
+}
+
+.security-graph-wrapper {
+    min-width: 720px;
+}
+
+.security-graph-columns {
+    display: grid;
+
+    grid-template-columns:
+        repeat(
+            8,
+            minmax(95px, 1fr)
         );
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.025),
-        0 15px 40px rgba(0, 0, 0, 0.18);
+
+    gap: 6px;
+
+    align-items: start;
 }
 
-.graph-canvas {
-    position: relative;
-    width: 100%;
-    min-height: 470px;
-    overflow: hidden;
+.security-graph-column-title {
+    min-height: 30px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 6px;
+
+    color: var(--dim);
+
+    font-size: 6px;
+    font-weight: 800;
+
+    letter-spacing: .07em;
+    text-transform: uppercase;
 }
 
+.security-graph-column-title b {
+    color: var(--blue);
 
-/* =========================================================
-   GRAPH GRID
-   ========================================================= */
-
-.graph-canvas::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0.5;
-    background-image:
-        linear-gradient(
-            rgba(110, 180, 205, 0.035) 1px,
-            transparent 1px
-        ),
-        linear-gradient(
-            90deg,
-            rgba(110, 180, 205, 0.035) 1px,
-            transparent 1px
-        );
-    background-size: 32px 32px;
+    font-size: 8px;
 }
 
+.security-graph-node {
+    min-height: 55px;
 
-/* =========================================================
-   GRAPH EDGE LAYER
-   ========================================================= */
+    margin-bottom: 6px;
 
-.graph-edge-layer {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    overflow: visible;
-    pointer-events: none;
-    z-index: 1;
-}
+    padding:
+        8px;
 
-.graph-edge {
-    fill: none;
-    stroke: rgba(92, 137, 153, 0.38);
-    stroke-width: 1.2;
-    vector-effect: non-scaling-stroke;
-    transition:
-        stroke 0.2s ease,
-        stroke-width 0.2s ease,
-        opacity 0.2s ease;
-}
-
-.graph-edge.highlighted {
-    stroke: #6fd7f3;
-    stroke-width: 2;
-    opacity: 0.9;
-    filter:
-        drop-shadow(
-            0 0 4px rgba(111, 215, 243, 0.4)
-        );
-}
-
-
-/* =========================================================
-   GRAPH NODES
-   ========================================================= */
-
-.graph-node {
-    position: absolute;
-    z-index: 3;
-    transform: translate(-50%, -50%);
-    min-width: 110px;
-    max-width: 150px;
-    padding: 10px 11px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 9px;
     background:
         linear-gradient(
             145deg,
-            rgba(17, 28, 37, 0.98),
-            rgba(9, 16, 23, 0.98)
+            rgba(15,24,36,.9),
+            rgba(8,13,20,.9)
         );
-    box-shadow:
-        0 8px 20px rgba(0, 0, 0, 0.28),
-        inset 0 1px 0 rgba(255, 255, 255, 0.025);
-    cursor: pointer;
-    user-select: none;
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+
     transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease;
+        .18s ease;
 }
 
-.graph-node:hover {
-    transform: translate(-50%, -50%) scale(1.06);
-    border-color: rgba(111, 215, 243, 0.55);
+.security-graph-node:hover {
+    transform:
+        translateY(-1px);
+
+    border-color:
+        rgba(77,166,255,.3);
+
     box-shadow:
-        0 12px 28px rgba(0, 0, 0, 0.4),
-        0 0 20px rgba(111, 215, 243, 0.08);
+        0 5px 20px rgba(0,0,0,.25);
 }
 
-.graph-node-type {
-    display: block;
-    margin-bottom: 4px;
-    color: #5f8291;
-    font-size: 7px;
+.security-graph-node-type {
+    margin-bottom: 5px;
+
+    color: var(--blue);
+
+    font-size: 6px;
     font-weight: 800;
-    letter-spacing: 1.1px;
+
+    letter-spacing: .08em;
 }
 
-.graph-node-label {
+.security-graph-node strong {
     display: block;
-    overflow: hidden;
-    color: #dce9ef;
-    font-size: 10px;
-    font-weight: 700;
-    line-height: 1.3;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+
+    color: var(--text-soft);
+
+    font-size: 7px;
+
+    word-break: break-word;
 }
 
-.graph-node-meta {
+.security-graph-node small {
     display: block;
-    overflow: hidden;
+
     margin-top: 4px;
-    color: #687d8b;
-    font-size: 8px;
+
+    color: var(--dim);
+
+    font-size: 6px;
+
     line-height: 1.3;
-    text-overflow: ellipsis;
+
+    word-break: break-word;
+}
+
+.security-graph-relationships {
+    margin-top: 16px;
+
+    padding-top: 13px;
+
+    border-top:
+        1px solid var(--border);
+}
+
+.graph-relationship {
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 5px;
+
+    padding:
+        7px 9px;
+
+    color: var(--muted);
+
+    background:
+        rgba(255,255,255,.015);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 5px;
+
+    font-size: 7px;
+
+    overflow-x: auto;
+}
+
+.graph-relationship b {
+    color: var(--cyan);
+}
+
+.graph-relationship strong {
+    color: var(--blue-bright);
+
     white-space: nowrap;
 }
-
-
-/* =========================================================
-   GRAPH NODE TYPE COLORS
-   ========================================================= */
-
-.graph-node[data-type="SOURCE"] {
-    border-color: rgba(111, 215, 243, 0.38);
-}
-
-.graph-node[data-type="SOURCE"] .graph-node-type {
-    color: #6fd7f3;
-}
-
-.graph-node[data-type="EVENT"] {
-    border-color: rgba(120, 160, 255, 0.38);
-}
-
-.graph-node[data-type="EVENT"] .graph-node-type {
-    color: #91b0ff;
-}
-
-.graph-node[data-type="DETECTION"] {
-    border-color: rgba(190, 125, 255, 0.42);
-}
-
-.graph-node[data-type="DETECTION"] .graph-node-type {
-    color: #c39bff;
-}
-
-.graph-node[data-type="ALERT"] {
-    border-color: rgba(255, 176, 90, 0.45);
-}
-
-.graph-node[data-type="ALERT"] .graph-node-type {
-    color: #ffb86b;
-}
-
-.graph-node[data-type="RISK"] {
-    border-color: rgba(255, 105, 105, 0.48);
-}
-
-.graph-node[data-type="RISK"] .graph-node-type {
-    color: #ff8585;
-}
-
-.graph-node[data-type="INCIDENT"] {
-    border-color: rgba(255, 75, 90, 0.58);
-    box-shadow:
-        0 0 22px rgba(255, 75, 90, 0.08),
-        0 8px 22px rgba(0, 0, 0, 0.32);
-}
-
-.graph-node[data-type="INCIDENT"] .graph-node-type {
-    color: #ff7777;
-}
-
-.graph-node[data-type="RESPONSE"] {
-    border-color: rgba(100, 210, 150, 0.45);
-}
-
-.graph-node[data-type="RESPONSE"] .graph-node-type {
-    color: #75dda4;
-}
-
-.graph-node[data-type="STATUS"] {
-    border-color: rgba(100, 210, 150, 0.5);
-}
-
-.graph-node[data-type="STATUS"] .graph-node-type {
-    color: #75dda4;
-}
-
-
-/* =========================================================
-   GRAPH LEGEND
-   ========================================================= */
 
 .graph-legend {
     display: flex;
-    align-items: center;
-    gap: 12px;
+
     flex-wrap: wrap;
+
+    gap: 9px;
+
     margin-top: 12px;
-    padding: 10px 12px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 8px;
-    background: rgba(255, 255, 255, 0.018);
 }
 
 .graph-legend-item {
-    display: inline-flex;
+    display: flex;
+
     align-items: center;
-    gap: 6px;
-    color: #708593;
-    font-size: 8px;
-    font-weight: 700;
-    letter-spacing: 0.4px;
+
+    gap: 5px;
+
+    color: var(--muted);
+
+    font-size: 7px;
 }
 
 .graph-legend-dot {
-    width: 7px;
-    height: 7px;
+    width: 6px;
+    height: 6px;
+
     border-radius: 50%;
-    background: #6f8792;
-    box-shadow: 0 0 7px currentColor;
-}
 
-.graph-legend-item[data-type="SOURCE"] .graph-legend-dot {
-    background: #6fd7f3;
-    color: #6fd7f3;
-}
+    background:
+        var(--blue);
 
-.graph-legend-item[data-type="EVENT"] .graph-legend-dot {
-    background: #91b0ff;
-    color: #91b0ff;
-}
-
-.graph-legend-item[data-type="DETECTION"] .graph-legend-dot {
-    background: #c39bff;
-    color: #c39bff;
-}
-
-.graph-legend-item[data-type="ALERT"] .graph-legend-dot {
-    background: #ffb86b;
-    color: #ffb86b;
-}
-
-.graph-legend-item[data-type="RISK"] .graph-legend-dot {
-    background: #ff8585;
-    color: #ff8585;
-}
-
-.graph-legend-item[data-type="INCIDENT"] .graph-legend-dot {
-    background: #ff7777;
-    color: #ff7777;
-}
-
-.graph-legend-item[data-type="RESPONSE"] .graph-legend-dot {
-    background: #75dda4;
-    color: #75dda4;
-}
-
-.graph-legend-item[data-type="STATUS"] .graph-legend-dot {
-    background: #75dda4;
-    color: #75dda4;
-}
-
-
-/* =========================================================
-   GRAPH TOOLTIP
-   ========================================================= */
-
-.graph-tooltip {
-    position: fixed;
-    z-index: 100000;
-    min-width: 220px;
-    max-width: 310px;
-    padding: 13px;
-    border: 1px solid rgba(111, 215, 243, 0.22);
-    border-radius: 9px;
-    background: rgba(7, 14, 20, 0.97);
     box-shadow:
-        0 15px 45px rgba(0, 0, 0, 0.55),
-        0 0 20px rgba(111, 215, 243, 0.04);
-    backdrop-filter: blur(12px);
-    pointer-events: none;
-    animation: graphTooltipIn 0.12s ease;
+        0 0 7px rgba(77,166,255,.45);
 }
 
-.graph-tooltip-title {
-    padding-bottom: 8px;
-    margin-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
-    color: #dceaf0;
-    font-size: 12px;
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+
+.investigation-timeline {
+    position: relative;
+}
+
+.timeline-item {
+    display: grid;
+
+    grid-template-columns:
+        27px 1fr;
+
+    gap: 11px;
+
+    position: relative;
+
+    padding-bottom: 10px;
+}
+
+.timeline-item:not(:last-child)::after {
+    content: "";
+
+    position: absolute;
+
+    left: 13px;
+
+    top: 28px;
+    bottom: 0;
+
+    width: 1px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(77,166,255,.28),
+            var(--border)
+        );
+}
+
+.timeline-marker {
+    width: 27px;
+    height: 27px;
+
+    display: grid;
+    place-items: center;
+
+    position: relative;
+    z-index: 1;
+
+    border:
+        1px solid rgba(77,166,255,.22);
+
+    border-radius: 50%;
+
+    background:
+        #09111c;
+
+    box-shadow:
+        0 0 12px rgba(77,166,255,.07);
+}
+
+.timeline-marker span {
+    color: var(--blue-bright);
+
+    font-size: 7px;
     font-weight: 800;
 }
 
-.graph-tooltip-row {
-    display: grid;
-    grid-template-columns: 75px 1fr;
-    gap: 8px;
-    padding: 3px 0;
+.timeline-content {
+    padding:
+        9px 11px;
+
+    background:
+        rgba(255,255,255,.018);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 7px;
+
+    transition:
+        .18s ease;
+}
+
+.timeline-content:hover {
+    border-color:
+        rgba(77,166,255,.25);
+
+    background:
+        rgba(77,166,255,.025);
+}
+
+.timeline-meta {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 10px;
+
+    color: var(--dim);
+
+    font-size: 7px;
+}
+
+.timeline-type {
+    color: var(--blue);
+
+    font-weight: 800;
+
+    letter-spacing: .08em;
+}
+
+.timeline-title {
+    margin-top: 6px;
+
+    color: var(--text);
+
     font-size: 9px;
+    font-weight: 700;
 }
 
-.graph-tooltip-row span:first-child {
-    color: #5f7582;
+.timeline-severity {
+    margin-left: 6px;
+
+    color: var(--yellow);
+
+    font-size: 7px;
 }
 
-.graph-tooltip-row span:last-child {
-    overflow: hidden;
-    color: #a6bac4;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+.timeline-description {
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 8px;
+
+    line-height: 1.45;
 }
 
-@keyframes graphTooltipIn {
-    from {
-        opacity: 0;
-        transform: translateY(4px);
-    }
+.timeline-source {
+    margin-top: 5px;
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
+    color: var(--dim);
 
-
-/* =========================================================
-   GRAPH LOADING
-   ========================================================= */
-
-.graph-loading {
-    min-height: 470px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #718895;
-    font-size: 11px;
-}
-
-.graph-loading::before {
-    content: "";
-    width: 18px;
-    height: 18px;
-    margin-right: 10px;
-    border: 2px solid rgba(255, 255, 255, 0.1);
-    border-top-color: #6fd7f3;
-    border-radius: 50%;
-    animation: aegis-graph-spin 0.8s linear infinite;
-}
-
-@keyframes aegis-graph-spin {
-    to {
-        transform: rotate(360deg);
-    }
+    font-size: 7px;
 }
 
 
-/* =========================================================
-   GRAPH EMPTY / ERROR
-   ========================================================= */
-
-.graph-empty,
-.graph-error {
-    min-height: 300px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    gap: 8px;
-    text-align: center;
-    color: #657b88;
-    font-size: 11px;
-}
-
-.graph-empty strong,
-.graph-error strong {
-    color: #a9bac3;
-    font-size: 14px;
-}
-
-.graph-empty p,
-.graph-error p {
-    max-width: 400px;
-    margin: 0;
-    line-height: 1.5;
-    color: #596e7b;
-    font-size: 10px;
-}
-
-
-/* =========================================================
-   INVESTIGATION LOADING
-   ========================================================= */
-
-.investigation-loading {
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 13px;
-    text-align: center;
-    color: #748a98;
-    font-size: 12px;
-}
-
-.investigation-spinner {
-    width: 25px;
-    height: 25px;
-    border: 2px solid rgba(255, 255, 255, 0.12);
-    border-top-color: #6fd7f3;
-    border-radius: 50%;
-    animation:
-        aegis-investigation-spin
-        0.8s
-        linear
-        infinite;
-}
-
-@keyframes aegis-investigation-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-
-/* =========================================================
-   INVESTIGATION ERROR
-   ========================================================= */
+/* ============================================================
+   ERROR
+   ============================================================ */
 
 .investigation-error {
-    min-height: 220px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
+    padding:
+        55px 25px;
+
     text-align: center;
 }
 
 .investigation-error strong {
-    font-size: 16px;
+    color: var(--red);
+
+    font-size: 13px;
 }
 
 .investigation-error p {
-    max-width: 420px;
-    color: #718592;
-    font-size: 12px;
-}
+    margin:
+        9px 0 18px;
 
+    color: var(--muted);
 
-/* =========================================================
-   INVESTIGATION SCROLLBAR
-   ========================================================= */
-
-.investigation-panel::-webkit-scrollbar {
-    width: 7px;
-}
-
-.investigation-panel::-webkit-scrollbar-track {
-    background: #080d12;
-}
-
-.investigation-panel::-webkit-scrollbar-thumb {
-    background: #1b3442;
-    border-radius: 10px;
-}
-
-.investigation-panel::-webkit-scrollbar-thumb:hover {
-    background: #285163;
-}
-
-
-/* =========================================================
-   GENERAL SCROLLBARS
-   ========================================================= */
-
-::-webkit-scrollbar {
-    width: 7px;
-    height: 7px;
-}
-
-::-webkit-scrollbar-track {
-    background: #071018;
-}
-
-::-webkit-scrollbar-thumb {
-    background: #1b3442;
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background: #285163;
-}
-
-
-/* =========================================================
-   FOOTER
-   ========================================================= */
-
-footer {
-    text-align: center;
-    color: #405563;
     font-size: 9px;
-    padding: 14px;
 }
 
 
-/* =========================================================
-   RESPONSIVE — 1100px
-   ========================================================= */
+/* ============================================================
+   SPINNER
+   ============================================================ */
 
-@media (max-width: 1100px) {
+.investigation-loading {
+    min-height: 100px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 9px;
+
+    color: var(--muted);
+
+    font-size: 9px;
+}
+
+.investigation-spinner {
+    width: 14px;
+    height: 14px;
+
+    border:
+        2px solid rgba(77,166,255,.12);
+
+    border-top-color:
+        var(--blue);
+
+    border-radius: 50%;
+
+    animation:
+        aegis-spin .7s linear infinite;
+}
+
+@keyframes aegis-spin {
+
+    to {
+        transform:
+            rotate(360deg);
+    }
+
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+.toast {
+    position: fixed;
+
+    right: 22px;
+    bottom: 22px;
+
+    z-index: 3000;
+
+    max-width: 360px;
+
+    padding:
+        11px 14px;
+
+    color: var(--text);
+
+    background:
+        rgba(12,19,29,.96);
+
+    border:
+        1px solid rgba(77,166,255,.25);
+
+    border-radius: 8px;
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.45);
+
+    font-size: 9px;
+
+    transform:
+        translateY(15px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        .2s ease;
+}
+
+.toast.show {
+    opacity: 1;
+
+    transform:
+        translateY(0);
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1050px) {
 
     .metrics {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 
-    .security-graph {
-        min-height: 520px;
+    .two-column {
+        grid-template-columns:
+            1fr;
     }
 
-    .graph-canvas {
-        min-height: 520px;
+    .security-graph-columns {
+        grid-template-columns:
+            repeat(4, minmax(105px, 1fr));
     }
+
 }
 
 
-/* =========================================================
-   RESPONSIVE — 900px
-   ========================================================= */
+@media (max-width: 700px) {
 
-@media (max-width: 900px) {
+    .topbar {
+        height: 68px;
 
-    .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
+        padding:
+            0 15px;
     }
 
-    .app-shell {
-        display: block;
+    .brand span {
+        display: none;
     }
 
-    .sidebar nav {
-        display: flex;
-        overflow-x: auto;
-    }
-
-    .sidebar-footer {
+    .health {
         display: none;
     }
 
     .main {
-        margin: 0;
-        width: 100%;
-        padding: 20px;
-    }
+        width:
+            calc(100% - 22px);
 
-    .metrics {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .grid-two {
-        grid-template-columns: 1fr;
-    }
-
-    .topbar {
-        align-items: flex-start;
-        gap: 10px;
-        flex-wrap: wrap;
+        padding:
+            24px 0 60px;
     }
 
     .hero {
-        gap: 20px;
-        flex-wrap: wrap;
+        display: block;
+
+        padding:
+            23px 21px;
     }
 
-    .incident-header {
-        flex-direction: column;
+    .last-updated {
+        display: inline-block;
+
+        margin-top: 14px;
     }
 
-    .incident-risk {
-        text-align: left;
+    .metrics {
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 8px;
     }
 
-    .event-row {
-        grid-template-columns: 1fr 1fr;
+    .metric-card {
+        min-height: 115px;
+
+        padding:
+            15px;
     }
 
-    .response-row {
-        grid-template-columns: 1fr 1fr;
+    .metric-card strong {
+        font-size: 26px;
     }
 
-    .investigation-panel {
-        width: min(900px, 100vw);
+    .investigation-drawer {
+        width: 100%;
     }
+
+    .investigation-content {
+        padding:
+            12px;
+    }
+
+    .investigation-section {
+        padding:
+            14px;
+    }
+
+    .ai-threat-grid,
+    .attack-story-summary {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .analysis-stat-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
 }
 
 
-/* =========================================================
-   RESPONSIVE — 700px
-   ========================================================= */
+@media (max-width: 450px) {
 
-@media (max-width: 700px) {
+    .topbar-right .refresh-btn {
+        padding:
+            8px 9px;
 
-    .investigation-panel {
-        width: 100%;
+        font-size: 8px;
+    }
+
+    .hero h2 {
+        font-size: 26px;
+    }
+
+    .metrics {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .ai-threat-grid,
+    .attack-story-summary {
+        grid-template-columns:
+            1fr;
+    }
+
+    .attack-story-flow {
+        justify-content:
+            flex-start;
+    }
+
+}
+/* ============================================================
+   AEGIS X â€” PREMIUM SOC VISUAL LAYER
+   ============================================================ */
+
+.soc-status-bar {
+    min-height: 68px;
+
+    display: grid;
+
+    grid-template-columns:
+        1.35fr
+        repeat(4, 1fr)
+        auto;
+
+    align-items: center;
+
+    gap: 1px;
+
+    margin-bottom: 18px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(77,166,255,.16);
+
+    border-radius: 12px;
+
+    background:
+        rgba(8,14,22,.92);
+
+    box-shadow:
+        0 12px 45px rgba(0,0,0,.24),
+        inset 0 1px 0 rgba(255,255,255,.025);
+
+    position: relative;
+}
+
+.soc-status-bar::before {
+    content: "";
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(64,217,255,.035),
+            transparent 35%,
+            rgba(156,124,255,.025)
+        );
+}
+
+.soc-status-main,
+.soc-status-item,
+.soc-simulation {
+    min-height: 68px;
+
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    padding:
+        0 14px;
+
+    border-right:
+        1px solid var(--border);
+}
+
+.soc-status-main {
+    padding-left: 20px;
+}
+
+.soc-live-dot {
+    width: 8px;
+    height: 8px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: var(--green);
+
+    box-shadow:
+        0 0 0 4px rgba(72,223,154,.06),
+        0 0 15px rgba(72,223,154,.75);
+
+    animation:
+        aegis-live 2s infinite;
+}
+
+@keyframes aegis-live {
+
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: .45;
+    }
+
+}
+
+.soc-status-main strong,
+.soc-status-item strong {
+    display: block;
+
+    color: var(--text);
+
+    font-size: 8px;
+
+    font-weight: 800;
+
+    letter-spacing: .09em;
+}
+
+.soc-status-main small,
+.soc-status-item small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: var(--dim);
+
+    font-size: 6px;
+
+    font-weight: 700;
+
+    letter-spacing: .1em;
+}
+
+.soc-status-icon {
+    width: 25px;
+    height: 25px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    color: var(--cyan);
+
+    background:
+        rgba(64,217,255,.055);
+
+    border:
+        1px solid rgba(64,217,255,.13);
+
+    border-radius: 7px;
+
+    font-size: 9px;
+}
+
+.soc-status-icon.alert {
+    color: var(--yellow);
+
+    background:
+        rgba(255,200,87,.045);
+
+    border-color:
+        rgba(255,200,87,.14);
+}
+
+.soc-status-icon.incident {
+    color: var(--purple);
+
+    background:
+        rgba(156,124,255,.045);
+
+    border-color:
+        rgba(156,124,255,.14);
+}
+
+.soc-status-icon.risk {
+    color: var(--red);
+
+    background:
+        rgba(255,95,109,.045);
+
+    border-color:
+        rgba(255,95,109,.14);
+}
+
+.soc-simulation {
+    border-right: 0;
+
+    color: var(--yellow);
+
+    font-size: 7px;
+
+    font-weight: 800;
+
+    letter-spacing: .08em;
+
+    white-space: nowrap;
+}
+
+.soc-simulation span {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+
+    background: var(--yellow);
+
+    box-shadow:
+        0 0 9px rgba(255,200,87,.6);
+}
+
+
+/* ============================================================
+   PREMIUM METRIC CARDS
+   ============================================================ */
+
+.metrics .metric-card:nth-child(1)::before,
+.metrics .metric-card:nth-child(2)::before,
+.metrics .metric-card:nth-child(3)::before,
+.metrics .metric-card:nth-child(4)::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+
+    width: 100%;
+    height: 2px;
+}
+
+.metrics .metric-card:nth-child(1)::before {
+    background:
+        linear-gradient(
+            90deg,
+            var(--cyan),
+            transparent
+        );
+}
+
+.metrics .metric-card:nth-child(2)::before {
+    background:
+        linear-gradient(
+            90deg,
+            var(--yellow),
+            transparent
+        );
+}
+
+.metrics .metric-card:nth-child(3)::before {
+    background:
+        linear-gradient(
+            90deg,
+            var(--purple),
+            transparent
+        );
+}
+
+.metrics .metric-card:nth-child(4)::before {
+    background:
+        linear-gradient(
+            90deg,
+            var(--red),
+            transparent
+        );
+}
+
+.metrics .metric-card:nth-child(1) strong {
+    color: var(--cyan);
+}
+
+.metrics .metric-card:nth-child(2) strong {
+    color: var(--yellow);
+}
+
+.metrics .metric-card:nth-child(3) strong {
+    color: var(--purple);
+}
+
+.metrics .metric-card:nth-child(4) strong {
+    color: var(--red);
+}
+
+
+/* ============================================================
+   SECTION TITLES
+   ============================================================ */
+
+.panel-header {
+    position: relative;
+}
+
+.panel-header::before {
+    content: "";
+
+    width: 3px;
+    height: 26px;
+
+    position: absolute;
+
+    left: 0;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    background:
+        var(--blue);
+
+    border-radius:
+        0 3px 3px 0;
+
+    box-shadow:
+        0 0 12px rgba(77,166,255,.45);
+}
+
+
+/* ============================================================
+   INCIDENT TABLE EMPHASIS
+   ============================================================ */
+
+.panel:has(#incidentRows) {
+    border-color:
+        rgba(77,166,255,.16);
+}
+
+#incidentRows tr {
+    position: relative;
+}
+
+#incidentRows td:first-child {
+    color: var(--blue-bright);
+
+    font-weight: 800;
+}
+
+#incidentRows td:nth-child(2) strong {
+    letter-spacing: .04em;
+}
+
+#incidentRows .investigate-btn {
+    background:
+        rgba(77,166,255,.06);
+
+    box-shadow:
+        inset 0 0 12px rgba(77,166,255,.035);
+}
+
+
+/* ============================================================
+   INVESTIGATION DRAWER â€” PREMIUM HEADER
+   ============================================================ */
+
+.investigation-header {
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(14,28,45,.98),
+            rgba(7,12,20,.98)
+        );
+}
+
+.investigation-header::after {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--cyan),
+            var(--blue),
+            var(--purple),
+            transparent
+        );
+
+    opacity: .55;
+}
+
+.investigation-header .eyebrow {
+    color: var(--cyan);
+}
+
+.investigation-content {
+    background:
+        radial-gradient(
+            circle at 90% 0%,
+            rgba(77,166,255,.035),
+            transparent 30%
+        );
+}
+
+
+/* ============================================================
+   AI FLAGSHIP EFFECT
+   ============================================================ */
+
+.ai-investigation-section {
+    position: relative;
+
+    overflow: hidden;
+}
+
+.ai-investigation-section::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+
+    background:
+        linear-gradient(
+            90deg,
+            var(--purple),
+            var(--blue),
+            var(--cyan),
+            transparent
+        );
+
+    opacity: .8;
+}
+
+.ai-investigation-section::after {
+    content: "AI";
+
+    position: absolute;
+
+    right: 15px;
+    bottom: -22px;
+
+    color:
+        rgba(156,124,255,.025);
+
+    font-size: 110px;
+
+    font-weight: 900;
+
+    pointer-events: none;
+}
+
+
+/* ============================================================
+   ATTACK STORY EMPHASIS
+   ============================================================ */
+
+#attackStorySection {
+    border-color:
+        rgba(77,166,255,.15);
+}
+
+.attack-flow-node {
+    position: relative;
+
+    box-shadow:
+        inset 0 0 20px rgba(77,166,255,.018);
+}
+
+.attack-flow-node:first-child {
+    border-color:
+        rgba(64,217,255,.22);
+}
+
+.attack-flow-node:last-child {
+    border-color:
+        rgba(156,124,255,.22);
+}
+
+.attack-flow-arrow {
+    text-shadow:
+        0 0 12px rgba(64,217,255,.5);
+}
+
+
+/* ============================================================
+   GRAPH PREMIUM
+   ============================================================ */
+
+.security-graph-node {
+    position: relative;
+}
+
+.security-graph-node::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 8px;
+
+    width: 2px;
+    height: 16px;
+
+    background:
+        var(--blue);
+
+    opacity: .65;
+
+    border-radius:
+        0 2px 2px 0;
+}
+
+.security-graph-node[data-node-type="SOURCE"] {
+    border-color:
+        rgba(64,217,255,.20);
+}
+
+.security-graph-node[data-node-type="ALERT"] {
+    border-color:
+        rgba(255,200,87,.18);
+}
+
+.security-graph-node[data-node-type="INCIDENT"] {
+    border-color:
+        rgba(156,124,255,.22);
+}
+
+.security-graph-node[data-node-type="RESPONSE"] {
+    border-color:
+        rgba(72,223,154,.18);
+}
+
+.security-graph-node[data-node-type="RISK"] {
+    border-color:
+        rgba(255,95,109,.20);
+}
+
+
+/* ============================================================
+   TIMELINE PREMIUM
+   ============================================================ */
+
+.timeline-marker {
+    border-color:
+        rgba(64,217,255,.25);
+
+    box-shadow:
+        0 0 16px rgba(64,217,255,.07);
+}
+
+.timeline-item:not(:last-child)::after {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(64,217,255,.32),
+            rgba(77,166,255,.08)
+        );
+}
+
+.timeline-content {
+    position: relative;
+}
+
+.timeline-content::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 2px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--blue),
+            transparent
+        );
+
+    opacity: .45;
+}
+
+
+/* ============================================================
+   MOBILE STATUS BAR
+   ============================================================ */
+
+@media (max-width: 1050px) {
+
+    .soc-status-bar {
+        grid-template-columns:
+            repeat(3, 1fr);
+    }
+
+    .soc-status-main {
+        grid-column:
+            span 3;
+    }
+
+    .soc-simulation {
+        display: none;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .soc-status-bar {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .soc-status-main {
+        grid-column:
+            span 2;
+    }
+
+    .soc-status-item {
+        border-bottom:
+            1px solid var(--border);
+    }
+
+}
+
+
+/* ============================================================
+   AEGIS X â€” UI V4
+   PREMIUM SECURITY OPERATIONS CENTER
+   ============================================================ */
+
+
+/* ============================================================
+   1. BIGGER / MORE READABLE CORE UI
+   ============================================================ */
+
+body {
+    font-size: 14px;
+}
+
+.main {
+    width: min(1540px, calc(100% - 48px));
+    padding-top: 34px;
+}
+
+.hero {
+    min-height: 190px;
+    padding: 34px 38px;
+}
+
+.hero h2 {
+    font-size: clamp(34px, 4vw, 50px);
+    letter-spacing: -.045em;
+}
+
+.hero p {
+    max-width: 850px;
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+.eyebrow {
+    font-size: 9px;
+}
+
+.last-updated {
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   AEGIS X HERO â€” STRONGER VISUAL IDENTITY
+   ============================================================ */
+
+.hero {
+    background:
+        radial-gradient(
+            circle at 78% 50%,
+            rgba(64,217,255,.09),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 92% 10%,
+            rgba(156,124,255,.09),
+            transparent 23%
+        ),
+        linear-gradient(
+            120deg,
+            rgba(11,25,40,.98),
+            rgba(5,12,20,.98)
+        );
+
+    border-color:
+        rgba(64,217,255,.18);
+
+    box-shadow:
+        0 22px 75px rgba(0,0,0,.38),
+        inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.hero::before {
+    width: 560px;
+    height: 560px;
+
+    right: -100px;
+    top: -260px;
+
+    background:
+        repeating-radial-gradient(
+            circle,
+            rgba(64,217,255,.045) 0 1px,
+            transparent 1px 15px
+        );
+
+    filter: none;
+    opacity: .55;
+}
+
+.hero::after {
+    width: 4px;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--cyan),
+            var(--blue),
+            var(--purple)
+        );
+
+    box-shadow:
+        0 0 25px rgba(64,217,255,.65);
+}
+
+
+/* ============================================================
+   2. BIGGER METRIC CARDS
+   ============================================================ */
+
+.metrics {
+    gap: 16px;
+}
+
+.metric-card {
+    min-height: 168px;
+    padding: 25px;
+
+    border-radius: 15px;
+}
+
+.metric-card span {
+    font-size: 9px;
+}
+
+.metric-card strong {
+    margin-top: 17px;
+    font-size: 42px;
+}
+
+.metric-card small {
+    font-size: 10px;
+}
+
+.metric-card:hover {
+    transform: translateY(-4px);
+
+    box-shadow:
+        0 15px 45px rgba(0,0,0,.32),
+        0 0 28px rgba(77,166,255,.08);
+}
+
+
+/* ============================================================
+   SOC STATUS BAR â€” LARGER
+   ============================================================ */
+
+.soc-status-bar {
+    min-height: 78px;
+
+    border-radius: 14px;
+
+    box-shadow:
+        0 15px 55px rgba(0,0,0,.30),
+        inset 0 1px 0 rgba(255,255,255,.025);
+}
+
+.soc-status-main,
+.soc-status-item,
+.soc-simulation {
+    min-height: 78px;
+}
+
+.soc-status-main strong,
+.soc-status-item strong {
+    font-size: 10px;
+}
+
+.soc-status-main small,
+.soc-status-item small {
+    font-size: 7px;
+}
+
+.soc-status-icon {
+    width: 31px;
+    height: 31px;
+
+    font-size: 11px;
+}
+
+.soc-live-dot {
+    width: 10px;
+    height: 10px;
+}
+
+
+/* ============================================================
+   PANELS â€” MORE PRESENCE
+   ============================================================ */
+
+.panel {
+    border-radius: 15px;
+
+    box-shadow:
+        0 15px 50px rgba(0,0,0,.24),
+        inset 0 1px 0 rgba(255,255,255,.018);
+}
+
+.panel-header {
+    min-height: 82px;
+    padding: 19px 24px;
+}
+
+.panel-header h3 {
+    font-size: 16px;
+}
+
+.panel-header .tag {
+    font-size: 8px;
+}
+
+.detection,
+.activity {
+    padding: 18px 23px;
+}
+
+.rowline strong {
+    font-size: 11px;
+}
+
+.meta,
+.activity small {
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   INCIDENT TABLE â€” LARGER
+   ============================================================ */
+
+th {
+    padding: 14px 17px;
+    font-size: 8px;
+}
+
+td {
+    padding: 17px;
+    font-size: 10px;
+}
+
+.action-btn {
+    padding: 7px 11px;
+    font-size: 8px;
+}
+
+
+/* ============================================================
+   3. MUCH WIDER INVESTIGATION DRAWER
+   ============================================================ */
+
+.investigation-drawer {
+    width: min(1180px, 96vw);
+
+    background:
+        radial-gradient(
+            circle at 80% 0%,
+            rgba(77,166,255,.055),
+            transparent 25%
+        ),
+        linear-gradient(
+            180deg,
+            #07101a 0%,
+            #040911 100%
+        );
+
+    border-left:
+        1px solid rgba(64,217,255,.25);
+
+    box-shadow:
+        -40px 0 120px rgba(0,0,0,.70);
+}
+
+.investigation-header {
+    min-height: 105px;
+
+    padding:
+        27px 31px;
+}
+
+.investigation-header h2 {
+    font-size: 27px;
+}
+
+.investigation-header p {
+    font-size: 11px;
+}
+
+.investigation-content {
+    padding:
+        25px 29px 50px;
+}
+
+.investigation-section {
+    padding: 24px;
+
+    margin-bottom: 18px;
+
+    border-radius: 14px;
+}
+
+.investigation-section-header {
+    margin-bottom: 21px;
+}
+
+.investigation-section-header h3 {
+    font-size: 17px;
+}
+
+.investigation-section-header p {
+    font-size: 10px;
+}
+
+
+/* ============================================================
+   AI INVESTIGATION â€” FLAGSHIP
+   ============================================================ */
+
+.ai-investigation-section {
+    min-height: 270px;
+
+    border-color:
+        rgba(156,124,255,.24);
+
+    background:
+        radial-gradient(
+            circle at 94% 50%,
+            rgba(156,124,255,.10),
+            transparent 25%
+        ),
+        linear-gradient(
+            135deg,
+            rgba(27,19,48,.80),
+            rgba(8,14,23,.98)
+        );
+
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.30),
+        inset 0 0 45px rgba(156,124,255,.025);
+}
+
+.ai-engine-badge {
+    padding: 8px 11px;
+    font-size: 8px;
+}
+
+.ai-threat-grid {
+    grid-template-columns:
+        repeat(4, minmax(130px, 1fr));
+
+    gap: 11px;
+}
+
+.ai-threat-card {
+    min-height: 105px;
+
+    padding: 17px;
+
+    border-radius: 10px;
+}
+
+.ai-threat-card span {
+    font-size: 8px;
+}
+
+.ai-threat-card strong {
+    margin-top: 12px;
+    font-size: 18px;
+}
+
+.ai-assessment p,
+.ai-conclusion p {
+    font-size: 10px;
+    line-height: 1.75;
+}
+
+.ai-stage {
+    padding: 9px 12px;
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   MITRE â€” MORE VISIBLE
+   ============================================================ */
+
+.mitre-tag {
+    padding: 8px 11px;
+    font-size: 9px;
+}
+
+.mitre-technique {
+    padding: 14px;
+}
+
+.mitre-technique strong,
+.mitre-technique span {
+    font-size: 10px;
+}
+
+.mitre-confidence,
+.mitre-technique p {
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   4. ATTACK STORY â€” VISUAL ATTACK CHAIN
+   ============================================================ */
+
+.attack-story-summary {
+    grid-template-columns:
+        repeat(4, minmax(130px, 1fr));
+
+    gap: 10px;
+}
+
+.attack-story-card {
+    min-height: 95px;
+    padding: 15px;
+}
+
+.attack-story-card .investigation-label {
+    font-size: 7px;
+}
+
+.attack-story-card strong {
+    margin-top: 9px;
+    font-size: 11px;
+}
+
+.attack-stage-list {
+    gap: 9px;
+}
+
+.attack-stage {
+    padding: 11px 14px;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(77,166,255,.08),
+            rgba(77,166,255,.025)
+        );
+
+    box-shadow:
+        inset 0 0 20px rgba(77,166,255,.025);
+}
+
+.attack-stage-number {
+    width: 24px;
+    height: 24px;
+
+    font-size: 8px;
+}
+
+.attack-stage-content strong {
+    font-size: 9px;
+}
+
+.attack-stage-connector {
+    font-size: 16px;
+    color: var(--cyan);
+}
+
+.attack-story-flow {
+    gap: 8px;
+
+    padding:
+        14px 4px;
+}
+
+.attack-flow-node {
+    min-width: 125px;
+    min-height: 80px;
+
+    padding: 14px;
+
+    border-radius: 9px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(15,27,41,.98),
+            rgba(7,13,21,.98)
+        );
+}
+
+.attack-flow-node span {
+    font-size: 7px;
+}
+
+.attack-flow-node strong {
+    margin-top: 8px;
+    font-size: 10px;
+}
+
+.attack-flow-arrow {
+    font-size: 18px;
+    color: var(--cyan);
+
+    text-shadow:
+        0 0 16px rgba(64,217,255,.75);
+}
+
+
+/* ============================================================
+   5. SECURITY GRAPH â€” INTELLIGENCE VISUALIZATION
+   ============================================================ */
+
+#securityGraphSection {
+    min-height: 450px;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(64,217,255,.055),
+            transparent 40%
+        ),
+        linear-gradient(
+            145deg,
+            rgba(8,20,32,.98),
+            rgba(5,11,19,.98)
+        );
+
+    border-color:
+        rgba(64,217,255,.20);
+}
+
+.graph-stats {
+    gap: 9px;
+}
+
+.graph-stat {
+    min-width: 78px;
+    padding: 9px 11px;
+}
+
+.graph-stat strong {
+    font-size: 16px;
+}
+
+.graph-stat span {
+    font-size: 7px;
+}
+
+
+/* graph canvas / area */
+
+.security-graph {
+    position: relative;
+
+    min-height: 350px;
+
+    margin-top: 10px;
+
+    padding: 20px;
+
+    overflow: auto;
+
+    border:
+        1px solid rgba(64,217,255,.10);
+
+    border-radius: 12px;
+
+    background:
+        radial-gradient(
+            circle at 50% 50%,
+            rgba(64,217,255,.055),
+            transparent 32%
+        ),
+        repeating-linear-gradient(
+            0deg,
+            rgba(77,166,255,.035) 0,
+            rgba(77,166,255,.035) 1px,
+            transparent 1px,
+            transparent 35px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            rgba(77,166,255,.035) 0,
+            rgba(77,166,255,.035) 1px,
+            transparent 1px,
+            transparent 35px
+        ),
+        #050b13;
+}
+
+
+/* graph columns become larger */
+
+.security-graph-wrapper {
+    min-width: 900px;
+    min-height: 300px;
+}
+
+.security-graph-columns {
+    grid-template-columns:
+        repeat(
+            8,
+            minmax(110px, 1fr)
+        );
+
+    gap: 12px;
+
+    align-items: center;
+}
+
+.security-graph-column-title {
+    min-height: 35px;
+
+    font-size: 7px;
+}
+
+.security-graph-column-title b {
+    font-size: 10px;
+}
+
+.security-graph-node {
+    min-height: 75px;
+
+    padding: 13px;
+
+    margin-bottom: 10px;
+
+    border-radius: 10px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(14,29,44,.96),
+            rgba(5,12,20,.96)
+        );
+
+    box-shadow:
+        0 8px 25px rgba(0,0,0,.30),
+        inset 0 0 20px rgba(64,217,255,.018);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.security-graph-node:hover {
+    transform:
+        translateY(-4px) scale(1.025);
+
+    box-shadow:
+        0 12px 35px rgba(0,0,0,.40),
+        0 0 25px rgba(64,217,255,.08);
+}
+
+.security-graph-node::before {
+    width: 3px;
+    height: 24px;
+    top: 12px;
+
+    box-shadow:
+        0 0 10px rgba(64,217,255,.35);
+}
+
+.security-graph-node-type {
+    font-size: 7px;
+}
+
+.security-graph-node strong {
+    font-size: 9px;
+}
+
+.security-graph-node small {
+    font-size: 7px;
+}
+
+
+/* relationship lines */
+
+.security-graph-relationships {
+    margin-top: 20px;
+    padding-top: 17px;
+}
+
+.graph-relationship {
+    min-height: 34px;
+
+    padding: 9px 12px;
+
+    border-radius: 7px;
+
+    font-size: 8px;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(64,217,255,.035),
+            rgba(255,255,255,.012)
+        );
+}
+
+.graph-relationship b {
+    color: var(--cyan);
+
+    text-shadow:
+        0 0 8px rgba(64,217,255,.35);
+}
+
+.graph-relationship strong {
+    font-size: 8px;
+}
+
+
+/* ============================================================
+   TIMELINE â€” BIGGER VISUAL TRACK
+   ============================================================ */
+
+#investigationTimelineSection {
+    min-height: 390px;
+}
+
+.timeline-item {
+    grid-template-columns:
+        40px 1fr;
+
+    gap: 14px;
+
+    padding-bottom: 14px;
+}
+
+.timeline-item:not(:last-child)::after {
+    left: 19px;
+    top: 40px;
+}
+
+.timeline-marker {
+    width: 40px;
+    height: 40px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(64,217,255,.12),
+            #07101a 62%
+        );
+
+    border-color:
+        rgba(64,217,255,.30);
+
+    box-shadow:
+        0 0 20px rgba(64,217,255,.10);
+}
+
+.timeline-marker span {
+    font-size: 9px;
+}
+
+.timeline-content {
+    padding: 13px 15px;
+
+    border-radius: 9px;
+}
+
+.timeline-meta {
+    font-size: 8px;
+}
+
+.timeline-title {
+    font-size: 11px;
+}
+
+.timeline-description {
+    font-size: 9px;
+}
+
+.timeline-source {
+    font-size: 8px;
+}
+
+
+/* ============================================================
+   EVIDENCE + RECOMMENDATIONS
+   ============================================================ */
+
+.evidence-item,
+.recommendation-item {
+    padding: 13px 14px;
+}
+
+.evidence-header strong,
+.recommendation-header strong {
+    font-size: 9px;
+}
+
+.evidence-item p,
+.recommendation-item p {
+    font-size: 9px;
+}
+
+
+/* ============================================================
+   ANALYSIS STATS
+   ============================================================ */
+
+.analysis-stat-grid {
+    gap: 10px;
+}
+
+.analysis-stat-grid div {
+    padding: 14px;
+}
+
+.analysis-stat-grid span {
+    font-size: 7px;
+}
+
+.analysis-stat-grid strong {
+    margin-top: 7px;
+    font-size: 18px;
+}
+
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+@media (max-width: 1100px) {
+
+    .investigation-drawer {
+        width: 94vw;
+    }
+
+    .ai-threat-grid {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .attack-story-summary {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+
+@media (max-width: 800px) {
+
+    .main {
+        width:
+            calc(100% - 28px);
+    }
+
+    .soc-status-bar {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .soc-status-main {
+        grid-column:
+            span 2;
+    }
+
+    .investigation-drawer {
+        width: 100vw;
+    }
+
+    .investigation-header {
+        padding: 21px;
     }
 
     .investigation-content {
         padding: 16px;
     }
 
-    .investigation-header {
-        padding: 18px;
-    }
-
-    .investigation-risk,
-    .investigation-details {
-        grid-template-columns: 1fr;
-    }
-
-    .timeline-card-head {
-        flex-direction: column;
-    }
-
-    .timeline-card time {
-        white-space: normal;
-    }
-
-    .table-actions {
-        align-items: flex-start;
-    }
-
-    .graph-section-header {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .graph-stats {
-        width: 100%;
-    }
-
-    .security-graph {
-        min-height: 560px;
-    }
-
-    .graph-canvas {
-        min-height: 560px;
-        overflow-x: auto;
-    }
-
-    .graph-node {
-        min-width: 96px;
-        max-width: 125px;
-    }
 }
 
 
-/* =========================================================
-   RESPONSIVE — 500px
-   ========================================================= */
-
-@media (max-width: 500px) {
-
-    .metrics {
-        grid-template-columns: 1fr;
-    }
+@media (max-width: 550px) {
 
     .main {
-        padding: 16px 12px 30px;
+        width:
+            calc(100% - 18px);
     }
 
     .hero {
+        padding: 25px;
+    }
+
+    .hero h2 {
+        font-size: 31px;
+    }
+
+    .metrics {
+        grid-template-columns:
+            1fr 1fr;
+    }
+
+    .metric-card {
+        min-height: 140px;
         padding: 18px;
     }
 
-    .topbar h1 {
-        font-size: 23px;
+    .metric-card strong {
+        font-size: 32px;
     }
 
-    .investigation-summary {
-        padding: 16px;
+    .ai-threat-grid,
+    .attack-story-summary {
+        grid-template-columns:
+            1fr;
     }
 
-    .investigation-summary-head {
+    .investigation-section {
+        padding: 17px;
+    }
+
+}
+
+
+/* ============================================================
+   AEGIS X â€” FINAL MICRO DETAILS
+   ============================================================ */
+
+::selection {
+    background:
+        rgba(64,217,255,.22);
+
+    color: white;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #04080d;
+}
+
+::-webkit-scrollbar-thumb {
+    background:
+        linear-gradient(
+            180deg,
+            #1d3b55,
+            #122536
+        );
+
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background:
+        #28516f;
+}
+
+
+/* ============================================================
+   AEGIS X UI V5 â€” SECURITY INTELLIGENCE VISUAL LAYER
+   ============================================================ */
+
+
+/* ============================================================
+   HERO â€” THREAT INTELLIGENCE BACKDROP
+   ============================================================ */
+
+.hero {
+    position: relative;
+    overflow: hidden;
+
+    min-height: 205px;
+
+    background:
+        radial-gradient(
+            circle at 76% 50%,
+            rgba(64,217,255,.11),
+            transparent 24%
+        ),
+        radial-gradient(
+            circle at 88% 20%,
+            rgba(156,124,255,.10),
+            transparent 20%
+        ),
+        linear-gradient(
+            115deg,
+            #0a1828 0%,
+            #07111d 48%,
+            #050b13 100%
+        );
+}
+
+.hero::before {
+    content: "";
+
+    position: absolute;
+
+    right: 35px;
+    top: 18px;
+
+    width: 430px;
+    height: 170px;
+
+    opacity: .65;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(64,217,255,.16) 1px,
+            transparent 2px
+        );
+
+    background-size:
+        17px 17px;
+
+    mask-image:
+        linear-gradient(
+            90deg,
+            transparent,
+            black
+        );
+
+    transform:
+        perspective(500px)
+        rotateX(55deg)
+        rotateZ(-5deg);
+
+    pointer-events: none;
+}
+
+.hero::after {
+    content: "";
+
+    position: absolute;
+
+    right: 40px;
+    top: 30px;
+
+    width: 390px;
+    height: 120px;
+
+    background:
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 37px,
+            rgba(64,217,255,.10) 38px,
+            transparent 39px
+        );
+
+    opacity: .35;
+
+    pointer-events: none;
+}
+
+.hero > * {
+    position: relative;
+    z-index: 2;
+}
+
+
+/* ============================================================
+   HERO INTELLIGENCE SIGNAL
+   ============================================================ */
+
+.hero .last-updated {
+    position: relative;
+    z-index: 3;
+}
+
+
+/* ============================================================
+   THREAT ACTIVITY MINI VISUAL
+   ============================================================ */
+
+.hero-threat-visual {
+    position: absolute;
+
+    right: 45px;
+    top: 30px;
+
+    width: 380px;
+    height: 125px;
+
+    pointer-events: none;
+
+    opacity: .75;
+}
+
+.hero-threat-visual::before {
+    content: "";
+
+    position: absolute;
+
+    left: 25%;
+    top: 50%;
+
+    width: 52%;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(64,217,255,.7),
+            transparent
+        );
+
+    transform:
+        rotate(-13deg);
+
+    box-shadow:
+        0 0 12px rgba(64,217,255,.45);
+}
+
+.hero-threat-visual::after {
+    content: "";
+
+    position: absolute;
+
+    right: 18%;
+    top: 28%;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+
+    background:
+        var(--red);
+
+    box-shadow:
+        0 0 0 6px rgba(255,95,109,.07),
+        0 0 18px rgba(255,95,109,.8);
+
+    animation:
+        threat-pulse 1.8s infinite;
+}
+
+@keyframes threat-pulse {
+
+    0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.6);
+        opacity: .45;
+    }
+
+}
+
+
+/* ============================================================
+   SECURITY GRAPH â€” COMPLETE VISUAL CANVAS
+   ============================================================ */
+
+#securityGraphSection {
+    overflow: hidden;
+
+    min-height: 520px;
+
+    background:
+        radial-gradient(
+            circle at 50% 48%,
+            rgba(64,217,255,.085),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 20% 80%,
+            rgba(156,124,255,.055),
+            transparent 25%
+        ),
+        #050c14;
+
+    border-color:
+        rgba(64,217,255,.24);
+
+    box-shadow:
+        0 20px 70px rgba(0,0,0,.35),
+        inset 0 0 70px rgba(64,217,255,.018);
+}
+
+#securityGraph {
+    position: relative;
+
+    min-height: 430px;
+
+    margin-top: 15px;
+
+    overflow: hidden;
+
+    border:
+        1px solid rgba(64,217,255,.13);
+
+    border-radius: 14px;
+
+    background:
+        radial-gradient(
+            circle at center,
+            rgba(64,217,255,.055),
+            transparent 32%
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent 0 39px,
+            rgba(64,217,255,.035) 40px
+        ),
+        repeating-linear-gradient(
+            90deg,
+            transparent 0 39px,
+            rgba(64,217,255,.035) 40px
+        ),
+        #030a11;
+
+    box-shadow:
+        inset 0 0 80px rgba(0,0,0,.35);
+}
+
+
+/* visual graph wrapper */
+
+.aegis-network {
+    position: relative;
+
+    width: 100%;
+    min-width: 900px;
+
+    height: 420px;
+}
+
+.aegis-network-svg {
+    position: absolute;
+
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: visible;
+
+    pointer-events: none;
+}
+
+.aegis-edge {
+    fill: none;
+
+    stroke:
+        rgba(64,217,255,.34);
+
+    stroke-width: 1.5;
+
+    stroke-dasharray:
+        5 6;
+
+    filter:
+        drop-shadow(
+            0 0 4px rgba(64,217,255,.25)
+        );
+
+    animation:
+        edge-flow 3s linear infinite;
+}
+
+.aegis-edge.alert {
+    stroke:
+        rgba(255,95,109,.55);
+}
+
+.aegis-edge.risk {
+    stroke:
+        rgba(255,200,87,.55);
+}
+
+.aegis-edge.response {
+    stroke:
+        rgba(72,223,154,.55);
+}
+
+@keyframes edge-flow {
+
+    to {
+        stroke-dashoffset: -33;
+    }
+
+}
+
+
+/* ============================================================
+   NETWORK NODES
+   ============================================================ */
+
+.aegis-node {
+    position: absolute;
+
+    width: 132px;
+    min-height: 72px;
+
+    transform:
+        translate(-50%, -50%);
+
+    padding:
+        12px 13px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    justify-content: center;
+
+    text-align: center;
+
+    border:
+        1px solid rgba(77,166,255,.25);
+
+    border-radius: 11px;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(13,28,43,.98),
+            rgba(5,12,20,.98)
+        );
+
+    box-shadow:
+        0 10px 30px rgba(0,0,0,.42),
+        inset 0 0 20px rgba(64,217,255,.018);
+
+    z-index: 3;
+
+    transition:
+        transform .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.aegis-node:hover {
+    transform:
+        translate(-50%, -50%)
+        scale(1.08);
+
+    border-color:
+        rgba(64,217,255,.65);
+
+    box-shadow:
+        0 15px 40px rgba(0,0,0,.55),
+        0 0 30px rgba(64,217,255,.14);
+}
+
+.aegis-node-type {
+    margin-bottom: 5px;
+
+    color:
+        var(--cyan);
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        .13em;
+}
+
+.aegis-node-title {
+    color:
+        var(--text);
+
+    font-size: 10px;
+
+    font-weight: 800;
+
+    word-break: break-word;
+}
+
+.aegis-node-detail {
+    margin-top: 5px;
+
+    color:
+        var(--muted);
+
+    font-size: 7px;
+
+    line-height: 1.35;
+
+    word-break: break-word;
+}
+
+
+/* source */
+
+.aegis-node.source {
+    border-color:
+        rgba(64,217,255,.42);
+
+    box-shadow:
+        0 0 30px rgba(64,217,255,.08);
+}
+
+.aegis-node.source .aegis-node-type {
+    color:
+        var(--cyan);
+}
+
+
+/* event */
+
+.aegis-node.event {
+    border-color:
+        rgba(72,223,154,.32);
+}
+
+.aegis-node.event .aegis-node-type {
+    color:
+        var(--green);
+}
+
+
+/* detection */
+
+.aegis-node.detection {
+    border-color:
+        rgba(255,200,87,.40);
+}
+
+.aegis-node.detection .aegis-node-type {
+    color:
+        var(--yellow);
+}
+
+
+/* alert */
+
+.aegis-node.alert {
+    border-color:
+        rgba(255,95,109,.45);
+
+    box-shadow:
+        0 0 30px rgba(255,95,109,.07);
+}
+
+.aegis-node.alert .aegis-node-type {
+    color:
+        var(--red);
+}
+
+
+/* risk */
+
+.aegis-node.risk {
+    border-color:
+        rgba(255,200,87,.45);
+}
+
+.aegis-node.risk .aegis-node-type {
+    color:
+        var(--yellow);
+}
+
+
+/* incident â€” CENTRAL */
+
+.aegis-node.incident {
+    width: 158px;
+    min-height: 105px;
+
+    border:
+        2px solid rgba(255,95,109,.65);
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(255,95,109,.12),
+            rgba(10,17,27,.98) 62%
+        );
+
+    box-shadow:
+        0 0 0 7px rgba(255,95,109,.025),
+        0 0 35px rgba(255,95,109,.20),
+        0 15px 45px rgba(0,0,0,.5);
+
+    animation:
+        incident-glow 2.5s ease-in-out infinite;
+}
+
+.aegis-node.incident .aegis-node-type {
+    color:
+        var(--red);
+}
+
+.aegis-node.incident .aegis-node-title {
+    font-size: 15px;
+}
+
+@keyframes incident-glow {
+
+    0%, 100% {
+        box-shadow:
+            0 0 0 7px rgba(255,95,109,.025),
+            0 0 30px rgba(255,95,109,.16),
+            0 15px 45px rgba(0,0,0,.5);
+    }
+
+    50% {
+        box-shadow:
+            0 0 0 10px rgba(255,95,109,.025),
+            0 0 48px rgba(255,95,109,.25),
+            0 15px 45px rgba(0,0,0,.5);
+    }
+
+}
+
+
+/* response */
+
+.aegis-node.response {
+    border-color:
+        rgba(72,223,154,.48);
+}
+
+.aegis-node.response .aegis-node-type {
+    color:
+        var(--green);
+}
+
+
+/* ============================================================
+   GRAPH LEGEND
+   ============================================================ */
+
+.aegis-network-legend {
+    position: absolute;
+
+    left: 16px;
+    bottom: 14px;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 8px;
+
+    padding:
+        8px 10px;
+
+    border:
+        1px solid rgba(255,255,255,.07);
+
+    border-radius: 8px;
+
+    background:
+        rgba(3,8,14,.78);
+
+    backdrop-filter:
+        blur(10px);
+
+    z-index: 5;
+}
+
+.aegis-network-legend-item {
+    display: flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    color:
+        var(--muted);
+
+    font-size: 7px;
+}
+
+.aegis-network-legend-dot {
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+}
+
+.aegis-network-legend-dot.source {
+    background: var(--cyan);
+}
+
+.aegis-network-legend-dot.event {
+    background: var(--green);
+}
+
+.aegis-network-legend-dot.detection {
+    background: var(--yellow);
+}
+
+.aegis-network-legend-dot.alert {
+    background: var(--red);
+}
+
+.aegis-network-legend-dot.incident {
+    background: var(--purple);
+}
+
+.aegis-network-legend-dot.response {
+    background: var(--green);
+}
+
+
+/* ============================================================
+   GRAPH CENTER LABEL
+   ============================================================ */
+
+.aegis-network-label {
+    position: absolute;
+
+    left: 50%;
+    top: 10px;
+
+    transform:
+        translateX(-50%);
+
+    color:
+        rgba(64,217,255,.42);
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    letter-spacing:
+        .2em;
+
+    text-transform:
+        uppercase;
+
+    z-index: 4;
+}
+
+
+/* ============================================================
+   THREAT PULSE DECORATION
+   ============================================================ */
+
+.aegis-network-pulse {
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 180px;
+    height: 180px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border:
+        1px solid rgba(255,95,109,.12);
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    animation:
+        network-pulse 3s ease-out infinite;
+}
+
+.aegis-network-pulse:nth-child(2) {
+    animation-delay:
+        1.5s;
+}
+
+@keyframes network-pulse {
+
+    0% {
+        transform:
+            translate(-50%, -50%)
+            scale(.55);
+
+        opacity: .55;
+    }
+
+    100% {
+        transform:
+            translate(-50%, -50%)
+            scale(1.55);
+
+        opacity: 0;
+    }
+
+}
+
+
+/* ============================================================
+   THREAT DETECTION CARDS
+   ============================================================ */
+
+.detection,
+.activity {
+    position: relative;
+}
+
+.detection::before,
+.activity::before {
+    content: "";
+
+    position: absolute;
+
+    left: 0;
+    top: 0;
+    bottom: 0;
+
+    width: 3px;
+
+    background:
+        var(--blue);
+
+    opacity: .65;
+}
+
+.detection:hover,
+.activity:hover {
+    transform:
+        translateX(2px);
+
+    background:
+        rgba(77,166,255,.035);
+}
+
+
+/* ============================================================
+   INCIDENT TABLE â€” VISUAL RISK
+   ============================================================ */
+
+#incidentRows tr {
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+#incidentRows tr:hover {
+    background:
+        linear-gradient(
+            90deg,
+            rgba(77,166,255,.045),
+            transparent
+        );
+
+    transform:
+        translateX(3px);
+}
+
+#incidentRows td:nth-child(3) {
+    font-weight: 900;
+}
+
+
+/* ============================================================
+   AI SECTION â€” STRONGER
+   ============================================================ */
+
+.ai-investigation-section {
+    border:
+        1px solid rgba(156,124,255,.28);
+}
+
+.ai-threat-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.ai-threat-card::after {
+    content: "";
+
+    position: absolute;
+
+    right: -25px;
+    bottom: -25px;
+
+    width: 75px;
+    height: 75px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(156,124,255,.06);
+
+    filter:
+        blur(12px);
+}
+
+
+/* ============================================================
+   TIMELINE â€” CONNECTED INTELLIGENCE TRACK
+   ============================================================ */
+
+#investigationTimelineSection {
+    background:
+        linear-gradient(
+            145deg,
+            rgba(9,19,30,.98),
+            rgba(5,10,17,.98)
+        );
+}
+
+.timeline-content {
+    border-left:
+        3px solid rgba(77,166,255,.22);
+}
+
+.timeline-content:hover {
+    border-left-color:
+        var(--cyan);
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 850px) {
+
+    #securityGraph {
+        overflow-x: auto;
+    }
+
+    .aegis-network {
+        min-width: 900px;
+    }
+
+}
+
+
+
+/* =========================================================
+   CAMPAIGN INTELLIGENCE
+   ========================================================= */
+
+.campaign-intelligence-panel {
+    margin-top: 24px;
+    padding: 0 !important;
+    overflow: hidden;
+}
+
+.campaign-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 24px 26px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(13,39,58,.58),
+            rgba(8,14,28,.35)
+        );
+}
+
+.campaign-heading {
+    min-width: 0;
+}
+
+.campaign-eyebrow,
+.campaign-label {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.7px;
+    text-transform: uppercase;
+    opacity: .55;
+}
+
+.campaign-heading h3 {
+    margin: 7px 0 0;
+    font-size: 20px;
+    letter-spacing: -.3px;
+}
+
+.campaign-heading p {
+    margin: 7px 0 0;
+    font-size: 12px;
+    opacity: .58;
+}
+
+.campaign-summary {
+    min-width: 112px;
+    padding: 11px 15px;
+    border: 1px solid rgba(68,190,255,.16);
+    border-radius: 12px;
+    background: rgba(8,25,39,.7);
+    text-align: center;
+}
+
+.campaign-summary strong {
+    display: block;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.campaign-summary span {
+    display: block;
+    margin-top: 5px;
+    font-size: 9px;
+    letter-spacing: 1.1px;
+    opacity: .55;
+}
+
+.campaign-list {
+    display: grid;
+    gap: 1px;
+    background: rgba(255,255,255,.045);
+}
+
+.campaign-card {
+    padding: 23px 26px;
+    background:
+        linear-gradient(
+            120deg,
+            rgba(8,17,30,.98),
+            rgba(7,14,25,.94)
+        );
+    transition:
+        background .2s ease,
+        transform .2s ease;
+}
+
+.campaign-card:hover {
+    background:
+        linear-gradient(
+            120deg,
+            rgba(11,28,44,.98),
+            rgba(8,17,30,.98)
+        );
+}
+
+.campaign-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.campaign-index {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(68,190,255,.14);
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 800;
+    color: #62c9ff;
+    background: rgba(17,49,70,.28);
+}
+
+.campaign-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.campaign-title {
+    margin-top: 6px;
+    font-size: 16px;
+    font-weight: 750;
+    line-height: 1.35;
+}
+
+.campaign-source {
+    margin-top: 7px;
+    font-size: 10px;
+    letter-spacing: 1px;
+    opacity: .45;
+}
+
+.campaign-source span {
+    margin-left: 7px;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0;
+    opacity: 1;
+}
+
+.campaign-risk {
+    min-width: 82px;
+    padding: 8px 11px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.campaign-risk strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 18px;
+    letter-spacing: 0;
+}
+
+.campaign-risk-critical {
+    border: 1px solid rgba(248,113,113,.18);
+    background: rgba(239,68,68,.08);
+    color: #ff7373;
+}
+
+.campaign-risk-high {
+    border: 1px solid rgba(251,191,36,.18);
+    background: rgba(245,158,11,.08);
+    color: #fbbf24;
+}
+
+.campaign-risk-medium {
+    border: 1px solid rgba(96,165,250,.18);
+    background: rgba(59,130,246,.08);
+    color: #60a5fa;
+}
+
+.campaign-stats {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(100px, 1fr));
+    gap: 1px;
+    margin: 20px 0 0 50px;
+    border: 1px solid rgba(255,255,255,.055);
+    border-radius: 10px;
+    overflow: hidden;
+    background: rgba(255,255,255,.045);
+}
+
+.campaign-stat {
+    padding: 12px 14px;
+    background: rgba(5,13,23,.65);
+}
+
+.campaign-stat span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 1.2px;
+    opacity: .42;
+}
+
+.campaign-stat strong {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+.campaign-detections,
+.campaign-attack-path {
+    margin: 18px 0 0 50px;
+}
+
+.campaign-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 8px;
+}
+
+.campaign-chip {
+    display: inline-flex;
+    padding: 6px 9px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 7px;
+    background: rgba(255,255,255,.035);
+    font-family: monospace;
+    font-size: 9px;
+    letter-spacing: .3px;
+    opacity: .75;
+}
+
+.campaign-progression {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 9px;
+}
+
+.campaign-stage {
+    padding: 7px 10px;
+    border: 1px solid rgba(68,190,255,.10);
+    border-radius: 7px;
+    background: rgba(17,49,70,.24);
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .6px;
+}
+
+.campaign-arrow {
+    opacity: .35;
+    font-size: 13px;
+}
+
+.campaign-loading {
+    min-height: 120px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: .55;
+    font-size: 12px;
+}
+
+.campaign-loading-pulse {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: currentColor;
+    animation: campaignPulse 1.2s infinite ease-in-out;
+}
+
+.campaign-empty {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    opacity: .55;
+    font-size: 12px;
+}
+
+.campaign-empty span {
+    font-size: 10px;
+    opacity: .7;
+}
+
+@keyframes campaignPulse {
+
+    0%, 100% {
+        opacity: .25;
+        transform: scale(.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@media (max-width: 800px) {
+
+    .campaign-panel-head {
+        align-items: flex-start;
         flex-direction: column;
     }
 
-    .timeline-item {
-        grid-template-columns: 32px 1fr;
-        gap: 10px;
+    .campaign-summary {
+        align-self: flex-start;
     }
 
-    .timeline-node {
-        width: 27px;
-        height: 27px;
-        font-size: 9px;
+    .campaign-card-top {
+        flex-wrap: wrap;
     }
 
-    .graph-stats {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        width: 100%;
+    .campaign-risk {
+        margin-left: 50px;
     }
 
-    .graph-stat {
-        min-width: 0;
+    .campaign-stats,
+    .campaign-detections,
+    .campaign-attack-path {
+        margin-left: 0;
     }
 
-    .security-graph {
-        min-height: 620px;
-    }
-
-    .graph-canvas {
-        min-height: 620px;
-    }
-
-    .graph-legend {
-        gap: 8px;
-    }
-
-    .graph-legend-item {
-        font-size: 7px;
-    }
-
-    .attack-story-flow {
-        padding-bottom: 10px;
+    .campaign-stats {
+        grid-template-columns:
+            repeat(2, minmax(100px, 1fr));
     }
 }
 
 
 /* =========================================================
-   REDUCED MOTION
+   CAMPAIGN INVESTIGATION
    ========================================================= */
 
-@media (prefers-reduced-motion: reduce) {
+.campaign-card {
+    cursor: pointer;
+}
 
-    *,
-    *::before,
-    *::after {
-        scroll-behavior: auto !important;
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+.campaign-card::after {
+    content: "OPEN INVESTIGATION  →";
+    display: block;
+    margin: 18px 0 0 50px;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 1.1px;
+    color: #62c9ff;
+    opacity: .45;
+    transition: opacity .2s ease;
+}
+
+.campaign-card:hover::after {
+    opacity: 1;
+}
+
+.campaign-investigation-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: none;
+}
+
+.campaign-investigation-overlay.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.campaign-investigation-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(2,7,14,.82);
+    backdrop-filter: blur(8px);
+}
+
+.campaign-investigation-modal {
+    position: relative;
+    width: min(1100px, calc(100vw - 40px));
+    max-height: calc(100vh - 40px);
+    overflow: auto;
+    border: 1px solid rgba(68,190,255,.14);
+    border-radius: 18px;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(8,20,34,.98),
+            rgba(5,11,21,.99)
+        );
+    box-shadow:
+        0 30px 100px rgba(0,0,0,.55);
+}
+
+.campaign-investigation-header {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 24px 28px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    background: rgba(7,16,28,.96);
+    backdrop-filter: blur(14px);
+}
+
+.campaign-investigation-header h2 {
+    margin: 7px 0 0;
+    font-size: 22px;
+}
+
+.campaign-investigation-source {
+    margin-top: 7px;
+    font-family: monospace;
+    font-size: 11px;
+    opacity: .5;
+}
+
+.campaign-close {
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 10px;
+    background: rgba(255,255,255,.035);
+    color: inherit;
+    font-size: 25px;
+    cursor: pointer;
+}
+
+.campaign-close:hover {
+    background: rgba(255,255,255,.08);
+}
+
+.campaign-investigation-body {
+    padding: 26px 28px 34px;
+}
+
+.campaign-investigation-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(120px, 1fr));
+    gap: 10px;
+}
+
+.campaign-investigation-stat {
+    padding: 15px;
+    border: 1px solid rgba(255,255,255,.065);
+    border-radius: 11px;
+    background: rgba(255,255,255,.025);
+}
+
+.campaign-investigation-stat span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 1.2px;
+    opacity: .4;
+}
+
+.campaign-investigation-stat strong {
+    display: block;
+    margin-top: 7px;
+    font-size: 16px;
+}
+
+.campaign-investigation-section {
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid rgba(255,255,255,.065);
+    border-radius: 13px;
+    background: rgba(255,255,255,.018);
+}
+
+.campaign-investigation-section h4 {
+    margin: 0 0 15px;
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    opacity: .6;
+}
+
+.campaign-story {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.campaign-story-stage {
+    padding: 8px 11px;
+    border: 1px solid rgba(68,190,255,.12);
+    border-radius: 8px;
+    background: rgba(17,49,70,.24);
+    font-size: 10px;
+    font-weight: 750;
+}
+
+.campaign-story-arrow {
+    opacity: .35;
+}
+
+.campaign-incident-list {
+    display: grid;
+    gap: 8px;
+}
+
+.campaign-incident-row {
+    display: grid;
+    grid-template-columns: 70px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 11px 12px;
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 8px;
+    background: rgba(255,255,255,.02);
+}
+
+.campaign-incident-id {
+    font-family: monospace;
+    font-size: 10px;
+    opacity: .5;
+}
+
+.campaign-incident-type {
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.campaign-incident-risk {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .7px;
+}
+
+.campaign-analysis {
+    font-size: 12px;
+    line-height: 1.7;
+    opacity: .72;
+}
+
+.campaign-analysis ul {
+    margin: 10px 0 0;
+    padding-left: 18px;
+}
+
+.campaign-analysis li {
+    margin-bottom: 6px;
+}
+
+.campaign-investigation-loading {
+    min-height: 260px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: .55;
+}
+
+@media (max-width: 700px) {
+
+    .campaign-investigation-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .campaign-incident-row {
+        grid-template-columns: 1fr;
+    }
+
+    .campaign-investigation-header,
+    .campaign-investigation-body {
+        padding-left: 18px;
+        padding-right: 18px;
     }
 }
+
+
+/* =========================================================
+   CAMPAIGN INTELLIGENCE — READABLE INVESTIGATION
+   ========================================================= */
+
+.campaign-intel-hero {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 24px;
+    padding: 20px;
+    border: 1px solid rgba(68,190,255,.09);
+    border-radius: 14px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(13,39,58,.30),
+            rgba(255,255,255,.015)
+        );
+}
+
+.campaign-intel-hero-main {
+    flex: 1;
+}
+
+.campaign-intel-hero h3 {
+    margin: 7px 0 8px;
+    font-size: 20px;
+}
+
+.campaign-intel-hero p {
+    max-width: 760px;
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.65;
+    opacity: .65;
+}
+
+.campaign-intel-source {
+    margin-top: 14px;
+    font-size: 9px;
+    letter-spacing: 1px;
+    opacity: .42;
+}
+
+.campaign-intel-source strong {
+    margin-left: 7px;
+    font-family: monospace;
+    font-size: 11px;
+    letter-spacing: 0;
+    opacity: 1;
+}
+
+.campaign-intel-risk {
+    min-width: 105px;
+    padding: 12px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.campaign-intel-risk span {
+    display: block;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: 1px;
+}
+
+.campaign-intel-risk strong {
+    display: block;
+    margin-top: 2px;
+    font-size: 25px;
+}
+
+.campaign-intel-risk::after {
+    content: "";
+    display: block;
+}
+
+.campaign-intel-risk small {
+    display: block;
+    margin-top: 2px;
+    font-size: 7px;
+    letter-spacing: 1px;
+    opacity: .5;
+}
+
+.campaign-intel-metrics {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(120px, 1fr));
+    gap: 8px;
+}
+
+.campaign-intel-metric {
+    padding: 13px;
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 9px;
+    background: rgba(255,255,255,.018);
+}
+
+.campaign-intel-metric span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 1.1px;
+    opacity: .4;
+}
+
+.campaign-intel-metric strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 15px;
+}
+
+.campaign-section-title-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.campaign-section-title-row h4 {
+    margin-bottom: 3px;
+}
+
+.campaign-section-subtitle {
+    margin: 0;
+    font-size: 10px;
+    opacity: .42;
+}
+
+.campaign-intel-badge {
+    padding: 6px 9px;
+    border: 1px solid rgba(68,190,255,.10);
+    border-radius: 7px;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    color: #62c9ff;
+}
+
+.campaign-incident-description {
+    margin-top: 4px;
+    font-size: 9px;
+    opacity: .42;
+}
+
+.campaign-intelligence-grid {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(120px, 1fr));
+    gap: 8px;
+}
+
+.campaign-intelligence-card {
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.05);
+    border-radius: 9px;
+    background: rgba(255,255,255,.018);
+}
+
+.campaign-intelligence-card span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 1px;
+    opacity: .4;
+}
+
+.campaign-intelligence-card strong {
+    display: block;
+    margin-top: 6px;
+    font-size: 19px;
+}
+
+.campaign-intelligence-card small {
+    display: block;
+    margin-top: 4px;
+    font-size: 9px;
+    opacity: .4;
+}
+
+.campaign-analysis-summary {
+    display: flex;
+    gap: 12px;
+    margin-top: 15px;
+    padding: 14px;
+    border: 1px solid rgba(68,190,255,.08);
+    border-radius: 10px;
+    background: rgba(17,49,70,.13);
+}
+
+.campaign-analysis-icon {
+    width: 30px;
+    height: 30px;
+    flex: 0 0 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(68,190,255,.15);
+    border-radius: 8px;
+    font-size: 8px;
+    font-weight: 850;
+    color: #62c9ff;
+}
+
+.campaign-analysis-summary strong {
+    font-size: 11px;
+}
+
+.campaign-analysis-summary p {
+    margin: 5px 0 0;
+    font-size: 10px;
+    line-height: 1.6;
+    opacity: .55;
+}
+
+@media (max-width: 700px) {
+
+    .campaign-intel-hero {
+        flex-direction: column;
+    }
+
+    .campaign-intel-risk {
+        align-self: flex-start;
+    }
+
+    .campaign-intel-metrics,
+    .campaign-intelligence-grid {
+        grid-template-columns:
+            repeat(2, minmax(100px, 1fr));
+    }
+}
+
+
+/* Campaign narrative */
+
+.campaign-narrative {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.campaign-narrative-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 11px;
+    line-height: 1.55;
+    opacity: .68;
+}
+
+.campaign-narrative-dot {
+    width: 5px;
+    height: 5px;
+    flex: 0 0 5px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .65;
+}
+
+
+/* =========================================================
+   CAMPAIGN SECURITY GRAPH
+   ========================================================= */
+
+.campaign-graph-section {
+    overflow: hidden;
+}
+
+.campaign-graph-counts {
+    display: flex;
+    gap: 7px;
+}
+
+.campaign-graph-counts span {
+    padding: 6px 8px;
+    border: 1px solid rgba(68,190,255,.09);
+    border-radius: 7px;
+    background: rgba(17,49,70,.18);
+    font-family: monospace;
+    font-size: 8px;
+    letter-spacing: .7px;
+    color: #62c9ff;
+}
+
+.campaign-graph-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 430px;
+    margin-top: 15px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.055);
+    border-radius: 13px;
+    background:
+        radial-gradient(
+            circle at 50% 45%,
+            rgba(24,71,99,.13),
+            transparent 48%
+        ),
+        linear-gradient(
+            180deg,
+            rgba(3,12,22,.94),
+            rgba(4,10,18,.98)
+        );
+}
+
+.campaign-graph-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .24;
+    background-image:
+        linear-gradient(
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(255,255,255,.025) 1px,
+            transparent 1px
+        );
+    background-size: 40px 40px;
+}
+
+.campaign-security-graph {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100%;
+    min-width: 760px;
+    height: 430px;
+}
+
+.campaign-graph-edge {
+    fill: none;
+    stroke: rgba(98,201,255,.22);
+    stroke-width: 1.3;
+    stroke-dasharray: 5 5;
+    animation:
+        campaignGraphFlow 2.8s linear infinite;
+}
+
+.campaign-graph-node {
+    cursor: default;
+}
+
+.campaign-graph-node circle:first-child {
+    fill: rgba(6,18,31,.96);
+    stroke: rgba(98,201,255,.22);
+    stroke-width: 1.5;
+    transition:
+        stroke .2s ease,
+        filter .2s ease,
+        transform .2s ease;
+}
+
+.campaign-graph-node-core {
+    fill: currentColor;
+    opacity: .9;
+}
+
+.campaign-graph-node-type {
+    fill: rgba(210,230,244,.48);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    text-anchor: middle;
+}
+
+.campaign-graph-node-label {
+    fill: rgba(230,240,248,.72);
+    font-family: monospace;
+    font-size: 7px;
+    text-anchor: middle;
+}
+
+.campaign-graph-node.is-active circle:first-child {
+    stroke: rgba(98,201,255,.9);
+    filter:
+        drop-shadow(
+            0 0 8px rgba(98,201,255,.5)
+        );
+}
+
+.campaign-graph-node.source {
+    color: #62c9ff;
+}
+
+.campaign-graph-node.event {
+    color: #60a5fa;
+}
+
+.campaign-graph-node.detection {
+    color: #a78bfa;
+}
+
+.campaign-graph-node.alert {
+    color: #fbbf24;
+}
+
+.campaign-graph-node.risk {
+    color: #fb7185;
+}
+
+.campaign-graph-node.incident {
+    color: #c084fc;
+}
+
+.campaign-graph-node.response {
+    color: #34d399;
+}
+
+.campaign-graph-node.status {
+    color: #94a3b8;
+}
+
+.campaign-graph-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 13px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.045);
+}
+
+.campaign-graph-legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 8px;
+    letter-spacing: .7px;
+    opacity: .48;
+}
+
+.campaign-graph-dot {
+    width: 6px;
+    height: 6px;
+    display: inline-block;
+    border-radius: 50%;
+}
+
+.campaign-graph-dot.source {
+    background: #62c9ff;
+}
+
+.campaign-graph-dot.event {
+    background: #60a5fa;
+}
+
+.campaign-graph-dot.detection {
+    background: #a78bfa;
+}
+
+.campaign-graph-dot.alert {
+    background: #fbbf24;
+}
+
+.campaign-graph-dot.incident {
+    background: #c084fc;
+}
+
+.campaign-graph-dot.risk {
+    background: #fb7185;
+}
+
+.campaign-graph-dot.response {
+    background: #34d399;
+}
+
+@keyframes campaignGraphFlow {
+
+    from {
+        stroke-dashoffset: 20;
+    }
+
+    to {
+        stroke-dashoffset: 0;
+    }
+
+}
+
+@media (max-width: 800px) {
+
+    .campaign-graph-wrapper {
+        overflow-x: auto;
+    }
+
+}
+
+
+
+
+/* AEGIS X CAMPAIGN GRAPH V16 */
+
+.campaign-graph-v16 {
+    position: relative;
+    margin-top: 28px;
+    padding: 24px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: 20px;
+    background:
+        radial-gradient(
+            circle at 15% 10%,
+            rgba(76, 201, 240, 0.07),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(139, 92, 246, 0.06),
+            transparent 32%
+        ),
+        rgba(7, 11, 20, 0.92);
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.28),
+        inset 0 1px 0 rgba(255,255,255,0.025);
+    overflow: hidden;
+}
+
+.campaign-graph-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 18px;
+}
+
+.campaign-graph-kicker {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    color: #64748b;
+    margin-bottom: 7px;
+}
+
+.campaign-graph-header h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 800;
+    color: #f8fafc;
+}
+
+.campaign-graph-header p {
+    margin: 7px 0 0;
+    max-width: 680px;
+    color: #94a3b8;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.campaign-graph-controls {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+.campaign-graph-control {
+    min-width: 38px;
+    height: 36px;
+    padding: 0 11px;
+    border: 1px solid rgba(148, 163, 184, 0.18);
+    border-radius: 9px;
+    background: rgba(15, 23, 42, 0.8);
+    color: #dbeafe;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition:
+        transform 160ms ease,
+        border-color 160ms ease,
+        background 160ms ease;
+}
+
+.campaign-graph-control:hover {
+    transform: translateY(-1px);
+    border-color: rgba(76, 201, 240, 0.45);
+    background: rgba(30, 41, 59, 0.95);
+}
+
+.campaign-graph-zoom-value {
+    min-width: 66px;
+    color: #94a3b8;
+    cursor: default;
+}
+
+.campaign-graph-fit {
+    color: #67e8f9;
+}
+
+.campaign-graph-counts {
+    display: flex;
+    align-items: stretch;
+    gap: 9px;
+    margin-bottom: 14px;
+}
+
+.campaign-graph-stat {
+    min-width: 100px;
+    padding: 10px 13px;
+    border: 1px solid rgba(148, 163, 184, 0.12);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.58);
+}
+
+.campaign-graph-stat-value {
+    display: block;
+    color: #f8fafc;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.campaign-graph-stat-label {
+    display: block;
+    margin-top: 2px;
+    color: #64748b;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.campaign-graph-flow-status {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    margin-left: auto;
+    padding: 0 13px;
+    border-radius: 10px;
+    color: #64748b;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+}
+
+.campaign-flow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #22c55e;
+    box-shadow: 0 0 12px rgba(34,197,94,0.7);
+    animation: campaignGraphPulse 1.8s infinite;
+}
+
+@keyframes campaignGraphPulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.45;
+        transform: scale(0.75);
+    }
+}
+
+.campaign-graph-wrapper {
+    position: relative;
+    width: 100%;
+    height: 650px;
+    min-height: 560px;
+    overflow: hidden;
+    border: 1px solid rgba(71, 85, 105, 0.22);
+    border-radius: 16px;
+    background: #050912;
+}
+
+.campaign-security-graph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    user-select: none;
+}
+
+.campaign-security-graph.is-dragging {
+    cursor: grabbing;
+}
+
+.campaign-graph-background {
+    fill:
+        radial-gradient(
+            circle,
+            rgba(30, 41, 59, 0.5),
+            rgba(5, 9, 18, 1)
+        );
+    fill: #050912;
+}
+
+.campaign-graph-grid-line {
+    stroke: rgba(148, 163, 184, 0.055);
+    stroke-width: 1;
+}
+
+.campaign-graph-edge {
+    fill: none;
+    stroke: rgba(100, 116, 139, 0.5);
+    stroke-width: 2;
+    transition:
+        stroke 180ms ease,
+        opacity 180ms ease,
+        stroke-width 180ms ease;
+}
+
+.campaign-graph-edge-group {
+    opacity: 1;
+}
+
+.campaign-graph-edge-group.is-active .campaign-graph-edge {
+    stroke: #67e8f9;
+    stroke-width: 3.5;
+    filter: url(#campaignGraphGlow);
+}
+
+.campaign-graph-edge-group.is-muted {
+    opacity: 0.08;
+}
+
+.campaign-graph-edge-label {
+    fill: #64748b;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-anchor: middle;
+    pointer-events: none;
+    text-transform: uppercase;
+}
+
+.campaign-graph-edge {
+    stroke-dasharray: 7 7;
+    animation: campaignGraphFlow 2.8s linear infinite;
+}
+
+@keyframes campaignGraphFlow {
+    to {
+        stroke-dashoffset: -42;
+    }
+}
+
+.campaign-graph-node {
+    cursor: pointer;
+    transition: opacity 180ms ease;
+}
+
+.campaign-graph-node-glow {
+    fill: var(--node-accent, #38bdf8);
+    opacity: 0.07;
+    transition:
+        opacity 180ms ease,
+        r 180ms ease;
+}
+
+.campaign-graph-node-circle {
+    fill: #0b1220;
+    stroke: var(--node-accent, #38bdf8);
+    stroke-width: 2;
+    transition:
+        r 180ms ease,
+        stroke-width 180ms ease,
+        filter 180ms ease;
+}
+
+.campaign-graph-node:hover .campaign-graph-node-circle,
+.campaign-graph-node.is-selected .campaign-graph-node-circle {
+    stroke-width: 3;
+    filter: url(#campaignGraphGlow);
+}
+
+.campaign-graph-node:hover .campaign-graph-node-glow,
+.campaign-graph-node.is-selected .campaign-graph-node-glow {
+    opacity: 0.22;
+    r: 40;
+}
+
+.campaign-graph-node.is-muted {
+    opacity: 0.13;
+}
+
+.campaign-graph-node-type {
+    fill: var(--node-accent, #38bdf8);
+    font-size: 9px;
+    font-weight: 900;
+    text-anchor: middle;
+    letter-spacing: 0.06em;
+    pointer-events: none;
+}
+
+.campaign-graph-node-label {
+    fill: #cbd5e1;
+    font-size: 13px;
+    font-weight: 700;
+    text-anchor: middle;
+    pointer-events: none;
+    paint-order: stroke;
+    stroke: #050912;
+    stroke-width: 5px;
+    stroke-linejoin: round;
+}
+
+.node-source {
+    --node-accent: #4cc9f0;
+}
+
+.node-event {
+    --node-accent: #8b5cf6;
+}
+
+.node-detection {
+    --node-accent: #f59e0b;
+}
+
+.node-alert {
+    --node-accent: #fb7185;
+}
+
+.node-risk {
+    --node-accent: #ef4444;
+}
+
+.node-incident {
+    --node-accent: #f43f5e;
+}
+
+.node-response {
+    --node-accent: #22c55e;
+}
+
+.node-status {
+    --node-accent: #38bdf8;
+}
+
+.campaign-graph-tooltip {
+    position: absolute;
+    z-index: 20;
+    min-width: 240px;
+    max-width: 330px;
+    padding: 13px 14px;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    border-radius: 12px;
+    background: rgba(8, 13, 24, 0.97);
+    box-shadow:
+        0 20px 45px rgba(0,0,0,0.4),
+        inset 0 1px 0 rgba(255,255,255,0.035);
+    backdrop-filter: blur(14px);
+    opacity: 0;
+    transform: translateY(4px);
+    pointer-events: none;
+    transition:
+        opacity 120ms ease,
+        transform 120ms ease;
+}
+
+.campaign-graph-tooltip.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.campaign-graph-tooltip-type {
+    color: #67e8f9;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+    margin-bottom: 4px;
+}
+
+.campaign-graph-tooltip-title {
+    color: #f8fafc;
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 9px;
+}
+
+.campaign-graph-tooltip-data {
+    display: grid;
+    gap: 6px;
+}
+
+.campaign-graph-tooltip-data > div {
+    display: flex;
+    gap: 9px;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+.campaign-graph-tooltip-data b {
+    min-width: 52px;
+    color: #64748b;
+}
+
+.campaign-graph-tooltip-data span {
+    color: #cbd5e1;
+}
+
+.campaign-graph-hint {
+    position: absolute;
+    right: 15px;
+    bottom: 13px;
+    padding: 7px 10px;
+    border: 1px solid rgba(148, 163, 184, 0.1);
+    border-radius: 8px;
+    background: rgba(5, 9, 18, 0.78);
+    color: #64748b;
+    font-size: 10px;
+    backdrop-filter: blur(8px);
+}
+
+.campaign-graph-hint span {
+    color: #94a3b8;
+    font-weight: 800;
+}
+
+.campaign-graph-legend {
+    margin-top: 15px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.campaign-graph-legend-title {
+    margin-bottom: 9px;
+    color: #475569;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: 0.14em;
+}
+
+.campaign-graph-legend-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 13px;
+}
+
+.campaign-graph-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #94a3b8;
+    font-size: 10px;
+}
+
+.campaign-node-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    box-shadow: 0 0 8px currentColor;
+}
+
+.campaign-node-dot.node-source {
+    color: #4cc9f0;
+    background: #4cc9f0;
+}
+
+.campaign-node-dot.node-event {
+    color: #8b5cf6;
+    background: #8b5cf6;
+}
+
+.campaign-node-dot.node-detection {
+    color: #f59e0b;
+    background: #f59e0b;
+}
+
+.campaign-node-dot.node-alert {
+    color: #fb7185;
+    background: #fb7185;
+}
+
+.campaign-node-dot.node-risk {
+    color: #ef4444;
+    background: #ef4444;
+}
+
+.campaign-node-dot.node-incident {
+    color: #f43f5e;
+    background: #f43f5e;
+}
+
+.campaign-node-dot.node-response {
+    color: #22c55e;
+    background: #22c55e;
+}
+
+.campaign-node-dot.node-status {
+    color: #38bdf8;
+    background: #38bdf8;
+}
+
+@media (max-width: 900px) {
+
+    .campaign-graph-header {
+        flex-direction: column;
+    }
+
+    .campaign-graph-controls {
+        width: 100%;
+    }
+
+    .campaign-graph-counts {
+        flex-wrap: wrap;
+    }
+
+    .campaign-graph-flow-status {
+        width: 100%;
+        margin-left: 0;
+        padding: 8px 0;
+    }
+
+    .campaign-graph-wrapper {
+        height: 520px;
+    }
+
+    .campaign-graph-hint {
+        display: none;
+    }
+}
+
+/* =========================================================
+   CAMPAIGN SECURITY GRAPH — AUTO FIT / RESPONSIVE V2
+   ========================================================= */
+
+.campaign-graph-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 560px;
+    height: 680px;
+    overflow: hidden;
+    border-radius: 18px;
+}
+
+.campaign-security-graph {
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: visible;
+}
+
+.campaign-security-graph .campaign-graph-edge {
+    vector-effect: non-scaling-stroke;
+}
+
+.campaign-security-graph .campaign-graph-node {
+    cursor: pointer;
+}
+
+.campaign-graph-auto-fitted {
+    overflow: hidden;
+}
+
+@media (max-width: 1100px) {
+    .campaign-graph-wrapper {
+        height: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .campaign-graph-wrapper {
+        height: 520px;
+        min-height: 480px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .campaign-security-graph {
+        min-width: 900px;
+    }
+}
+
+/* =========================================================
+   CAMPAIGN GRAPH — RELATIONSHIP INSPECTOR
+   ========================================================= */
+
+.campaign-graph-relationship-inspector {
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+    min-width: 190px;
+    max-width: 280px;
+    padding: 12px 15px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    background: rgba(10, 15, 25, 0.92);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.28);
+    opacity: 0;
+    transform: translateY(6px);
+    pointer-events: none;
+    transition:
+        opacity 0.18s ease,
+        transform 0.18s ease;
+    z-index: 20;
+}
+
+.campaign-graph-relationship-inspector.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.campaign-graph-inspector-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    opacity: 0.55;
+    margin-bottom: 5px;
+}
+
+.campaign-graph-inspector-value {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.campaign-security-graph .campaign-graph-edge {
+    cursor: pointer;
+    transition:
+        opacity 0.18s ease,
+        stroke-width 0.18s ease;
+}
+
+.campaign-security-graph .campaign-graph-edge-active {
+    opacity: 1 !important;
+    stroke-width: 4 !important;
+}
+
+/* =========================================================
+   AEGIS X — INVESTIGATION EVIDENCE CHAIN
+   ========================================================= */
+
+.evidence-chain-panel {
+    margin-top: 18px;
+}
+
+.evidence-chain-header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-start;
+    margin-bottom: 18px;
+}
+
+.evidence-chain-header h3 {
+    margin: 4px 0 6px;
+}
+
+.evidence-chain-header p {
+    margin: 0;
+    opacity: .7;
+}
+
+.evidence-chain-risk {
+    min-width: 100px;
+    padding: 12px 16px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    text-align: right;
+}
+
+.evidence-chain-risk span,
+.evidence-chain-risk small {
+    display: block;
+    font-size: 10px;
+    letter-spacing: .12em;
+    opacity: .6;
+}
+
+.evidence-chain-risk strong {
+    display: block;
+    font-size: 25px;
+    margin: 2px 0;
+}
+
+.evidence-chain-metrics {
+    display: grid;
+    grid-template-columns:
+        repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.evidence-chain-metrics > div {
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    background: rgba(255,255,255,.025);
+}
+
+.evidence-chain-metrics strong {
+    display: block;
+    font-size: 22px;
+}
+
+.evidence-chain-metrics span {
+    font-size: 11px;
+    opacity: .6;
+}
+
+.evidence-chain-flow {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    margin-bottom: 20px;
+    overflow-x: auto;
+}
+
+.evidence-chain-node {
+    flex: 1;
+    min-width: 145px;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 12px;
+    background: rgba(255,255,255,.025);
+}
+
+.evidence-chain-node span {
+    font-size: 10px;
+    opacity: .45;
+}
+
+.evidence-chain-node strong {
+    display: block;
+    margin: 5px 0;
+    font-size: 12px;
+    letter-spacing: .08em;
+}
+
+.evidence-chain-node small {
+    opacity: .65;
+}
+
+.evidence-chain-arrow {
+    display: flex;
+    align-items: center;
+    opacity: .5;
+    font-size: 20px;
+}
+
+.evidence-chain-section {
+    margin-top: 18px;
+}
+
+.evidence-chain-progression {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.evidence-chain-stage {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.1);
+    background: rgba(255,255,255,.025);
+    font-size: 11px;
+}
+
+.evidence-mitre-list {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.evidence-mitre-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 10px;
+}
+
+.evidence-mitre-item strong {
+    margin-right: 10px;
+}
+
+.evidence-mitre-item span {
+    opacity: .75;
+}
+
+.evidence-chain-empty {
+    padding: 12px 14px;
+    border: 1px dashed rgba(255,255,255,.12);
+    border-radius: 10px;
+    opacity: .6;
+    font-size: 12px;
+}
+
+@media (max-width: 800px) {
+
+    .evidence-chain-metrics {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .evidence-chain-header {
+        flex-direction: column;
+    }
+}
+
+
+/* ============================================================
+   AEGIS X — INVESTIGATION POLISH v31
+   ============================================================ */
+
+/* Cleaner investigation drawer */
+
+.investigation-panel {
+    max-width: 1320px;
+}
+
+.investigation-content {
+    padding-top: 16px;
+    padding-bottom: 28px;
+}
+
+.investigation-section {
+    margin-bottom: 16px;
+}
+
+
+/* Tighter AI investigation cards */
+
+.ai-investigation-container {
+    margin-bottom: 14px;
+}
+
+.investigation-summary {
+    padding: 18px;
+}
+
+.investigation-risk,
+.investigation-details {
+    gap: 10px;
+}
+
+.investigation-risk > div,
+.investigation-details > div {
+    padding: 12px 14px;
+}
+
+
+/* Compact attack story */
+
+.attack-story {
+    margin-top: 12px;
+    padding: 16px;
+}
+
+.attack-story-head {
+    margin-bottom: 12px;
+}
+
+.attack-story-flow {
+    gap: 8px;
+}
+
+.story-step {
+    min-height: 58px;
+    padding: 10px 12px;
+}
+
+.story-step small {
+    line-height: 1.35;
+}
+
+.story-arrow {
+    font-size: 14px;
+}
+
+
+/* Cleaner graph */
+
+.graph-legend {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px 12px;
+    padding: 9px 12px;
+}
+
+.graph-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    line-height: 1;
+}
+
+.graph-legend-dot {
+    width: 8px !important;
+    height: 8px !important;
+    min-width: 8px !important;
+    min-height: 8px !important;
+    max-width: 8px !important;
+    max-height: 8px !important;
+    border-radius: 50%;
+    display: inline-block;
+    flex: 0 0 8px;
+}
+
+
+/* Compact timeline */
+
+.investigation-timeline,
+.timeline {
+    padding-top: 4px;
+}
+
+.timeline-item {
+    margin-bottom: 9px;
+}
+
+.timeline-card {
+    padding: 13px 15px;
+}
+
+.timeline-card-head {
+    margin-bottom: 5px;
+}
+
+.timeline-card p {
+    margin-top: 5px;
+    margin-bottom: 7px;
+    line-height: 1.4;
+}
+
+.timeline-meta {
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.timeline-meta span {
+    padding: 4px 7px;
+    font-size: 10px;
+}
+
+.timeline-empty {
+    padding: 22px;
+}
+
+
+/* Make repeated evidence visually subordinate */
+
+.timeline-event .timeline-card,
+.timeline-alert .timeline-card {
+    min-height: 0;
+}
+
+
+/* Cleaner section spacing */
+
+.investigation-section-header,
+.graph-section-header,
+.timeline-section-header {
+    margin-bottom: 10px;
+}
+
+.investigation-section-header p,
+.graph-section-header p,
+.timeline-section-header p {
+    margin-top: 3px;
+}
+
+
+/* Prevent oversized graph legend elements */
+
+.graph-legend *,
+.graph-legend-item *,
+.graph-legend-dot {
+    box-sizing: border-box;
+}
+
+
+/* ============================================================
+   AEGIS X AUTO-FIX
+   ============================================================ */
+
+.auto-fix-btn,
+.investigation-auto-fix {
+
+    border:
+        1px solid
+        rgba(255, 190, 80, 0.50);
+
+    background:
+        rgba(255, 170, 40, 0.08);
+
+    color:
+        #ffd27a;
+
+    font-weight:
+        700;
+
+}
+
+
+.auto-fix-btn:hover,
+.investigation-auto-fix:hover {
+
+    background:
+        rgba(255, 170, 40, 0.16);
+
+    border-color:
+        rgba(255, 196, 80, 0.80);
+
+}
+
+
+.investigation-auto-fix {
+
+    padding:
+        9px 14px;
+
+    border-radius:
+        9px;
+
+    cursor:
+        pointer;
+
+}
+
+
+/* AEGIS_AUTO_FIX_CSS_START */
+
+.auto-fix-btn,
+.investigation-auto-fix {
+    border: 1px solid rgba(255, 184, 77, 0.45);
+    background: rgba(255, 184, 77, 0.10);
+    color: #ffcf70;
+    cursor: pointer;
+    transition:
+        background 0.18s ease,
+        border-color 0.18s ease,
+        transform 0.18s ease,
+        box-shadow 0.18s ease;
+}
+
+.auto-fix-btn:hover,
+.investigation-auto-fix:hover {
+    background: rgba(255, 184, 77, 0.20);
+    border-color: rgba(255, 184, 77, 0.75);
+    box-shadow: 0 0 18px rgba(255, 184, 77, 0.12);
+    transform: translateY(-1px);
+}
+
+.investigation-auto-fix {
+    min-height: 38px;
+    padding: 0 15px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+}
+
+@media (max-width: 800px) {
+    .investigation-auto-fix {
+        padding: 0 10px;
+        font-size: 11px;
+    }
+}
+
+/* AEGIS_AUTO_FIX_CSS_END */
+

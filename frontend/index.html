@@ -1,845 +1,506 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    >
-
-    <title>AEGIS X — Security Operations Center</title>
-
-    <link
-        rel="stylesheet"
-        href="/static/style.css?v=4"
-    >
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEGIS X — Security Intelligence</title>
+    <link rel="stylesheet" href="/static/style.css?v=40">
 </head>
 
 <body>
 
-    <!-- =========================================================
-         AEGIS X APPLICATION
-         ========================================================= -->
+<div class="app">
 
-    <div class="app-shell">
+    <header class="topbar">
+        <div class="brand">
+            <div class="brand-mark">A</div>
+            <div>
+                <h1>AEGIS X</h1>
+                <span>SECURITY INTELLIGENCE &amp; DEFENSE PLATFORM</span>
+            </div>
+        </div>
 
-        <!-- =====================================================
-             SIDEBAR
-             ===================================================== -->
+        <div class="topbar-right">
+            <div class="health">
+                <i id="healthDot"></i>
+                <span id="healthText">Checking</span>
+            </div>
 
-        <aside class="sidebar">
+            <button id="refreshBtn" class="refresh-btn">
+                ↻ Refresh
+            </button>
+        </div>
+    </header>
 
-            <div class="brand">
 
-                <span class="brand-mark">
-                    A
-                </span>
+    <main class="main">
+
+        <section class="hero">
+            <div>
+                <div class="eyebrow">SECURITY OPERATIONS CENTER</div>
+                <h2>Security Intelligence Dashboard</h2>
+                <p>
+                    Unified visibility across events, detections,
+                    incidents, response activity and investigation intelligence.
+                </p>
+            </div>
+
+            <div class="last-updated" id="lastUpdated">
+                Updating...
+            </div>
+        </section>
+        <section class="soc-status-bar">
+
+            <div class="soc-status-main">
+                <span class="soc-live-dot"></span>
 
                 <div>
-                    <strong>AEGIS X</strong>
+                    <strong>SOC OPERATIONS</strong>
+                    <small>AEGIS X SECURITY FABRIC</small>
+                </div>
+            </div>
 
-                    <small>
-                        Security Intelligence
-                    </small>
+            <div class="soc-status-item">
+                <span class="soc-status-icon">◉</span>
+                <div>
+                    <strong id="socEventStatus">— EVENTS</strong>
+                    <small>TELEMETRY</small>
+                </div>
+            </div>
+
+            <div class="soc-status-item">
+                <span class="soc-status-icon alert">!</span>
+                <div>
+                    <strong id="socAlertStatus">— ALERTS</strong>
+                    <small>ACTIVE DETECTIONS</small>
+                </div>
+            </div>
+
+            <div class="soc-status-item">
+                <span class="soc-status-icon incident">◆</span>
+                <div>
+                    <strong id="socIncidentStatus">— INCIDENTS</strong>
+                    <small>OPEN CASES</small>
+                </div>
+            </div>
+
+            <div class="soc-status-item">
+                <span class="soc-status-icon risk">▲</span>
+                <div>
+                    <strong id="socRiskStatus">RISK —</strong>
+                    <small>MAX RISK SCORE</small>
+                </div>
+            </div>
+
+            <div class="soc-simulation">
+                <span></span>
+                SIMULATION MODE
+            </div>
+
+        </section>
+
+
+
+        <!-- METRICS -->
+
+        <section class="metrics">
+
+            <div class="metric-card">
+                <span>SECURITY EVENTS</span>
+                <strong id="eventsCount">—</strong>
+                <small>Observed telemetry</small>
+            </div>
+
+            <div class="metric-card">
+                <span>ACTIVE ALERTS</span>
+                <strong id="activeAlerts">—</strong>
+                <small>Unresolved detections</small>
+            </div>
+
+            <div class="metric-card">
+                <span>OPEN INCIDENTS</span>
+                <strong id="openIncidents">—</strong>
+                <small>Active investigations</small>
+            </div>
+
+            <div class="metric-card">
+                <span>HIGHEST RISK</span>
+                <strong id="highestRisk">—</strong>
+                <small>Current risk score</small>
+            </div>
+
+        </section>
+
+
+        <!-- DETECTIONS / RESPONSE -->
+
+        <section class="two-column">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <span class="eyebrow">DETECTION ENGINE</span>
+                        <h3>Threat Detections</h3>
+                    </div>
+
+                    <span id="detectionTag" class="tag">
+                        Loading
+                    </span>
+                </div>
+
+                <div id="detections" class="activity-list">
+                    <div class="loading">Loading detections...</div>
                 </div>
 
             </div>
 
 
-            <nav>
+            <div class="panel">
 
-                <a
-                    class="active"
-                    href="#overview"
-                >
-                    Overview
-                </a>
+                <div class="panel-header">
+                    <div>
+                        <span class="eyebrow">RESPONSE ENGINE</span>
+                        <h3>Response Activity</h3>
+                    </div>
 
-                <a href="#incidents">
-                    Incidents
-                </a>
+                    <span id="responseTag" class="tag">
+                        Loading
+                    </span>
+                </div>
 
-                <a href="#alerts">
-                    Alerts
-                </a>
-
-                <a href="#responses">
-                    Responses
-                </a>
-
-                <a href="#events">
-                    Events
-                </a>
-
-            </nav>
-
-
-            <div class="sidebar-footer">
-
-                <span class="dot"></span>
-
-                Simulation mode
+                <div id="responses" class="activity-list">
+                    <div class="loading">Loading responses...</div>
+                </div>
 
             </div>
 
-        </aside>
+        </section>
 
 
-        <!-- =====================================================
-             MAIN CONTENT
-             ===================================================== -->
+        <!-- INCIDENTS -->
 
-        <main class="main">
+        <section class="panel">
 
-            <!-- =================================================
-                 TOP BAR
-                 ================================================= -->
-
-            <header class="topbar">
-
+            <div class="panel-header">
                 <div>
-
-                    <div class="eyebrow">
-                        SECURITY OPERATIONS CENTER
-                    </div>
-
-                    <h1>
-                        Command Center
-                    </h1>
-
+                    <span class="eyebrow">INCIDENT MANAGEMENT</span>
+                    <h3>Security Incidents</h3>
                 </div>
 
+                <span class="tag">LIVE</span>
+            </div>
 
-                <div class="top-actions">
+            <div class="table-wrap">
 
-                    <span id="lastUpdated">
-                        Loading...
-                    </span>
+                <table>
 
-                    <button
-                        id="refreshBtn"
-                        type="button"
-                    >
-                        Refresh
-                    </button>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>TYPE</th>
+                            <th>SOURCE</th>
+                            <th>RISK</th>
+                            <th>LEVEL</th>
+                            <th>STATUS</th>
+                            <th>LAST SEEN</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
 
-                </div>
+                    <tbody id="incidentRows">
+                        <tr>
+                            <td colspan="8" class="empty">
+                                Loading incidents...
+                            </td>
+                        </tr>
+                    </tbody>
 
-            </header>
+                </table>
+
+            </div>
+
+        </section>
 
 
-            <!-- =================================================
-                 OVERVIEW
-                 ================================================= -->
+        <!-- ALERT HISTORY -->
 
-            <section
-                id="overview"
-                class="hero"
-            >
+        <section class="panel">
 
+            <div class="panel-header">
                 <div>
-
-                    <div class="eyebrow">
-                        AEGIS X STATUS
-                    </div>
-
-                    <h2>
-                        Defensive intelligence at a glance.
-                    </h2>
-
-                    <p>
-                        Detection, risk assessment,
-                        incident correlation and
-                        simulated response in one view.
-                    </p>
-
+                    <span class="eyebrow">DETECTION HISTORY</span>
+                    <h3>Alert History</h3>
                 </div>
+            </div>
+
+            <div class="table-wrap">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>TYPE</th>
+                            <th>SOURCE</th>
+                            <th>RISK</th>
+                            <th>LEVEL</th>
+                            <th>STATUS</th>
+                            <th>CREATED</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="alertRows">
+                        <tr>
+                            <td colspan="7" class="empty">
+                                Loading alerts...
+                            </td>
+                        </tr>
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
 
 
-                <div class="health">
+        <!-- EVENTS -->
 
-                    <span class="pulse"></span>
+        <section class="panel">
 
-                    <div>
-
-                        <strong id="healthText">
-                            Checking
-                        </strong>
-
-                        <small>
-                            API health
-                        </small>
-
-                    </div>
-
+            <div class="panel-header">
+                <div>
+                    <span class="eyebrow">RAW TELEMETRY</span>
+                    <h3>Security Events</h3>
                 </div>
+            </div>
 
-            </section>
+            <div class="table-wrap">
 
+                <table>
 
-            <!-- =================================================
-                 METRICS
-                 ================================================= -->
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>EVENT</th>
+                            <th>SOURCE</th>
+                            <th>HOST</th>
+                            <th>USER</th>
+                            <th>SEVERITY</th>
+                            <th>TIMESTAMP</th>
+                        </tr>
+                    </thead>
 
-            <section class="metrics">
+                    <tbody id="eventRows">
+                        <tr>
+                            <td colspan="7" class="empty">
+                                Loading events...
+                            </td>
+                        </tr>
+                    </tbody>
 
-                <article class="metric">
+                </table>
 
-                    <span>
-                        Events analyzed
-                    </span>
+            </div>
 
-                    <strong id="eventsCount">
-                        —
-                    </strong>
+        </section>
 
-                    <small>
-                        Telemetry records
-                    </small>
+    
 
-                </article>
+<!-- CAMPAIGN INTELLIGENCE -->
+<section id="campaigns" class="panel campaign-intelligence-panel">
 
+    <div class="campaign-panel-head">
 
-                <article class="metric danger">
+        <div class="campaign-heading">
 
-                    <span>
-                        Active alerts
-                    </span>
+            <div class="campaign-eyebrow">
+                AEGIS X · CORRELATION ENGINE
+            </div>
 
-                    <strong id="activeAlerts">
-                        —
-                    </strong>
+            <h3>Campaign Intelligence</h3>
 
-                    <small>
-                        New / acknowledged
-                    </small>
+            <p>
+                Correlated attack activity across related security incidents.
+            </p>
 
-                </article>
-
-
-                <article class="metric warning">
-
-                    <span>
-                        Open incidents
-                    </span>
-
-                    <strong id="openIncidents">
-                        —
-                    </strong>
-
-                    <small>
-                        Requires attention
-                    </small>
-
-                </article>
-
-
-                <article class="metric accent">
-
-                    <span>
-                        Highest risk
-                    </span>
-
-                    <strong id="highestRisk">
-                        —
-                    </strong>
-
-                    <small>
-                        Current incident score
-                    </small>
-
-                </article>
-
-            </section>
-
-
-            <!-- =================================================
-                 DETECTIONS + RESPONSES
-                 ================================================= -->
-
-            <section class="grid-two">
-
-                <!-- THREAT DETECTIONS -->
-
-                <article class="panel">
-
-                    <div class="panel-head">
-
-                        <div>
-
-                            <h3>
-                                Threat detections
-                            </h3>
-
-                            <p>
-                                Latest detection pipeline result
-                            </p>
-
-                        </div>
-
-                        <span
-                            class="tag"
-                            id="detectionTag"
-                        >
-                            —
-                        </span>
-
-                    </div>
-
-
-                    <div
-                        id="detections"
-                        class="detection-list"
-                    >
-
-                        <div class="empty">
-                            Loading detections...
-                        </div>
-
-                    </div>
-
-                </article>
-
-
-                <!-- RESPONSE ACTIVITY -->
-
-                <article class="panel">
-
-                    <div class="panel-head">
-
-                        <div>
-
-                            <h3>
-                                Response activity
-                            </h3>
-
-                            <p>
-                                Simulated defensive actions
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="responses"
-                        class="activity-list"
-                    >
-
-                        <div class="empty">
-                            Loading responses...
-                        </div>
-
-                    </div>
-
-                </article>
-
-            </section>
-
-
-            <!-- =================================================
-                 INCIDENTS
-                 ================================================= -->
-
-            <section
-                id="incidents"
-                class="panel table-panel"
-            >
-
-                <div class="panel-head">
-
-                    <div>
-
-                        <h3>
-                            Incidents
-                        </h3>
-
-                        <p>
-                            Correlated security incidents
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    ID
-                                </th>
-
-                                <th>
-                                    Type
-                                </th>
-
-                                <th>
-                                    Source
-                                </th>
-
-                                <th>
-                                    Risk
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    Last seen
-                                </th>
-
-                                <th>
-                                    Action
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="incidentRows">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 ALERT HISTORY
-                 ================================================= -->
-
-            <section
-                id="alerts"
-                class="panel table-panel"
-            >
-
-                <div class="panel-head">
-
-                    <div>
-
-                        <h3>
-                            Alert history
-                        </h3>
-
-                        <p>
-                            Detection alerts stored by AEGIS X
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    ID
-                                </th>
-
-                                <th>
-                                    Type
-                                </th>
-
-                                <th>
-                                    Severity
-                                </th>
-
-                                <th>
-                                    Risk
-                                </th>
-
-                                <th>
-                                    Source
-                                </th>
-
-                                <th>
-                                    Status
-                                </th>
-
-                                <th>
-                                    Created
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="alertRows">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 RECENT EVENTS
-                 ================================================= -->
-
-            <section
-                id="events"
-                class="panel table-panel"
-            >
-
-                <div class="panel-head">
-
-                    <div>
-
-                        <h3>
-                            Recent events
-                        </h3>
-
-                        <p>
-                            Latest security telemetry
-                        </p>
-
-                    </div>
-
-                </div>
-
-
-                <div class="table-wrap">
-
-                    <table>
-
-                        <thead>
-
-                            <tr>
-
-                                <th>
-                                    ID
-                                </th>
-
-                                <th>
-                                    Event
-                                </th>
-
-                                <th>
-                                    Source
-                                </th>
-
-                                <th>
-                                    IP
-                                </th>
-
-                                <th>
-                                    Severity
-                                </th>
-
-                                <th>
-                                    Description
-                                </th>
-
-                                <th>
-                                    Time
-                                </th>
-
-                            </tr>
-
-                        </thead>
-
-
-                        <tbody id="eventRows">
-                        </tbody>
-
-                    </table>
-
-                </div>
-
-            </section>
-
-
-            <!-- =================================================
-                 TOAST
-                 ================================================= -->
-
-            <div
-                id="toast"
-                class="toast"
-            ></div>
-
-
-            <!-- =================================================
-                 FOOTER
-                 ================================================= -->
-
-            <footer>
-
-                AEGIS X · Authorized defensive security
-                operations · Response engine currently simulated
-
-            </footer>
-
-        </main>
-
-    </div>
-
-
-    <!-- =========================================================
-         INVESTIGATION OVERLAY
-         ========================================================= -->
-
-    <div
-        id="investigationOverlay"
-        class="investigation-overlay"
-        aria-hidden="true"
-    >
-
-        <!-- BACKDROP -->
+        </div>
 
         <div
-            class="investigation-backdrop"
-            onclick="closeInvestigation()"
-        ></div>
-
-
-        <!-- =====================================================
-             INVESTIGATION DRAWER
-             ===================================================== -->
-
-        <aside
-            class="investigation-panel"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="investigationTitle"
+            id="campaignSummary"
+            class="campaign-summary"
         >
-
-            <!-- =================================================
-                 INVESTIGATION HEADER
-                 ================================================= -->
-
-            <div class="investigation-header">
-
-                <div>
-
-                    <div class="investigation-eyebrow">
-                        AEGIS X · SECURITY INVESTIGATION
-                    </div>
-
-
-                    <h2 id="investigationTitle">
-                        Incident Investigation
-                    </h2>
-
-
-                    <p id="investigationSubtitle">
-                        Attack story and correlated
-                        security activity
-                    </p>
-
-                </div>
-
-
-                <button
-                    class="investigation-close"
-                    type="button"
-                    onclick="closeInvestigation()"
-                    aria-label="Close investigation"
-                >
-                    ×
-                </button>
-
-            </div>
-
-
-            <!-- =================================================
-                 INVESTIGATION CONTENT
-                 ================================================= -->
-
-            <div
-                id="investigationContent"
-                class="investigation-content"
-            >
-
-                <!-- =================================================
-                     ATTACK STORY
-                     ================================================= -->
-
-                <section
-                    id="attackStorySection"
-                    class="investigation-section"
-                >
-
-                    <div class="investigation-section-head">
-
-                        <div>
-
-                            <div class="section-eyebrow">
-                                ATTACK STORY
-                            </div>
-
-                            <h3>
-                                Security Investigation
-                            </h3>
-
-                            <p>
-                                Correlated evidence,
-                                detection, risk and response.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div id="attackStory">
-                        <div class="investigation-loading">
-
-                            <div class="investigation-spinner"></div>
-
-                            <span>
-                                Select INVESTIGATE on an incident
-                                to begin analysis.
-                            </span>
-
-                        </div>
-                    </div>
-
-                </section>
-
-
-                <!-- =================================================
-                     SECURITY GRAPH
-                     ================================================= -->
-
-                <section
-                    id="securityGraphSection"
-                    class="investigation-section"
-                >
-
-                    <div class="graph-section-header">
-
-                        <div>
-
-                            <div class="section-eyebrow">
-                                SECURITY GRAPH
-                            </div>
-
-                            <h3>
-                                Attack Relationship Map
-                            </h3>
-
-                            <p>
-                                Visual correlation of security
-                                evidence and response.
-                            </p>
-
-                        </div>
-
-
-                        <div
-                            id="graphStats"
-                            class="graph-stats"
-                        ></div>
-
-                    </div>
-
-
-                    <div
-                        id="securityGraph"
-                        class="security-graph"
-                    >
-
-                        <div class="graph-loading">
-                            Loading security graph...
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="graphLegend"
-                        class="graph-legend"
-                    ></div>
-
-                </section>
-
-
-                <!-- =================================================
-                     INVESTIGATION TIMELINE
-                     ================================================= -->
-
-                <section
-                    id="investigationTimelineSection"
-                    class="investigation-section"
-                >
-
-                    <div class="timeline-section-header">
-
-                        <div>
-
-                            <div class="section-eyebrow">
-                                INVESTIGATION TIMELINE
-                            </div>
-
-                            <h3>
-                                Evidence & Response History
-                            </h3>
-
-                            <p>
-                                Chronological investigation activity.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <div
-                        id="investigationTimeline"
-                        class="timeline"
-                    >
-
-                        <div class="investigation-loading">
-
-                            <div class="investigation-spinner"></div>
-
-                            <span>
-                                Loading investigation timeline...
-                            </span>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-            </div>
-
-        </aside>
+            Analyzing
+        </div>
 
     </div>
 
+    <div
+        id="campaignList"
+        class="campaign-list"
+    >
 
-    <!-- =========================================================
-         AEGIS X JAVASCRIPT
-         ========================================================= -->
+        <div class="campaign-loading">
 
-    <script
-        src="/static/app.js?v=4"
-    ></script>
+            <div class="campaign-loading-pulse"></div>
 
+            <span>
+                Analyzing correlated attack activity...
+            </span>
+
+        </div>
+
+    </div>
+
+</section>
+</main>
+
+</div>
+
+
+<!-- ============================================================
+     INVESTIGATION DRAWER
+     ============================================================ -->
+
+<div
+    id="investigationOverlay"
+    class="investigation-overlay"
+    aria-hidden="true"
+>
+
+    <aside class="investigation-drawer">
+
+        <header class="investigation-header">
+
+            <div>
+
+                <div class="eyebrow">
+                    AEGIS X INVESTIGATION
+                </div>
+
+                <h2 id="investigationTitle">
+                    Incident
+                </h2>
+
+                <p id="investigationSubtitle">
+                    Security investigation
+                </p>
+
+            </div>
+
+            <button
+                id="closeInvestigation"
+                class="close-btn"
+                type="button"
+                aria-label="Close investigation"
+            >
+                ×
+            </button>
+
+        </header>
+
+
+        <div
+            id="investigationContent"
+            class="investigation-content"
+        ></div>
+
+    </aside>
+
+</div>
+
+
+<div id="toast" class="toast"></div>
+
+
+<script src="/static/app.js?v=40"></script>
+
+
+<!-- CAMPAIGN INVESTIGATION -->
+<div
+    id="campaign-investigation-overlay"
+    class="campaign-investigation-overlay"
+    aria-hidden="true"
+>
+
+    <div class="campaign-investigation-backdrop"></div>
+
+    <div class="campaign-investigation-modal">
+
+        <div class="campaign-investigation-header">
+
+            <div>
+
+                <div class="campaign-eyebrow">
+                    AEGIS X · CAMPAIGN INVESTIGATION
+                </div>
+
+                <h2 id="campaignInvestigationTitle">
+                    Campaign Investigation
+                </h2>
+
+                <div
+                    id="campaignInvestigationSource"
+                    class="campaign-investigation-source"
+                >
+                    —
+                </div>
+
+            </div>
+
+            <button
+                id="closeCampaignInvestigation"
+                class="campaign-close"
+                type="button"
+                aria-label="Close campaign investigation"
+            >
+                &times;
+            </button>
+
+        </div>
+
+
+        <div
+            id="campaignInvestigationBody"
+            class="campaign-investigation-body"
+        >
+
+            <div class="campaign-loading">
+                Analyzing campaign...
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 </body>
-
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

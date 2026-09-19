@@ -1,3 +1,4 @@
+﻿from backend.app.compatibility import router as compatibility_router
 from contextlib import asynccontextmanager
 from pathlib import Path
 
@@ -37,6 +38,15 @@ from backend.app.response import (
 from backend.app.timeline import get_incident_timeline
 from backend.app.graph import build_security_graph
 from .attack_chain import build_attack_chain
+from .investigation import build_ai_investigation
+from .investigation import build_investigation
+from backend.app.correlation import (
+    build_correlation,
+    build_source_correlation,
+)
+from backend.app.campaign_intelligence import (
+    build_campaign_intelligence,
+)
 
 # ============================================================
 # PATH CONFIGURATION
@@ -261,15 +271,15 @@ def analyze_detections():
     Pipeline:
 
         Security Events
-              ↓
+              â†“
         Detection Engine
-              ↓
+              â†“
         Risk Engine
-              ↓
+              â†“
         Alert Management
-              ↓
+              â†“
         Incident Management
-              ↓
+              â†“
         Response Decision
     """
 
@@ -514,7 +524,7 @@ def list_incidents():
 
 
 # ============================================================
-# PHASE 2.1 — INCIDENT TIMELINE
+# PHASE 2.1 â€” INCIDENT TIMELINE
 # ============================================================
 
 @app.get("/api/v1/incidents/{incident_id}/timeline")
@@ -526,13 +536,13 @@ def incident_timeline(incident_id: int):
     Correlation:
 
         EVENT
-          ↓
+          â†“
         ALERT
-          ↓
+          â†“
         INCIDENT
-          ↓
+          â†“
         RESPONSE
-          ↓
+          â†“
         STATUS
     """
 
@@ -637,7 +647,6 @@ def run_incident_response(
         incident_id=incident["id"],
         action=response["action"],
         source_ip=incident["source_ip"],
-        mode=response["mode"],
     )
 
     return {
@@ -681,3 +690,163 @@ def get_attack_chain(incident_id: int):
         )
 
     return result
+@app.get("/api/v1/incidents/{incident_id}/investigation")
+def get_investigation(incident_id: int):
+    result = build_ai_investigation(incident_id)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Incident {incident_id} not found",
+        )
+
+    return result
+@app.get("/api/v1/incidents/{incident_id}/investigation")
+def get_incident_investigation(incident_id: int):
+    result = build_investigation(incident_id)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Incident {incident_id} not found",
+        )
+
+    return result
+# ============================================================
+# AEGIS X â€” UEBA BEHAVIORAL INTELLIGENCE API
+# ============================================================
+
+@app.get("/api/v1/ueba")
+def get_ueba_analysis():
+
+    from backend.app.ueba import analyze_ueba
+
+    return analyze_ueba()
+
+
+@app.post("/api/v1/ueba/analyze")
+def run_ueba_analysis():
+
+    from backend.app.ueba import analyze_ueba
+
+    return analyze_ueba()
+
+
+@app.get("/api/v1/incidents/{incident_id}/ueba")
+def get_incident_ueba(incident_id: int):
+
+    from backend.app.ueba import analyze_incident_ueba
+
+    result = analyze_incident_ueba(incident_id)
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Incident {incident_id} not found",
+        )
+
+    return result
+
+
+
+@app.post("/api/v1/events/ingest-and-analyze")
+def ingest_and_analyze_event(event: SecurityEvent):
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            INSERT INTO security_events (
+                event_type,
+                source,
+                user,
+                source_ip,
+                description,
+                severity,
+                timestamp
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """,
+            (
+                event.event_type.value,
+                event.source,
+                event.user,
+                event.source_ip,
+                event.description,
+                event.severity,
+                event.timestamp.isoformat(),
+            ),
+        )
+
+        connection.commit()
+        event_id = cursor.lastrowid
+
+    finally:
+        connection.close()
+
+    # Execute the SAME detection pipeline used by:
+    # POST /api/v1/detections/analyze
+    analysis_result = analyze_detections()
+
+    return {
+        "status": "processed",
+        "event": {
+            "event_id": event_id,
+            "event_type": event.event_type.value,
+            "source": event.source,
+            "user": event.user,
+            "source_ip": event.source_ip,
+        },
+        "pipeline": {
+            "ingested": True,
+            "detection_completed": True,
+            "analysis_executed": True,
+        },
+        "detection": analysis_result,
+    }
+from backend.app.simulator import (
+    BruteForceSimulationRequest,
+    run_brute_force_simulation,
+)
+
+
+@app.post("/api/v1/simulator/brute-force")
+def simulate_brute_force(request: BruteForceSimulationRequest):
+    return run_brute_force_simulation(request)
+from backend.app.simulator import (
+    SimulationRequest,
+    run_simulation,
+)
+
+
+@app.post("/api/v1/simulator/run")
+def run_security_simulation(request: SimulationRequest):
+    return run_simulation(request)
+@app.get("/api/v1/correlation")
+def get_attack_correlation():
+    return build_correlation()
+
+
+@app.get("/api/v1/correlation/{source_ip}")
+def get_source_attack_correlation(source_ip: str):
+    return build_source_correlation(source_ip)
+@app.get("/api/v1/campaigns/{source_ip}")
+def get_campaign_intelligence(source_ip: str):
+    result = build_campaign_intelligence(
+        source_ip
+    )
+
+    if result is None:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                f"No correlated campaign found "
+                f"for source {source_ip}"
+            ),
+        )
+
+    return result
+
+app.include_router(compatibility_router)
+
+
