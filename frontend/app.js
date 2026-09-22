@@ -10870,3 +10870,342 @@ async function autoFixIncident(incidentId) {
 })();
 
 
+/* ============================================================
+   AEGIS SHIELD — Dashboard Protection Center
+   ============================================================ */
+
+(function () {
+    "use strict";
+
+    const SHIELD_ID = "aegis-shield-center";
+
+    function shieldStateClass(state) {
+        if (state === "PROTECTED") return "protected";
+        if (state === "ELEVATED") return "elevated";
+        return "lockdown";
+    }
+
+    function shieldMarkup(data) {
+        const integrity = data.integrity || {};
+        const components = data.components || {};
+        const policy = data.response_policy || {};
+        const state = data.protection_state || "PROTECTED";
+
+        return `
+        <section id="${SHIELD_ID}" class="aegis-shield-panel">
+            <div class="shield-header">
+                <div>
+                    <div class="shield-kicker">AEGIS SECURITY LAYER</div>
+                    <h2>🛡 AEGIS SHIELD</h2>
+                    <p>Continuous Security Protection & Integrity Layer</p>
+                </div>
+                <div class="shield-state ${shieldStateClass(state)}">
+                    <span class="shield-dot"></span>
+                    ${state}
+                </div>
+            </div>
+
+            <div class="shield-grid">
+                <div class="shield-card">
+                    <span class="shield-label">SYSTEM INTEGRITY</span>
+                    <strong>${components.system_integrity || "ACTIVE"}</strong>
+                </div>
+                <div class="shield-card">
+                    <span class="shield-label">EVENT PROTECTION</span>
+                    <strong>${components.event_protection || "ACTIVE"}</strong>
+                </div>
+                <div class="shield-card">
+                    <span class="shield-label">API PROTECTION</span>
+                    <strong>${components.api_protection || "ACTIVE"}</strong>
+                </div>
+                <div class="shield-card">
+                    <span class="shield-label">RESPONSE GUARD</span>
+                    <strong>${components.response_guard || "ACTIVE"}</strong>
+                </div>
+            </div>
+
+            <div class="shield-metrics">
+                <div>
+                    <span>Protected Files</span>
+                    <b>${integrity.protected_files ?? 0}</b>
+                </div>
+                <div>
+                    <span>Verified</span>
+                    <b>${integrity.verified_files ?? 0}</b>
+                </div>
+                <div>
+                    <span>Integrity Failures</span>
+                    <b>${integrity.failed_files ?? 0}</b>
+                </div>
+                <div>
+                    <span>Response Mode</span>
+                    <b>${policy.mode || "SIMULATION"}</b>
+                </div>
+            </div>
+
+            <div class="shield-footer">
+                <div>
+                    <strong>Protection Policy</strong>
+                    <p>
+                        AEGIS SHIELD validates software integrity and guards
+                        response actions before simulated execution.
+                    </p>
+                </div>
+                <button id="aegis-shield-verify" type="button">
+                    VERIFY INTEGRITY
+                </button>
+            </div>
+
+            <div id="aegis-shield-result"></div>
+        </section>`;
+    }
+
+    function injectStyles() {
+        if (document.getElementById("aegis-shield-styles")) return;
+
+        const style = document.createElement("style");
+        style.id = "aegis-shield-styles";
+        style.textContent = `
+            .aegis-shield-panel {
+                margin: 22px 0;
+                padding: 24px;
+                border: 1px solid rgba(74, 190, 255, .25);
+                border-radius: 18px;
+                background: linear-gradient(145deg, rgba(10,18,30,.98), rgba(12,25,40,.96));
+                box-shadow: 0 18px 45px rgba(0,0,0,.28);
+                color: #eaf4ff;
+            }
+
+            .shield-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 20px;
+                margin-bottom: 22px;
+            }
+
+            .shield-kicker {
+                font-size: 10px;
+                letter-spacing: 2px;
+                color: #55c8ff;
+                font-weight: 700;
+            }
+
+            .shield-header h2 {
+                margin: 5px 0;
+                font-size: 24px;
+            }
+
+            .shield-header p {
+                margin: 0;
+                color: #9fb1c5;
+            }
+
+            .shield-state {
+                padding: 10px 15px;
+                border-radius: 999px;
+                font-size: 11px;
+                font-weight: 800;
+                letter-spacing: 1px;
+                display: flex;
+                align-items: center;
+                gap: 8px;
+            }
+
+            .shield-state.protected {
+                background: rgba(45, 205, 130, .12);
+                color: #63e6a3;
+                border: 1px solid rgba(45,205,130,.3);
+            }
+
+            .shield-state.elevated {
+                background: rgba(255,180,70,.12);
+                color: #ffc266;
+                border: 1px solid rgba(255,180,70,.3);
+            }
+
+            .shield-state.lockdown {
+                background: rgba(255,80,100,.12);
+                color: #ff8a99;
+                border: 1px solid rgba(255,80,100,.3);
+            }
+
+            .shield-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: currentColor;
+                box-shadow: 0 0 10px currentColor;
+            }
+
+            .shield-grid {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+            }
+
+            .shield-card {
+                padding: 16px;
+                border-radius: 12px;
+                background: rgba(255,255,255,.035);
+                border: 1px solid rgba(255,255,255,.07);
+            }
+
+            .shield-card strong {
+                display: block;
+                margin-top: 7px;
+                color: #63e6a3;
+                font-size: 13px;
+            }
+
+            .shield-label {
+                color: #91a5bb;
+                font-size: 9px;
+                letter-spacing: 1.2px;
+                font-weight: 700;
+            }
+
+            .shield-metrics {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 12px;
+                margin-top: 14px;
+            }
+
+            .shield-metrics > div {
+                padding: 14px;
+                border-radius: 12px;
+                background: rgba(85,200,255,.055);
+            }
+
+            .shield-metrics span {
+                display: block;
+                color: #91a5bb;
+                font-size: 10px;
+            }
+
+            .shield-metrics b {
+                display: block;
+                margin-top: 5px;
+                font-size: 17px;
+            }
+
+            .shield-footer {
+                margin-top: 18px;
+                padding-top: 18px;
+                border-top: 1px solid rgba(255,255,255,.08);
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 20px;
+            }
+
+            .shield-footer p {
+                color: #91a5bb;
+                margin: 5px 0 0;
+                max-width: 760px;
+                line-height: 1.5;
+            }
+
+            #aegis-shield-verify {
+                border: 0;
+                border-radius: 9px;
+                padding: 11px 16px;
+                background: #55c8ff;
+                color: #06111d;
+                font-weight: 800;
+                cursor: pointer;
+            }
+
+            #aegis-shield-result {
+                margin-top: 12px;
+                color: #91a5bb;
+                font-size: 12px;
+            }
+
+            @media (max-width: 900px) {
+                .shield-grid,
+                .shield-metrics {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .shield-header,
+                .shield-footer {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    async function loadShield() {
+        try {
+            const response = await fetch("/api/v1/shield/status");
+            if (!response.ok) throw new Error("Shield API unavailable");
+
+            const data = await response.json();
+
+            injectStyles();
+
+            const existing = document.getElementById(SHIELD_ID);
+            if (existing) existing.remove();
+
+            const wrapper = document.createElement("div");
+            wrapper.innerHTML = shieldMarkup(data);
+
+            const panel = wrapper.firstElementChild;
+
+            const target =
+                document.querySelector("main") ||
+                document.querySelector(".container") ||
+                document.body;
+
+            target.prepend(panel);
+
+            document
+                .getElementById("aegis-shield-verify")
+                ?.addEventListener("click", verifyShield);
+
+        } catch (error) {
+            console.warn("AEGIS SHIELD:", error.message);
+        }
+    }
+
+    async function verifyShield() {
+        const result = document.getElementById("aegis-shield-result");
+
+        if (!result) return;
+
+        result.textContent = "Running integrity verification...";
+
+        try {
+            const response = await fetch("/api/v1/shield/integrity");
+
+            if (!response.ok) {
+                throw new Error("Integrity endpoint unavailable");
+            }
+
+            const data = await response.json();
+
+            result.textContent =
+                `Integrity check: ${data.status} — ` +
+                `${data.verified_files}/${data.protected_files} files verified.`;
+        } catch (error) {
+            result.textContent =
+                "Integrity verification could not be completed.";
+        }
+    }
+
+    window.AEGISShield = {
+        load: loadShield,
+        verify: verifyShield
+    };
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", loadShield);
+    } else {
+        loadShield();
+    }
+})();
