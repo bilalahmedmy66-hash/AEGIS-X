@@ -1,4 +1,5 @@
 ﻿from .shield_routes import shield_router
+from .ai_routes import ai_router
 from backend.app.compatibility import router as compatibility_router
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -80,6 +81,7 @@ app = FastAPI(
 )
 
 app.include_router(shield_router)
+app.include_router(ai_router)
 
 
 # ============================================================
@@ -851,6 +853,7 @@ def get_campaign_intelligence(source_ip: str):
     return result
 
 app.include_router(compatibility_router)
+
 
 
 

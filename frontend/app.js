@@ -11209,3 +11209,537 @@ async function autoFixIncident(incidentId) {
         loadShield();
     }
 })();
+
+/* ============================================================
+   AEGIS AI COPILOT
+   Apple-inspired security intelligence interface
+   ============================================================ */
+
+(function () {
+    "use strict";
+
+    const AI_ID = "aegis-ai-copilot";
+
+    function escapeHtml(value) {
+        return String(value || "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function markdownBasic(text) {
+        let html = escapeHtml(text);
+
+        html = html.replace(/^## (.+)$/gm, "<h3>$1</h3>");
+        html = html.replace(/^\- (.+)$/gm, "<li>$1</li>");
+        html = html.replace(/(<li>.*<\/li>)/gs, "<ul>$1</ul>");
+        html = html.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+        html = html.replace(/\n\n/g, "<br><br>");
+        html = html.replace(/\n/g, "<br>");
+
+        return html;
+    }
+
+    function ensureStyles() {
+        if (document.getElementById("aegis-ai-styles")) {
+            return;
+        }
+
+        const style = document.createElement("style");
+        style.id = "aegis-ai-styles";
+
+        style.textContent = `
+            #${AI_ID}-button {
+                position: fixed;
+                right: 26px;
+                bottom: 26px;
+                z-index: 9998;
+                border: 1px solid rgba(255,255,255,.16);
+                border-radius: 999px;
+                padding: 13px 19px;
+                color: #fff;
+                background: rgba(18,18,24,.82);
+                backdrop-filter: blur(22px);
+                -webkit-backdrop-filter: blur(22px);
+                box-shadow: 0 16px 50px rgba(0,0,0,.35);
+                cursor: pointer;
+                font-weight: 700;
+                letter-spacing: .2px;
+                transition: transform .2s ease, background .2s ease;
+            }
+
+            #${AI_ID}-button:hover {
+                transform: translateY(-2px);
+                background: rgba(35,35,44,.92);
+            }
+
+            #${AI_ID}-overlay {
+                position: fixed;
+                inset: 0;
+                z-index: 9999;
+                background: rgba(0,0,0,.48);
+                backdrop-filter: blur(9px);
+                -webkit-backdrop-filter: blur(9px);
+                display: none;
+                align-items: stretch;
+                justify-content: flex-end;
+            }
+
+            #${AI_ID}-drawer {
+                width: min(680px, 94vw);
+                height: 100%;
+                background:
+                    linear-gradient(
+                        180deg,
+                        rgba(25,25,32,.97),
+                        rgba(12,12,17,.985)
+                    );
+                border-left: 1px solid rgba(255,255,255,.10);
+                box-shadow: -30px 0 90px rgba(0,0,0,.48);
+                color: #f5f5f7;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .aegis-ai-head {
+                padding: 26px 28px 20px;
+                border-bottom: 1px solid rgba(255,255,255,.08);
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+
+            .aegis-ai-kicker {
+                font-size: 11px;
+                letter-spacing: 1.8px;
+                opacity: .55;
+                font-weight: 800;
+            }
+
+            .aegis-ai-title {
+                margin-top: 7px;
+                font-size: 28px;
+                font-weight: 750;
+                letter-spacing: -.7px;
+            }
+
+            .aegis-ai-subtitle {
+                margin-top: 5px;
+                color: rgba(255,255,255,.58);
+                font-size: 13px;
+            }
+
+            .aegis-ai-close {
+                width: 34px;
+                height: 34px;
+                border-radius: 50%;
+                border: 1px solid rgba(255,255,255,.10);
+                background: rgba(255,255,255,.07);
+                color: white;
+                cursor: pointer;
+                font-size: 18px;
+            }
+
+            .aegis-ai-body {
+                flex: 1;
+                overflow-y: auto;
+                padding: 24px 28px 40px;
+            }
+
+            .aegis-ai-status {
+                display: flex;
+                align-items: center;
+                gap: 9px;
+                color: rgba(255,255,255,.65);
+                font-size: 12px;
+                margin-bottom: 18px;
+            }
+
+            .aegis-ai-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #32d74b;
+                box-shadow: 0 0 12px rgba(50,215,75,.65);
+            }
+
+            .aegis-ai-card {
+                background: rgba(255,255,255,.055);
+                border: 1px solid rgba(255,255,255,.085);
+                border-radius: 18px;
+                padding: 17px;
+                margin-bottom: 14px;
+            }
+
+            .aegis-ai-label {
+                display: block;
+                color: rgba(255,255,255,.55);
+                font-size: 11px;
+                font-weight: 800;
+                letter-spacing: 1px;
+                text-transform: uppercase;
+                margin-bottom: 9px;
+            }
+
+            .aegis-ai-input,
+            .aegis-ai-textarea {
+                width: 100%;
+                box-sizing: border-box;
+                border: 1px solid rgba(255,255,255,.11);
+                border-radius: 13px;
+                background: rgba(0,0,0,.22);
+                color: white;
+                padding: 12px 13px;
+                outline: none;
+                font: inherit;
+            }
+
+            .aegis-ai-textarea {
+                min-height: 92px;
+                resize: vertical;
+            }
+
+            .aegis-ai-input:focus,
+            .aegis-ai-textarea:focus {
+                border-color: rgba(255,255,255,.28);
+            }
+
+            .aegis-ai-actions {
+                display: flex;
+                gap: 9px;
+                flex-wrap: wrap;
+            }
+
+            .aegis-ai-action {
+                border: 1px solid rgba(255,255,255,.11);
+                border-radius: 999px;
+                padding: 10px 14px;
+                background: rgba(255,255,255,.06);
+                color: white;
+                cursor: pointer;
+                font-size: 12px;
+                font-weight: 650;
+            }
+
+            .aegis-ai-action:hover {
+                background: rgba(255,255,255,.11);
+            }
+
+            .aegis-ai-primary {
+                width: 100%;
+                border: 0;
+                border-radius: 14px;
+                padding: 14px 18px;
+                background: #f5f5f7;
+                color: #111116;
+                cursor: pointer;
+                font-weight: 800;
+                margin-top: 12px;
+            }
+
+            .aegis-ai-primary:disabled {
+                opacity: .45;
+                cursor: wait;
+            }
+
+            .aegis-ai-context {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 8px;
+            }
+
+            .aegis-ai-metric {
+                background: rgba(255,255,255,.045);
+                border-radius: 12px;
+                padding: 12px;
+            }
+
+            .aegis-ai-metric strong {
+                display: block;
+                font-size: 18px;
+            }
+
+            .aegis-ai-metric span {
+                display: block;
+                margin-top: 3px;
+                font-size: 10px;
+                color: rgba(255,255,255,.45);
+                text-transform: uppercase;
+            }
+
+            .aegis-ai-result {
+                line-height: 1.65;
+                color: rgba(255,255,255,.84);
+                font-size: 14px;
+            }
+
+            .aegis-ai-result h3 {
+                color: white;
+                font-size: 16px;
+                margin: 20px 0 8px;
+            }
+
+            .aegis-ai-result ul {
+                padding-left: 20px;
+            }
+
+            .aegis-ai-badge {
+                display: inline-flex;
+                padding: 5px 9px;
+                border-radius: 999px;
+                background: rgba(50,215,75,.10);
+                color: #75e68a;
+                border: 1px solid rgba(50,215,75,.18);
+                font-size: 10px;
+                font-weight: 800;
+                letter-spacing: .7px;
+            }
+
+            @media (max-width: 700px) {
+                #${AI_ID}-button {
+                    right: 14px;
+                    bottom: 14px;
+                }
+
+                .aegis-ai-context {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .aegis-ai-head,
+                .aegis-ai-body {
+                    padding-left: 18px;
+                    padding-right: 18px;
+                }
+            }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    function createCopilot() {
+        if (document.getElementById(AI_ID + "-button")) {
+            return;
+        }
+
+        ensureStyles();
+
+        const button = document.createElement("button");
+        button.id = AI_ID + "-button";
+        button.innerHTML = "✦ AEGIS AI";
+        document.body.appendChild(button);
+
+        const overlay = document.createElement("div");
+        overlay.id = AI_ID + "-overlay";
+
+        overlay.innerHTML = `
+            <aside id="${AI_ID}-drawer">
+                <header class="aegis-ai-head">
+                    <div>
+                        <div class="aegis-ai-kicker">AEGIS X INTELLIGENCE</div>
+                        <div class="aegis-ai-title">AI Security Copilot</div>
+                        <div class="aegis-ai-subtitle">
+                            Gemini-powered security reasoning over AEGIS evidence
+                        </div>
+                    </div>
+                    <button class="aegis-ai-close" id="${AI_ID}-close">×</button>
+                </header>
+
+                <div class="aegis-ai-body">
+                    <div class="aegis-ai-status">
+                        <span class="aegis-ai-dot"></span>
+                        <span id="${AI_ID}-status">Checking AI Core…</span>
+                        <span class="aegis-ai-badge">HUMAN IN THE LOOP</span>
+                    </div>
+
+                    <div class="aegis-ai-card">
+                        <label class="aegis-ai-label">Incident</label>
+                        <input
+                            id="${AI_ID}-incident"
+                            class="aegis-ai-input"
+                            type="number"
+                            placeholder="Enter incident ID, e.g. 15"
+                        />
+
+                        <div style="height:12px"></div>
+
+                        <label class="aegis-ai-label">Ask AEGIS</label>
+                        <textarea
+                            id="${AI_ID}-question"
+                            class="aegis-ai-textarea"
+                            placeholder="Ask about the incident, evidence, attack progression, risk, MITRE context, or next investigation steps…"
+                        ></textarea>
+
+                        <div style="height:12px"></div>
+
+                        <div class="aegis-ai-actions">
+                            <button class="aegis-ai-action" data-ai-q="Explain what happened in this incident.">Explain incident</button>
+                            <button class="aegis-ai-action" data-ai-q="Why is this incident risky?">Explain risk</button>
+                            <button class="aegis-ai-action" data-ai-q="What should a security analyst investigate next?">Next steps</button>
+                            <button class="aegis-ai-action" data-ai-q="Summarize the attack progression from the evidence.">Attack story</button>
+                        </div>
+
+                        <button class="aegis-ai-primary" id="${AI_ID}-analyze">
+                            Analyze Security Context
+                        </button>
+                    </div>
+
+                    <div id="${AI_ID}-context"></div>
+
+                    <div class="aegis-ai-card">
+                        <div class="aegis-ai-label">AI Analysis</div>
+                        <div id="${AI_ID}-result" class="aegis-ai-result">
+                            Select an incident and ask AEGIS AI to begin.
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        `;
+
+        document.body.appendChild(overlay);
+
+        const close = () => {
+            overlay.style.display = "none";
+        };
+
+        const open = () => {
+            overlay.style.display = "flex";
+            checkStatus();
+        };
+
+        button.addEventListener("click", open);
+        overlay.addEventListener("click", (event) => {
+            if (event.target === overlay) {
+                close();
+            }
+        });
+
+        document.getElementById(AI_ID + "-close").addEventListener("click", close);
+
+        document.querySelectorAll("[data-ai-q]").forEach((element) => {
+            element.addEventListener("click", () => {
+                document.getElementById(AI_ID + "-question").value =
+                    element.getAttribute("data-ai-q");
+            });
+        });
+
+        document.getElementById(AI_ID + "-analyze").addEventListener("click", analyze);
+
+        async function checkStatus() {
+            const status = document.getElementById(AI_ID + "-status");
+
+            try {
+                const response = await fetch("/api/v1/ai/status");
+                const data = await response.json();
+
+                if (data.available) {
+                    status.textContent = "AI Core Online · " + data.model;
+                } else {
+                    status.textContent = "AI Core unavailable · configure backend key";
+                }
+            } catch (error) {
+                status.textContent = "AI Core connection unavailable";
+            }
+        }
+
+        async function analyze() {
+            const incidentValue =
+                document.getElementById(AI_ID + "-incident").value.trim();
+
+            const question =
+                document.getElementById(AI_ID + "-question").value.trim();
+
+            const result =
+                document.getElementById(AI_ID + "-result");
+
+            const context =
+                document.getElementById(AI_ID + "-context");
+
+            const analyzeButton =
+                document.getElementById(AI_ID + "-analyze");
+
+            analyzeButton.disabled = true;
+            analyzeButton.textContent = "Analyzing Security Context…";
+
+            result.innerHTML =
+                "AEGIS AI is correlating the available security evidence…";
+
+            try {
+                const body = {};
+
+                if (incidentValue) {
+                    body.incident_id = Number(incidentValue);
+                }
+
+                if (question) {
+                    body.question = question;
+                }
+
+                const response = await fetch("/api/v1/ai/analyze", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(body)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.available) {
+                    throw new Error(data.error || "AI analysis unavailable.");
+                }
+
+                const summary = data.context_summary || {};
+
+                context.innerHTML = `
+                    <div class="aegis-ai-card">
+                        <div class="aegis-ai-label">Evidence Context</div>
+                        <div class="aegis-ai-context">
+                            <div class="aegis-ai-metric">
+                                <strong>${summary.events ?? 0}</strong>
+                                <span>Events</span>
+                            </div>
+                            <div class="aegis-ai-metric">
+                                <strong>${summary.alerts ?? 0}</strong>
+                                <span>Alerts</span>
+                            </div>
+                            <div class="aegis-ai-metric">
+                                <strong>${summary.incidents ?? 0}</strong>
+                                <span>Incidents</span>
+                            </div>
+                            <div class="aegis-ai-metric">
+                                <strong>${escapeHtml(summary.shield_state || "—")}</strong>
+                                <span>Shield</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                result.innerHTML = markdownBasic(data.analysis);
+            } catch (error) {
+                result.innerHTML =
+                    "<strong>AI analysis unavailable.</strong><br><br>" +
+                    escapeHtml(error.message);
+            } finally {
+                analyzeButton.disabled = false;
+                analyzeButton.textContent = "Analyze Security Context";
+            }
+        }
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", createCopilot);
+    } else {
+        createCopilot();
+    }
+
+    window.AEGISAI = {
+        open: function () {
+            const button = document.getElementById(AI_ID + "-button");
+            if (button) {
+                button.click();
+            }
+        }
+    };
+})();
