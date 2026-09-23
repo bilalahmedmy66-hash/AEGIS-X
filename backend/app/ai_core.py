@@ -256,7 +256,10 @@ Remember that AEGIS X response execution is simulation-only.
 """
 
     try:
-        client = genai.Client(api_key=api_key)
+        client = genai.Client(
+            api_key=api_key,
+            http_options=types.HttpOptions(timeout=15000)
+        )
 
         response = None
         last_error = None
@@ -313,3 +316,4 @@ Remember that AEGIS X response execution is simulation-only.
             "incident_id": incident_id,
             "error": str(exc),
         }
+
