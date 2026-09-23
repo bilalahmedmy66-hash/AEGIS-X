@@ -11743,3 +11743,890 @@ async function autoFixIncident(incidentId) {
         }
     };
 })();
+/* ============================================================
+   AEGIS AI COPILOT 2.0
+   High-tech evidence intelligence presentation layer
+   Frontend-only enhancement — preserves existing AI Core
+   ============================================================ */
+
+(function () {
+    "use strict";
+
+    const RESULT_ID = "aegis-ai-result";
+    const CONTEXT_ID = "aegis-ai-context";
+    const STYLE_ID = "aegis-ai-2-style";
+
+    function injectStyles() {
+        if (document.getElementById(STYLE_ID)) return;
+
+        const style = document.createElement("style");
+        style.id = STYLE_ID;
+
+        style.textContent = `
+        /* ========================================================
+           AEGIS AI 2.0 — visual system
+           ======================================================== */
+
+        #aegis-ai-result {
+            overflow: visible !important;
+        }
+
+        .aegis-ai-v2 {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            animation: aegisAIReveal .42s ease both;
+        }
+
+        @keyframes aegisAIReveal {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .aegis-ai-v2-hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 20px;
+            padding: 22px;
+            background:
+                radial-gradient(circle at 92% 8%, rgba(124,58,237,.20), transparent 32%),
+                radial-gradient(circle at 5% 100%, rgba(59,130,246,.10), transparent 35%),
+                linear-gradient(145deg, rgba(255,255,255,.075), rgba(255,255,255,.025));
+            box-shadow:
+                inset 0 1px 0 rgba(255,255,255,.07),
+                0 18px 55px rgba(0,0,0,.18);
+        }
+
+        .aegis-ai-v2-hero::after {
+            content: "";
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            right: -65px;
+            top: -65px;
+            border-radius: 50%;
+            border: 1px solid rgba(139,92,246,.18);
+            box-shadow:
+                0 0 0 24px rgba(139,92,246,.035),
+                0 0 0 48px rgba(139,92,246,.025);
+            pointer-events: none;
+        }
+
+        .aegis-ai-v2-eyebrow {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #a78bfa;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 9px;
+        }
+
+        .aegis-ai-v2-pulse {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #7c3aed;
+            box-shadow: 0 0 0 5px rgba(124,58,237,.12);
+            animation: aegisPulse 1.8s infinite;
+        }
+
+        @keyframes aegisPulse {
+            0%, 100% { box-shadow: 0 0 0 4px rgba(124,58,237,.10); }
+            50% { box-shadow: 0 0 0 8px rgba(124,58,237,.025); }
+        }
+
+        .aegis-ai-v2-title {
+            font-size: 22px;
+            line-height: 1.15;
+            font-weight: 850;
+            letter-spacing: -.45px;
+            color: #f7f7fa;
+            margin-bottom: 7px;
+        }
+
+        .aegis-ai-v2-subtitle {
+            color: rgba(255,255,255,.58);
+            font-size: 12px;
+            line-height: 1.55;
+            max-width: 720px;
+        }
+
+        .aegis-ai-v2-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.55fr) minmax(180px, .75fr);
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .aegis-ai-v2-stat {
+            min-height: 88px;
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.07);
+        }
+
+        .aegis-ai-v2-stat-label {
+            color: rgba(255,255,255,.45);
+            font-size: 9px;
+            font-weight: 850;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .aegis-ai-v2-stat-value {
+            font-size: 20px;
+            font-weight: 900;
+            color: #f8f8fb;
+            letter-spacing: -.4px;
+        }
+
+        .aegis-ai-v2-stat-meta {
+            margin-top: 4px;
+            color: rgba(255,255,255,.48);
+            font-size: 10px;
+        }
+
+        .aegis-ai-v2-risk {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+        }
+
+        .aegis-ai-v2-ring {
+            width: 57px;
+            height: 57px;
+            flex: 0 0 57px;
+            border-radius: 50%;
+            display: grid;
+            place-items: center;
+            position: relative;
+            background:
+                radial-gradient(circle at center, #19191f 55%, transparent 56%),
+                conic-gradient(#ef4444 var(--risk-angle, 216deg), rgba(255,255,255,.08) 0);
+        }
+
+        .aegis-ai-v2-ring span {
+            font-size: 14px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .aegis-ai-v2-risk-level {
+            font-size: 11px;
+            font-weight: 900;
+            letter-spacing: .8px;
+            color: #ff8a8a;
+            text-transform: uppercase;
+        }
+
+        .aegis-ai-v2-section {
+            border: 1px solid rgba(255,255,255,.075);
+            border-radius: 17px;
+            background: rgba(255,255,255,.035);
+            overflow: hidden;
+        }
+
+        .aegis-ai-v2-section-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+
+        .aegis-ai-v2-section-title {
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: 1.1px;
+            text-transform: uppercase;
+            color: rgba(255,255,255,.62);
+        }
+
+        .aegis-ai-v2-section-body {
+            padding: 17px;
+            color: rgba(255,255,255,.78);
+            font-size: 13px;
+            line-height: 1.72;
+        }
+
+        .aegis-ai-v2-progression {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+            padding: 17px;
+        }
+
+        .aegis-ai-v2-stage {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 9px 11px;
+            border-radius: 10px;
+            background: rgba(124,58,237,.10);
+            border: 1px solid rgba(139,92,246,.20);
+            color: #ddd2ff;
+            font-size: 10px;
+            font-weight: 850;
+            letter-spacing: .55px;
+        }
+
+        .aegis-ai-v2-stage::before {
+            content: "";
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            box-shadow: 0 0 9px rgba(139,92,246,.7);
+        }
+
+        .aegis-ai-v2-arrow {
+            color: rgba(255,255,255,.25);
+            font-weight: 900;
+        }
+
+        .aegis-ai-v2-evidence {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 9px;
+            padding: 14px;
+        }
+
+        .aegis-ai-v2-evidence-card {
+            padding: 13px;
+            border-radius: 12px;
+            background: rgba(0,0,0,.15);
+            border: 1px solid rgba(255,255,255,.055);
+        }
+
+        .aegis-ai-v2-evidence-number {
+            font-size: 21px;
+            font-weight: 900;
+            color: #fff;
+        }
+
+        .aegis-ai-v2-evidence-label {
+            margin-top: 3px;
+            color: rgba(255,255,255,.43);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+        }
+
+        .aegis-ai-v2-next {
+            display: flex;
+            flex-direction: column;
+            gap: 9px;
+        }
+
+        .aegis-ai-v2-next-item {
+            display: flex;
+            gap: 11px;
+            align-items: flex-start;
+        }
+
+        .aegis-ai-v2-next-number {
+            width: 22px;
+            height: 22px;
+            flex: 0 0 22px;
+            display: grid;
+            place-items: center;
+            border-radius: 7px;
+            background: rgba(124,58,237,.13);
+            border: 1px solid rgba(139,92,246,.18);
+            color: #c4b5fd;
+            font-size: 10px;
+            font-weight: 900;
+        }
+
+        .aegis-ai-v2-next-text {
+            padding-top: 1px;
+        }
+
+        .aegis-ai-v2-chip-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .aegis-ai-v2-chip {
+            padding: 7px 9px;
+            border-radius: 8px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.07);
+            color: rgba(255,255,255,.72);
+            font-size: 10px;
+            font-weight: 750;
+        }
+
+        .aegis-ai-v2-safety {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            background: rgba(50,215,75,.055);
+            border: 1px solid rgba(50,215,75,.14);
+        }
+
+        .aegis-ai-v2-safety-main {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+        }
+
+        .aegis-ai-v2-safe-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #32d74b;
+            box-shadow: 0 0 12px rgba(50,215,75,.45);
+        }
+
+        .aegis-ai-v2-safe-title {
+            color: #83e993;
+            font-size: 10px;
+            font-weight: 900;
+            letter-spacing: .9px;
+            text-transform: uppercase;
+        }
+
+        .aegis-ai-v2-safe-meta {
+            color: rgba(255,255,255,.45);
+            font-size: 10px;
+        }
+
+        .aegis-ai-v2-trace {
+            padding: 16px;
+        }
+
+        .aegis-ai-v2-trace-line {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            flex-wrap: wrap;
+        }
+
+        .aegis-ai-v2-trace-node {
+            padding: 8px 10px;
+            border-radius: 9px;
+            background: rgba(255,255,255,.045);
+            border: 1px solid rgba(255,255,255,.065);
+            color: rgba(255,255,255,.72);
+            font-size: 9px;
+            font-weight: 850;
+            letter-spacing: .45px;
+        }
+
+        .aegis-ai-v2-trace-node.ai {
+            color: #ddd2ff;
+            background: rgba(124,58,237,.11);
+            border-color: rgba(139,92,246,.20);
+        }
+
+        .aegis-ai-v2-trace-arrow {
+            color: rgba(255,255,255,.25);
+        }
+
+        .aegis-ai-v2-raw {
+            border-top: 1px solid rgba(255,255,255,.055);
+            padding-top: 5px;
+        }
+
+        .aegis-ai-v2-raw summary {
+            cursor: pointer;
+            color: rgba(255,255,255,.43);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            padding: 9px 2px;
+        }
+
+        .aegis-ai-v2-raw-content {
+            padding: 10px 0 2px;
+            color: rgba(255,255,255,.62);
+            font-size: 12px;
+            line-height: 1.7;
+        }
+
+        .aegis-ai-v2-loading {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 17px;
+            color: rgba(255,255,255,.62);
+            font-size: 12px;
+        }
+
+        .aegis-ai-v2-loader {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            border: 2px solid rgba(255,255,255,.10);
+            border-top-color: #8b5cf6;
+            animation: aegisSpin .8s linear infinite;
+        }
+
+        @keyframes aegisSpin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 700px) {
+            .aegis-ai-v2-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .aegis-ai-v2-evidence {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .aegis-ai-v2-hero {
+                padding: 17px;
+            }
+
+            .aegis-ai-v2-title {
+                font-size: 19px;
+            }
+        }
+        `;
+
+        document.head.appendChild(style);
+    }
+
+    function escape(value) {
+        if (typeof escapeHtml === "function") {
+            return escapeHtml(String(value ?? ""));
+        }
+
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    function cleanText(value) {
+        return String(value || "")
+            .replace(/<[^>]*>/g, " ")
+            .replace(/\s+/g, " ")
+            .trim();
+    }
+
+    function extractSection(text, names) {
+        const normalized = text.replace(/\r/g, "");
+        const lower = normalized.toLowerCase();
+
+        let start = -1;
+        let matched = "";
+
+        for (const name of names) {
+            const index = lower.indexOf(name.toLowerCase());
+
+            if (index !== -1 && (start === -1 || index < start)) {
+                start = index;
+                matched = name;
+            }
+        }
+
+        if (start === -1) return "";
+
+        const after = normalized.slice(start + matched.length);
+        const next = after.search(
+            /(?:assessment|what happened|evidence|attack progression|risk explanation|mitre context|analyst next steps|confidence|response safety)\s*:?\s*/i
+        );
+
+        return (next === -1 ? after : after.slice(0, next)).trim();
+    }
+
+    function extractNumber(text, pattern) {
+        const match = text.match(pattern);
+        return match ? match[1] : null;
+    }
+
+    function parseAnalysis(html) {
+        const text = cleanText(html);
+
+        const riskScore =
+            extractNumber(text, /(?:risk|score)[^\d]{0,20}(\d{1,3})/i);
+
+        let riskLevel = null;
+
+        if (/\bCRITICAL\b/i.test(text)) riskLevel = "CRITICAL";
+        else if (/\bHIGH\b/i.test(text)) riskLevel = "HIGH";
+        else if (/\bMEDIUM\b/i.test(text)) riskLevel = "MEDIUM";
+        else if (/\bLOW\b/i.test(text)) riskLevel = "LOW";
+
+        const incidentMatch = text.match(/Incident\s*#?\s*(\d+)/i);
+        const incidentId = incidentMatch ? incidentMatch[1] : null;
+
+        const assessment = extractSection(text, ["Assessment"]);
+        const happened = extractSection(text, ["What Happened"]);
+        const evidence = extractSection(text, ["Evidence"]);
+        const progression = extractSection(text, ["Attack Progression"]);
+        const riskExplanation = extractSection(text, ["Risk Explanation"]);
+        const mitre = extractSection(text, ["MITRE Context"]);
+        const nextSteps = extractSection(text, ["Analyst Next Steps"]);
+        const confidence = extractSection(text, ["Confidence & Uncertainty", "Confidence"]);
+        const responseSafety = extractSection(text, ["Response Safety"]);
+
+        return {
+            text,
+            incidentId,
+            riskScore,
+            riskLevel,
+            assessment,
+            happened,
+            evidence,
+            progression,
+            riskExplanation,
+            mitre,
+            nextSteps,
+            confidence,
+            responseSafety
+        };
+    }
+
+    function sentenceList(text) {
+        if (!text) return [];
+
+        return text
+            .split(/(?:\n|(?<=\.)\s+(?=\d+[\.\)]\s+))/)
+            .map(cleanText)
+            .filter(Boolean)
+            .slice(0, 6);
+    }
+
+    function stageList(text) {
+        if (!text) return [];
+
+        const matches = text.match(
+            /\b(?:INITIAL_ACCESS|PRIVILEGE_ESCALATION|EXECUTION|COMPROMISE|LATERAL_OR_ANOMALOUS_ACCESS|IMPACT|PERSISTENCE|CREDENTIAL_ACCESS|DISCOVERY)\b/g
+        );
+
+        return [...new Set(matches || [])];
+    }
+
+    function riskAngle(score) {
+        const numeric = Math.max(0, Math.min(100, Number(score || 0)));
+        return Math.round(numeric * 3.6);
+    }
+
+    function enhance() {
+        const result = document.getElementById(RESULT_ID);
+
+        if (!result) return;
+        if (result.dataset.aegisV2 === "1") return;
+
+        const rawHTML = result.innerHTML;
+        const rawText = cleanText(rawHTML);
+
+        if (
+            !rawText ||
+            /Select an incident/i.test(rawText) ||
+            /correlating the available security evidence/i.test(rawText) ||
+            /AI analysis unavailable/i.test(rawText)
+        ) {
+            return;
+        }
+
+        if (rawText.length < 100) return;
+
+        const parsed = parseAnalysis(rawHTML);
+
+        result.dataset.aegisV2 = "1";
+
+        const context = document.getElementById(CONTEXT_ID);
+        const metrics = context
+            ? context.querySelectorAll(".aegis-ai-metric strong")
+            : [];
+
+        const events = metrics[0] ? cleanText(metrics[0].textContent) : "—";
+        const alerts = metrics[1] ? cleanText(metrics[1].textContent) : "—";
+        const incidents = metrics[2] ? cleanText(metrics[2].textContent) : "—";
+        const shield = metrics[3] ? cleanText(metrics[3].textContent) : "PROTECTED";
+
+        const stages = stageList(parsed.progression);
+
+        const displayedRisk =
+            parsed.riskScore ||
+            (parsed.riskLevel === "CRITICAL" ? "90" :
+             parsed.riskLevel === "HIGH" ? "60" :
+             parsed.riskLevel === "MEDIUM" ? "40" : "20");
+
+        const displayedLevel = parsed.riskLevel || "ANALYSIS";
+
+        const stageHTML = stages.length
+            ? stages.map((stage, index) => `
+                ${index ? '<span class="aegis-ai-v2-arrow">→</span>' : ""}
+                <span class="aegis-ai-v2-stage">${escape(stage.replace(/_/g, " "))}</span>
+            `).join("")
+            : `<span class="aegis-ai-v2-stage">Evidence correlation in progress</span>`;
+
+        const nextItems = sentenceList(parsed.nextSteps || parsed.happened);
+
+        const nextHTML = nextItems.length
+            ? `
+                <div class="aegis-ai-v2-next">
+                    ${nextItems.map((item, index) => `
+                        <div class="aegis-ai-v2-next-item">
+                            <span class="aegis-ai-v2-next-number">${index + 1}</span>
+                            <span class="aegis-ai-v2-next-text">${escape(item)}</span>
+                        </div>
+                    `).join("")}
+                </div>
+            `
+            : `<div>${escape(parsed.happened || parsed.assessment || "No additional analyst guidance was returned.")}</div>`;
+
+        const rawAnalysis = rawHTML;
+
+        result.innerHTML = `
+            <div class="aegis-ai-v2">
+
+                <section class="aegis-ai-v2-hero">
+                    <div class="aegis-ai-v2-eyebrow">
+                        <span class="aegis-ai-v2-pulse"></span>
+                        AEGIS AI ANALYSIS ENGINE
+                    </div>
+
+                    <div class="aegis-ai-v2-title">
+                        Security Intelligence Assessment
+                    </div>
+
+                    <div class="aegis-ai-v2-subtitle">
+                        Evidence-grounded reasoning generated from the AEGIS incident context.
+                        Human analyst remains in control of response decisions.
+                    </div>
+
+                    <div class="aegis-ai-v2-grid">
+
+                        <div class="aegis-ai-v2-stat">
+                            <div class="aegis-ai-v2-stat-label">Incident</div>
+                            <div class="aegis-ai-v2-stat-value">
+                                ${parsed.incidentId ? "#" + escape(parsed.incidentId) : "Selected"}
+                            </div>
+                            <div class="aegis-ai-v2-stat-meta">
+                                AI-correlated security context
+                            </div>
+                        </div>
+
+                        <div class="aegis-ai-v2-stat">
+                            <div class="aegis-ai-v2-risk">
+                                <div
+                                    class="aegis-ai-v2-ring"
+                                    style="--risk-angle:${riskAngle(displayedRisk)}deg"
+                                >
+                                    <span>${escape(displayedRisk)}</span>
+                                </div>
+
+                                <div>
+                                    <div class="aegis-ai-v2-stat-label">Risk Signal</div>
+                                    <div class="aegis-ai-v2-risk-level">
+                                        ${escape(displayedLevel)}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Assessment</span>
+                        <span class="aegis-ai-v2-chip">AI + AEGIS EVIDENCE</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-section-body">
+                        ${escape(parsed.assessment || parsed.happened || parsed.text)}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Evidence Context</span>
+                        <span class="aegis-ai-v2-chip">TRACEABLE</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-evidence">
+                        <div class="aegis-ai-v2-evidence-card">
+                            <div class="aegis-ai-v2-evidence-number">${escape(events)}</div>
+                            <div class="aegis-ai-v2-evidence-label">Events</div>
+                        </div>
+
+                        <div class="aegis-ai-v2-evidence-card">
+                            <div class="aegis-ai-v2-evidence-number">${escape(alerts)}</div>
+                            <div class="aegis-ai-v2-evidence-label">Alerts</div>
+                        </div>
+
+                        <div class="aegis-ai-v2-evidence-card">
+                            <div class="aegis-ai-v2-evidence-number">${escape(incidents)}</div>
+                            <div class="aegis-ai-v2-evidence-label">Incidents</div>
+                        </div>
+
+                        <div class="aegis-ai-v2-evidence-card">
+                            <div class="aegis-ai-v2-evidence-number">${escape(shield)}</div>
+                            <div class="aegis-ai-v2-evidence-label">Shield</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Attack Progression</span>
+                        <span class="aegis-ai-v2-chip">CHAIN INTELLIGENCE</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-progression">
+                        ${stageHTML}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">What Happened</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-section-body">
+                        ${escape(parsed.happened || parsed.assessment || "No additional narrative returned.")}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Risk Explanation</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-section-body">
+                        ${escape(parsed.riskExplanation || "Risk interpretation is based on the correlated AEGIS evidence and incident context.")}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">MITRE Context</span>
+                        <span class="aegis-ai-v2-chip">EVIDENCE-BOUND</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-section-body">
+                        ${escape(parsed.mitre || "No specific MITRE technique was asserted beyond the available evidence.")}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Analyst Next Steps</span>
+                        <span class="aegis-ai-v2-chip">HUMAN DECISION</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-section-body">
+                        ${nextHTML}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Confidence & Uncertainty</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-section-body">
+                        ${escape(parsed.confidence || "The AI assessment should be interpreted together with the underlying AEGIS evidence.")}
+                    </div>
+                </section>
+
+                <section class="aegis-ai-v2-section">
+                    <div class="aegis-ai-v2-section-head">
+                        <span class="aegis-ai-v2-section-title">Evidence Trace</span>
+                        <span class="aegis-ai-v2-chip">SOURCE → AI</span>
+                    </div>
+
+                    <div class="aegis-ai-v2-trace">
+                        <div class="aegis-ai-v2-trace-line">
+                            <span class="aegis-ai-v2-trace-node">SECURITY EVENTS</span>
+                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-node">DETECTIONS</span>
+                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-node">ALERTS</span>
+                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-node">INCIDENT</span>
+                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-node ai">AEGIS AI</span>
+                        </div>
+                    </div>
+                </section>
+
+                <div class="aegis-ai-v2-safety">
+                    <div class="aegis-ai-v2-safety-main">
+                        <span class="aegis-ai-v2-safe-dot"></span>
+                        <div>
+                            <div class="aegis-ai-v2-safe-title">Response Safety Active</div>
+                            <div class="aegis-ai-v2-safe-meta">
+                                AI recommendations remain human-approved and simulation-safe.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="aegis-ai-v2-safe-meta">
+                        ${escape(parsed.responseSafety || "SIMULATION MODE")}
+                    </div>
+                </div>
+
+                <details class="aegis-ai-v2-raw">
+                    <summary>View raw AI reasoning</summary>
+                    <div class="aegis-ai-v2-raw-content">
+                        ${rawAnalysis}
+                    </div>
+                </details>
+
+            </div>
+        `;
+    }
+
+    function observe() {
+        const result = document.getElementById(RESULT_ID);
+
+        if (!result) return;
+
+        const observer = new MutationObserver(() => {
+            if (result.dataset.aegisV2 === "1") return;
+
+            window.requestAnimationFrame(enhance);
+        });
+
+        observer.observe(result, {
+            childList: true,
+            subtree: true,
+            characterData: true
+        });
+
+        window.requestAnimationFrame(enhance);
+    }
+
+    function boot() {
+        injectStyles();
+        observe();
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+    } else {
+        boot();
+    }
+
+})();
