@@ -1,0 +1,209 @@
+/* ============================================================
+   AEGIS X — SECURITY GRAPH 2.0
+   ============================================================ */
+
+.security-graph-wrapper.graph-v2 {
+    position: relative;
+}
+
+.graph-v2-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 10px;
+}
+
+.graph-v2-toolbar button {
+    border: 1px solid rgba(64,217,255,.16);
+    border-radius: 6px;
+    padding: 6px 9px;
+    background: rgba(10,18,30,.82);
+    color: var(--text-soft);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .06em;
+    cursor: pointer;
+}
+
+.graph-v2-toolbar button:hover {
+    border-color: rgba(64,217,255,.35);
+    color: var(--cyan);
+}
+
+.graph-v2-focus {
+    margin-left: auto;
+    color: var(--dim);
+    font-size: 8px;
+}
+
+.security-graph-node.graph-v2-selected {
+    border-color: rgba(64,217,255,.75) !important;
+    box-shadow:
+        0 0 0 1px rgba(64,217,255,.20),
+        0 8px 24px rgba(0,0,0,.35);
+}
+
+.security-graph-node.graph-v2-muted {
+    opacity: .28;
+}
+
+.graph-relationship.graph-v2-active {
+    border-color: rgba(64,217,255,.28);
+    background: rgba(64,217,255,.05);
+}
+
+.graph-v2-detail {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 8px;
+    background: rgba(8,14,24,.72);
+}
+
+.graph-v2-detail-label {
+    color: var(--cyan);
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: .1em;
+}
+
+.graph-v2-detail-value {
+    margin-top: 4px;
+    color: var(--text-soft);
+    font-size: 9px;
+    word-break: break-word;
+}
+
+@media (max-width: 700px) {
+    .graph-v2-focus {
+        width: 100%;
+        margin-left: 0;
+    }
+}
+
+/* ============================================================
+   SECURITY GRAPH 2.0 — INTERACTION STATES
+   ============================================================ */
+
+.aegis-network .graph-v2-toolbar {
+    position: absolute;
+    top: 42px;
+    left: 16px;
+    right: 16px;
+    z-index: 20;
+
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.aegis-network .graph-v2-toolbar button {
+    border: 1px solid rgba(64,217,255,.18);
+    border-radius: 6px;
+    padding: 6px 9px;
+
+    background: rgba(7,14,24,.88);
+    color: var(--text-soft);
+
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .06em;
+
+    cursor: pointer;
+}
+
+.aegis-network .graph-v2-toolbar button:hover {
+    border-color: rgba(64,217,255,.45);
+    color: var(--cyan);
+}
+
+.aegis-network .graph-v2-focus {
+    margin-left: auto;
+
+    color: var(--dim);
+    font-size: 8px;
+    letter-spacing: .03em;
+}
+
+.aegis-network .aegis-node.graph-v2-selected {
+    z-index: 12;
+
+    border-color: rgba(64,217,255,.85) !important;
+
+    box-shadow:
+        0 0 0 1px rgba(64,217,255,.28),
+        0 0 28px rgba(64,217,255,.18);
+}
+
+.aegis-network .aegis-node.graph-v2-muted {
+    opacity: .28;
+}
+
+.aegis-network .aegis-edge.graph-v2-active {
+    stroke-width: 2.5;
+    opacity: 1;
+    filter: url(#aegisGlow);
+}
+
+.aegis-network .aegis-edge.graph-v2-muted {
+    opacity: .18;
+}
+
+@media (max-width: 1100px) {
+    .aegis-network .graph-v2-toolbar {
+        right: 10px;
+        left: 10px;
+    }
+
+    .aegis-network .graph-v2-focus {
+        display: none;
+    }
+}
+
+/* Security Graph 2.0 — normalize legend markers */
+.aegis-network .aegis-network-legend-dot {
+    width: 7px !important;
+    height: 7px !important;
+    min-width: 7px !important;
+    min-height: 7px !important;
+    flex: 0 0 7px !important;
+}
+
+.aegis-network .aegis-network-legend {
+    gap: 9px !important;
+    align-items: center !important;
+}
+
+.aegis-network .aegis-network-legend-item {
+    white-space: nowrap !important;
+}
+
+
+/* Security Graph 2.0 — keep legend inside viewport */
+.aegis-network .aegis-network-legend {
+    left: 16px !important;
+    right: 16px !important;
+    bottom: 6px !important;
+    max-width: calc(100% - 32px) !important;
+    overflow: hidden !important;
+}
+
+
+/* Security Graph 2.0 — isolate legend dot from global detection styles */
+.aegis-network .aegis-network-legend .aegis-network-legend-dot.detection {
+    display: inline-block !important;
+    width: 7px !important;
+    height: 7px !important;
+    min-width: 7px !important;
+    min-height: 7px !important;
+    max-width: 7px !important;
+    max-height: 7px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+

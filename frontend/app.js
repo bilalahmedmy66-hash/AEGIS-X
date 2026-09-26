@@ -3619,6 +3619,17 @@ function renderSecurityGraph(data) {
             <div class="aegis-network-label">
                 LIVE SECURITY RELATIONSHIP GRAPH
             </div>
+            <div class="graph-v2-toolbar">
+
+                <button type="button" id="aegisGraphReset">RESET FOCUS</button>
+
+                <button type="button" id="aegisGraphPath">FOCUS PATH</button>
+
+                <span class="graph-v2-focus" id="aegisGraphFocus">
+                    Select a node to inspect its relationships.
+                </span>
+
+            </div>
 
             <div
                 class="aegis-network-pulse"
@@ -3682,6 +3693,101 @@ function renderSecurityGraph(data) {
      * Update graph statistics when available.
      */
 
+    const aegisGraphNodes = Array.from(
+        container.querySelectorAll(".aegis-node")
+    );
+
+    const aegisGraphEdges = Array.from(
+        container.querySelectorAll(".aegis-edge")
+    );
+
+    const aegisGraphFocus =
+        container.querySelector("#aegisGraphFocus");
+
+    const aegisGraphReset =
+        container.querySelector("#aegisGraphReset");
+
+    const aegisGraphPath =
+        container.querySelector("#aegisGraphPath");
+
+    const resetAegisGraphFocus = () => {
+        aegisGraphNodes.forEach(node => {
+            node.classList.remove(
+                "graph-v2-selected",
+                "graph-v2-muted"
+            );
+        });
+
+        aegisGraphEdges.forEach(edge => {
+            edge.classList.remove(
+                "graph-v2-active",
+                "graph-v2-muted"
+            );
+        });
+
+        if (aegisGraphFocus) {
+            aegisGraphFocus.textContent =
+                "Select a node to inspect its relationships.";
+        }
+    };
+
+    aegisGraphNodes.forEach(node => {
+        node.addEventListener("click", () => {
+            aegisGraphNodes.forEach(item => {
+                item.classList.remove("graph-v2-selected");
+                item.classList.add("graph-v2-muted");
+            });
+
+            aegisGraphEdges.forEach(edge => {
+                edge.classList.remove("graph-v2-active");
+                edge.classList.add("graph-v2-muted");
+            });
+
+            node.classList.remove("graph-v2-muted");
+            node.classList.add("graph-v2-selected");
+
+            if (aegisGraphFocus) {
+                const type =
+                    node.querySelector(
+                        ".aegis-node-type"
+                    )?.textContent || "NODE";
+
+                const title =
+                    node.querySelector(
+                        ".aegis-node-title"
+                    )?.textContent || "";
+
+                aegisGraphFocus.textContent =
+                    `${type}: ${title}`;
+            }
+        });
+    });
+
+    if (aegisGraphReset) {
+        aegisGraphReset.addEventListener(
+            "click",
+            resetAegisGraphFocus
+        );
+    }
+
+    if (aegisGraphPath) {
+        aegisGraphPath.addEventListener("click", () => {
+            aegisGraphNodes.forEach(node => {
+                node.classList.remove("graph-v2-muted");
+                node.classList.add("graph-v2-selected");
+            });
+
+            aegisGraphEdges.forEach(edge => {
+                edge.classList.remove("graph-v2-muted");
+                edge.classList.add("graph-v2-active");
+            });
+
+            if (aegisGraphFocus) {
+                aegisGraphFocus.textContent =
+                    "Evidence path focused: source ? event ? detection ? alert ? risk ? incident ? response.";
+            }
+        });
+    }
     const graphStats =
         document.getElementById("graphStats");
 
@@ -12630,3 +12736,5 @@ async function autoFixIncident(incidentId) {
     }
 
 })();
+
+
