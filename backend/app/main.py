@@ -663,6 +663,56 @@ def run_incident_response(
 
 
 # ============================================================
+# RESPONSE PREVIEW
+# ============================================================
+
+@app.get("/api/v1/incidents/{incident_id}/response-preview")
+def preview_incident_response(incident_id: int):
+    connection = get_connection()
+
+    try:
+        row = connection.execute(
+            """
+            SELECT
+                id,
+                incident_type,
+                severity,
+                risk_score,
+                risk_level,
+                source_ip,
+                description,
+                status
+            FROM security_incidents
+            WHERE id = ?
+            """,
+            (incident_id,),
+        ).fetchone()
+    finally:
+        connection.close()
+
+    if row is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"Incident {incident_id} not found",
+        )
+
+    incident = dict(row)
+
+    response = determine_response(
+        risk_score=incident["risk_score"],
+        risk_level=incident["risk_level"],
+        incident_type=incident["incident_type"],
+    )
+
+    return {
+        "incident": incident,
+        "response": response,
+        "mode": "SIMULATION",
+        "read_only": True,
+    }
+
+
+# ============================================================
 # RESPONSE ACTIONS
 # ============================================================
 

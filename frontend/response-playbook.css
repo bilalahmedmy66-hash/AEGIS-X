@@ -1,0 +1,271 @@
+﻿.response-playbook-panel {
+    margin-top: 14px;
+}
+
+.response-playbook-subtitle {
+    margin: 4px 0 0;
+    color: var(--muted-text, #8f9bad);
+    font-size: 0.85rem;
+}
+
+.response-playbook-toolbar {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: flex-end;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.response-playbook-toolbar label {
+    display: flex;
+    flex: 0 0 360px;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.78rem;
+}
+
+.response-playbook-toolbar select {
+    width: 360px;
+    max-width: 360px;
+    box-sizing: border-box;
+}
+
+.response-playbook-toolbar button,
+.response-execute-button {
+    width: auto;
+    min-width: 145px;
+    flex: 0 0 auto;
+}
+
+.response-playbook-status {
+    margin-top: 10px;
+    font-size: 0.8rem;
+    color: var(--muted-text, #8f9bad);
+}
+
+.response-summary-grid,
+.response-execution-result {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.response-summary-grid > div,
+.response-execution-result > div {
+    padding: 9px 10px;
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+.response-summary-grid span,
+.response-execution-result span,
+.response-playbook-decision span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--muted-text, #8f9bad);
+    margin-bottom: 3px;
+}
+
+.response-summary-grid strong,
+.response-execution-result strong,
+.response-playbook-decision strong {
+    font-size: 0.82rem;
+}
+
+.response-playbook-decision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.response-playbook-decision > div {
+    padding: 9px 10px;
+    border-left: 3px solid rgba(255,255,255,0.16);
+    background: rgba(255,255,255,0.025);
+}
+
+.response-playbook-warning {
+    margin-top: 10px;
+    padding: 9px 10px;
+    border: 1px solid rgba(255,193,7,0.25);
+    border-radius: 6px;
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.response-execute-button {
+    margin-top: 10px;
+}
+
+.response-execution-result {
+    margin-top: 10px;
+}
+
+.response-execute-button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+/* Response Playbook — AEGIS X dark UI refinement */
+
+.response-playbook-panel {
+    overflow: hidden;
+}
+
+.response-playbook-toolbar {
+    align-items: flex-end;
+    gap: 10px;
+    padding: 2px 0 4px;
+}
+
+.response-playbook-toolbar label {
+    color: #9aa7b8;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.response-playbook-toolbar select {
+    height: 34px !important;
+    padding: 0 34px 0 10px !important;
+    border: 1px solid #263244 !important;
+    border-radius: 5px !important;
+    background: #0b111b !important;
+    color: #e8eef7 !important;
+    font: inherit !important;
+    font-size: 13px !important;
+    outline: none !important;
+    color-scheme: dark;
+}
+
+.response-playbook-toolbar select:focus {
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 2px rgba(59,130,246,.12) !important;
+}
+
+.response-playbook-toolbar button,
+.response-execute-button {
+    height: 34px !important;
+    padding: 0 14px !important;
+    border: 1px solid #2d3b50 !important;
+    border-radius: 5px !important;
+    background: #121b28 !important;
+    color: #dbe7f5 !important;
+    font: inherit !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: .04em;
+    cursor: pointer;
+}
+
+.response-playbook-toolbar button:hover,
+.response-execute-button:hover {
+    background: #182536 !important;
+    border-color: #3b82f6 !important;
+}
+
+.response-playbook-status {
+    margin: 7px 0 0;
+    color: #7f8da1;
+    font-size: 11px;
+}
+
+.response-summary-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 9px;
+}
+
+.response-summary-grid > div {
+    min-height: 52px;
+    padding: 8px 10px;
+    border: 1px solid #1f2a3a;
+    border-radius: 5px;
+    background: #0b111b;
+}
+
+.response-summary-grid span,
+.response-execution-result span,
+.response-playbook-decision span {
+    color: #718096;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.response-summary-grid strong,
+.response-execution-result strong,
+.response-playbook-decision strong {
+    display: block;
+    margin-top: 4px;
+    color: #e7edf6;
+    font-size: 13px;
+    font-weight: 650;
+}
+
+.response-playbook-decision {
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.response-playbook-decision > div {
+    padding: 8px 10px;
+    border: 1px solid #1f2a3a;
+    border-left: 2px solid #2d3b50;
+    background: #0b111b;
+}
+
+.response-playbook-warning {
+    margin-top: 7px;
+    padding: 8px 10px;
+    border: 1px solid #51441d;
+    border-radius: 5px;
+    background: #12140f;
+    color: #b8b39b;
+    font-size: 11px;
+}
+
+.response-execute-button {
+    margin-top: 8px;
+    background: #152235 !important;
+    border-color: #315b8f !important;
+    color: #dcecff !important;
+}
+
+.response-execute-button:hover {
+    background: #1b3049 !important;
+}
+
+.response-execution-result {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.response-execution-result > div {
+    padding: 8px 10px;
+    border: 1px solid #1f2a3a;
+    border-radius: 5px;
+    background: #0b111b;
+}
+
+@media (max-width: 900px) {
+    .response-playbook-toolbar {
+        flex-wrap: wrap;
+    }
+
+    .response-playbook-toolbar label,
+    .response-playbook-toolbar select {
+        flex-basis: 100%;
+        width: 100%;
+        max-width: none;
+    }
+
+    .response-summary-grid,
+    .response-execution-result {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
