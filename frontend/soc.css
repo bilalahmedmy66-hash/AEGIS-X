@@ -1,0 +1,499 @@
+﻿/* ============================================================
+   AEGIS X — GLOBAL DASHBOARD / SOC LAYOUT SAFETY
+   This file only stabilizes layout. It does not control data.
+   ============================================================ */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: hidden !important;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+main,
+.dashboard,
+.dashboard-container,
+.page,
+.content,
+.content-wrapper,
+.container {
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* ------------------------------------------------------------
+   Real-Time SOC
+   ------------------------------------------------------------ */
+
+#aegis-realtime-soc {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    overflow: hidden !important;
+}
+
+#aegis-realtime-soc .aegis-soc-head,
+#aegis-realtime-soc .aegis-soc-metrics,
+#aegis-realtime-soc .aegis-soc-body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+#aegis-realtime-soc .aegis-soc-body {
+    overflow: hidden;
+}
+
+#aegis-realtime-soc .aegis-soc-panel {
+    min-width: 0 !important;
+    max-width: 100%;
+    overflow: hidden;
+}
+
+#aegis-realtime-soc .aegis-soc-feed {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+#aegis-realtime-soc .aegis-soc-feed-row {
+    min-width: 0;
+    max-width: 100%;
+}
+
+#aegis-realtime-soc .aegis-soc-feed-row > * {
+    min-width: 0;
+}
+
+/* ------------------------------------------------------------
+   Security Brain state — make it visibly part of SOC
+   ------------------------------------------------------------ */
+
+#aegis-realtime-soc .aegis-soc-brain-state {
+    min-height: 32px;
+    padding: 8px 10px;
+    border: 1px solid rgba(52,211,153,.20);
+    border-radius: 8px;
+    background: rgba(16,185,129,.045);
+}
+
+/* ------------------------------------------------------------
+   AEGIS Shield — prevent wide cards from breaking viewport
+   ------------------------------------------------------------ */
+
+#aegis-shield,
+.aegis-shield,
+.aegis-shield-container,
+.aegis-shield-page,
+[class*="aegis-shield"] {
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+#aegis-shield *,
+.aegis-shield *,
+.aegis-shield-container *,
+.aegis-shield-page * {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Shield cards must shrink instead of forcing horizontal scroll. */
+.aegis-shield-grid,
+.aegis-shield-cards,
+.aegis-shield-metrics,
+.aegis-shield-components {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* ------------------------------------------------------------
+   Responsive protection
+   ------------------------------------------------------------ */
+
+@media (max-width: 1000px) {
+    #aegis-realtime-soc .aegis-soc-metrics {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    #aegis-realtime-soc .aegis-soc-body {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+}
+
+@media (max-width: 650px) {
+    #aegis-realtime-soc .aegis-soc-metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}
+
+/* ============================================================
+   AEGIS X — SOC VISUAL UI
+   Visual styling only. No data or behavior changes.
+   ============================================================ */
+
+#aegis-realtime-soc {
+    margin: 22px 0 !important;
+    padding: 20px !important;
+    border: 1px solid rgba(96,165,250,.18);
+    border-radius: 14px;
+    background:
+        linear-gradient(180deg, rgba(15,23,42,.96), rgba(9,15,28,.96));
+    box-shadow:
+        0 14px 40px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+#aegis-realtime-soc .aegis-soc-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(148,163,184,.12);
+}
+
+#aegis-realtime-soc .aegis-soc-kicker {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    opacity: .62;
+}
+
+#aegis-realtime-soc .aegis-soc-title {
+    margin-top: 5px;
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -.02em;
+}
+
+#aegis-realtime-soc .aegis-soc-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 11px;
+    border: 1px solid rgba(52,211,153,.20);
+    border-radius: 999px;
+    background: rgba(16,185,129,.06);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    white-space: nowrap;
+}
+
+#aegis-realtime-soc .aegis-soc-live-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #34d399;
+    box-shadow: 0 0 10px rgba(52,211,153,.65);
+}
+
+#aegis-realtime-soc .aegis-soc-metrics {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+}
+
+#aegis-realtime-soc .aegis-soc-metric {
+    padding: 14px;
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 10px;
+    background: rgba(15,23,42,.72);
+}
+
+#aegis-realtime-soc .aegis-soc-metric-value {
+    font-size: 22px;
+    font-weight: 750;
+    line-height: 1.1;
+}
+
+#aegis-realtime-soc .aegis-soc-metric-label {
+    margin-top: 6px;
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    opacity: .55;
+}
+
+#aegis-realtime-soc .aegis-soc-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, .65fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+#aegis-realtime-soc .aegis-soc-panel {
+    padding: 15px;
+    border: 1px solid rgba(148,163,184,.12);
+    border-radius: 11px;
+    background: rgba(15,23,42,.58);
+}
+
+#aegis-realtime-soc .aegis-soc-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+#aegis-realtime-soc .aegis-soc-panel-title {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+}
+
+#aegis-realtime-soc .aegis-soc-panel-meta {
+    font-size: 10px;
+    opacity: .48;
+    white-space: nowrap;
+}
+
+#aegis-realtime-soc .aegis-soc-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+#aegis-realtime-soc .aegis-soc-feed-row {
+    display: grid;
+    grid-template-columns: 72px minmax(0,1fr) 58px;
+    align-items: center;
+    gap: 10px;
+    min-height: 48px;
+    padding: 8px 10px;
+    border: 1px solid rgba(148,163,184,.08);
+    border-radius: 8px;
+    background: rgba(2,6,23,.28);
+}
+
+#aegis-realtime-soc .aegis-soc-feed-kind {
+    font-size: 9px;
+    font-weight: 750;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .7;
+}
+
+#aegis-realtime-soc .aegis-soc-feed-type {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 11px;
+    font-weight: 650;
+}
+
+#aegis-realtime-soc .aegis-soc-feed-source {
+    margin-top: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 9px;
+    opacity: .42;
+}
+
+#aegis-realtime-soc .aegis-soc-feed-severity {
+    text-align: right;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    opacity: .62;
+}
+
+#aegis-realtime-soc .aegis-soc-brain {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#aegis-realtime-soc .aegis-soc-brain-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px;
+}
+
+#aegis-realtime-soc .aegis-soc-brain-card {
+    padding: 11px;
+    border: 1px solid rgba(148,163,184,.09);
+    border-radius: 8px;
+    background: rgba(2,6,23,.28);
+}
+
+#aegis-realtime-soc .aegis-soc-brain-card-label {
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    opacity: .42;
+}
+
+#aegis-realtime-soc .aegis-soc-brain-card-value {
+    margin-top: 5px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+#aegis-realtime-soc .aegis-soc-latest {
+    padding-top: 12px;
+    border-top: 1px solid rgba(148,163,184,.10);
+}
+
+#aegis-realtime-soc .aegis-soc-latest-title {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    opacity: .45;
+}
+
+#aegis-realtime-soc .aegis-soc-latest-name {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+#aegis-realtime-soc .aegis-soc-latest-meta {
+    margin-top: 5px;
+    font-size: 10px;
+    opacity: .55;
+}
+
+#aegis-realtime-soc .aegis-soc-footer {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(148,163,184,.08);
+    font-size: 9px;
+    letter-spacing: .03em;
+    opacity: .35;
+}
+
+@media (max-width: 900px) {
+    #aegis-realtime-soc .aegis-soc-metrics {
+        grid-template-columns: repeat(3, minmax(0,1fr)) !important;
+    }
+
+    #aegis-realtime-soc .aegis-soc-body {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 600px) {
+    #aegis-realtime-soc {
+        padding: 14px !important;
+    }
+
+    #aegis-realtime-soc .aegis-soc-head {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    #aegis-realtime-soc .aegis-soc-metrics {
+        grid-template-columns: repeat(2, minmax(0,1fr)) !important;
+    }
+}
+
+/* SOC panel height alignment */
+#aegis-realtime-soc .aegis-soc-body {
+    align-items: start;
+}
+
+#aegis-realtime-soc .aegis-soc-panel {
+    height: max-content;
+}
+
+#aegis-realtime-soc .aegis-soc-feed {
+    max-height: 560px;
+    overflow-y: auto;
+    padding-right: 4px;
+}
+
+#aegis-realtime-soc .aegis-soc-feed::-webkit-scrollbar {
+    width: 5px;
+}
+
+#aegis-realtime-soc .aegis-soc-feed::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#aegis-realtime-soc .aegis-soc-feed::-webkit-scrollbar-thumb {
+    background: rgba(148,163,184,.22);
+    border-radius: 10px;
+}
+
+/* Prevent SOC side panels from stretching to the tallest grid item */
+#aegis-realtime-soc .aegis-soc-body {
+    align-items: start !important;
+}
+
+#aegis-realtime-soc .aegis-soc-panel {
+    align-self: start !important;
+    height: fit-content !important;
+    min-height: 0 !important;
+}
+
+#aegis-realtime-soc .aegis-soc-panel:nth-child(2) {
+    height: fit-content !important;
+    align-self: start !important;
+}
+
+/* Final SOC grid sizing */
+#aegis-realtime-soc .aegis-soc-body {
+    grid-template-rows: max-content !important;
+    align-items: start !important;
+}
+
+#aegis-realtime-soc .aegis-soc-body > .aegis-soc-panel {
+    align-self: start !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+#aegis-realtime-soc .aegis-soc-body > .aegis-soc-panel:nth-child(2) {
+    max-height: max-content !important;
+}
+
+/* SOC body — independent panel heights */
+#aegis-realtime-soc .aegis-soc-body {
+    display: flex !important;
+    align-items: flex-start !important;
+    gap: 12px;
+}
+
+#aegis-realtime-soc .aegis-soc-body > .aegis-soc-panel:first-child {
+    flex: 1.35 1 0;
+    width: 0;
+}
+
+#aegis-realtime-soc .aegis-soc-body > .aegis-soc-panel:nth-child(2) {
+    flex: .65 1 0;
+    width: 0;
+    height: auto !important;
+    min-height: 0 !important;
+    align-self: flex-start !important;
+}
+
+@media (max-width: 900px) {
+    #aegis-realtime-soc .aegis-soc-body {
+        display: flex !important;
+        flex-direction: column;
+    }
+
+    #aegis-realtime-soc .aegis-soc-body > .aegis-soc-panel {
+        width: 100%;
+        flex: none;
+    }
+}
