@@ -277,6 +277,34 @@
                     <h3>Security Events</h3>
                 </div>
             </div>
+            <div class="threat-hunting-toolbar">
+                <input id="huntQuery" type="search" placeholder="Search telemetry...">
+                <select id="huntEventType">
+                    <option value="">All event types</option>
+                    <option value="LOGIN_FAILED">LOGIN_FAILED</option>
+                    <option value="LOGIN_SUCCESS">LOGIN_SUCCESS</option>
+                    <option value="SUSPICIOUS_IP">SUSPICIOUS_IP</option>
+                    <option value="FILE_MODIFIED">FILE_MODIFIED</option>
+                    <option value="PRIVILEGE_CHANGE">PRIVILEGE_CHANGE</option>
+                    <option value="MALWARE_DETECTED">MALWARE_DETECTED</option>
+                    <option value="UNUSUAL_ACCESS">UNUSUAL_ACCESS</option>
+                </select>
+                <input id="huntSourceIp" type="text" placeholder="Source IP">
+                <input id="huntUser" type="text" placeholder="User">
+                <select id="huntSeverity">
+                    <option value="">Any severity</option>
+                    <option value="3">3+</option>
+                    <option value="5">5+</option>
+                    <option value="7">7+</option>
+                    <option value="8">8+</option>
+                    <option value="9">9+</option>
+                </select>
+                <button id="huntButton" type="button">HUNT</button>
+                <button id="huntClearButton" type="button">CLEAR</button>
+            </div>
+
+            <div id="huntResults" class="threat-hunting-results"></div>
+
 
             <div class="table-wrap">
 

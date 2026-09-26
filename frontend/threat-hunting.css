@@ -1,0 +1,128 @@
+﻿.threat-hunting-toolbar {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) minmax(150px, 1fr) minmax(130px, 0.8fr) minmax(120px, 0.8fr) minmax(120px, 0.7fr) auto auto;
+    gap: 8px;
+    margin: 0 0 12px;
+    align-items: center;
+}
+
+.threat-hunting-toolbar input,
+.threat-hunting-toolbar select,
+.threat-hunting-toolbar button {
+    min-height: 36px;
+    box-sizing: border-box;
+}
+
+.threat-hunting-toolbar input,
+.threat-hunting-toolbar select {
+    width: 100%;
+    padding: 0 10px;
+    border: 1px solid rgba(120, 170, 190, 0.22);
+    border-radius: 6px;
+    background: rgba(8, 16, 24, 0.8);
+    color: inherit;
+    outline: none;
+}
+
+.threat-hunting-toolbar input:focus,
+.threat-hunting-toolbar select:focus {
+    border-color: rgba(70, 190, 220, 0.55);
+}
+
+.threat-hunting-toolbar button {
+    padding: 0 14px;
+    border: 1px solid rgba(70, 190, 220, 0.35);
+    border-radius: 6px;
+    background: rgba(20, 70, 88, 0.35);
+    color: inherit;
+    cursor: pointer;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+}
+
+.threat-hunting-toolbar button:hover {
+    background: rgba(30, 90, 110, 0.45);
+}
+
+.threat-hunting-toolbar button:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+.threat-hunting-results {
+    margin: 0 0 14px;
+}
+
+.threat-hunting-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+    padding: 8px 10px;
+    border: 1px solid rgba(120, 170, 190, 0.14);
+    border-radius: 6px;
+    background: rgba(8, 16, 24, 0.45);
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.threat-hunting-table-wrap {
+    overflow-x: auto;
+    border: 1px solid rgba(120, 170, 190, 0.14);
+    border-radius: 6px;
+}
+
+.threat-hunting-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.threat-hunting-table th,
+.threat-hunting-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(120, 170, 190, 0.10);
+    text-align: left;
+    white-space: nowrap;
+}
+
+.threat-hunting-table th {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    opacity: 0.65;
+}
+
+.hunt-severity {
+    display: inline-block;
+    min-width: 22px;
+    padding: 2px 5px;
+    border-radius: 4px;
+    text-align: center;
+    background: rgba(120, 170, 190, 0.12);
+}
+
+.threat-hunting-empty,
+.threat-hunting-error {
+    padding: 12px;
+    border: 1px solid rgba(120, 170, 190, 0.14);
+    border-radius: 6px;
+    background: rgba(8, 16, 24, 0.45);
+    font-size: 12px;
+    opacity: 0.75;
+}
+
+.threat-hunting-error {
+    border-color: rgba(210, 90, 90, 0.35);
+}
+
+@media (max-width: 1100px) {
+    .threat-hunting-toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .threat-hunting-toolbar {
+        grid-template-columns: 1fr;
+    }
+}

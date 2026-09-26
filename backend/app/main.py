@@ -1,4 +1,5 @@
-﻿from .shield_routes import shield_router
+﻿from .threat_hunting import threat_hunting_router
+from .shield_routes import shield_router
 from .ai_routes import ai_router
 from backend.app.compatibility import router as compatibility_router
 from contextlib import asynccontextmanager
@@ -853,9 +854,4 @@ def get_campaign_intelligence(source_ip: str):
     return result
 
 app.include_router(compatibility_router)
-
-
-
-
-
-
+app.include_router(threat_hunting_router)
