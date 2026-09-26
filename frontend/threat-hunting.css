@@ -126,3 +126,153 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Security Events / Threat Hunting — UI refinement */
+
+.threat-hunting-toolbar {
+    grid-template-columns: minmax(220px, 1.6fr) minmax(145px, 1fr) minmax(145px, 1fr);
+    gap: 9px;
+    margin: 14px 0 10px;
+    padding: 12px;
+    border: 1px solid rgba(120, 170, 190, 0.12);
+    border-radius: 6px;
+    background: rgba(8, 16, 24, 0.28);
+}
+
+.threat-hunting-toolbar input,
+.threat-hunting-toolbar select,
+.threat-hunting-toolbar button {
+    min-height: 34px;
+}
+
+.threat-hunting-toolbar input,
+.threat-hunting-toolbar select {
+    padding: 0 9px;
+    border-color: rgba(120, 170, 190, 0.18);
+    border-radius: 5px;
+    background: rgba(4, 10, 16, 0.72);
+    font-size: 12px;
+}
+
+.threat-hunting-toolbar button {
+    padding: 0 12px;
+    border-radius: 5px;
+    font-size: 11px;
+}
+
+.threat-hunting-toolbar button:first-of-type {
+    background: rgba(70, 150, 185, 0.14);
+    border-color: rgba(70, 190, 220, 0.38);
+}
+
+.threat-hunting-toolbar button:last-of-type {
+    background: rgba(255, 255, 255, 0.025);
+    border-color: rgba(255, 255, 255, 0.10);
+}
+
+.threat-hunting-results {
+    margin: 0 0 16px;
+}
+
+.threat-hunting-summary {
+    margin-bottom: 7px;
+    padding: 7px 10px;
+    border-color: rgba(120, 170, 190, 0.11);
+    background: rgba(8, 16, 24, 0.32);
+    font-size: 11px;
+}
+
+.threat-hunting-table-wrap {
+    border-color: rgba(120, 170, 190, 0.11);
+    border-radius: 5px;
+}
+
+.threat-hunting-table {
+    font-size: 11px;
+}
+
+.threat-hunting-table th,
+.threat-hunting-table td {
+    padding: 7px 9px;
+    border-bottom-color: rgba(120, 170, 190, 0.08);
+}
+
+.threat-hunting-table th {
+    background: rgba(255, 255, 255, 0.018);
+    font-size: 9px;
+}
+
+.hunt-severity {
+    min-width: 20px;
+    padding: 2px 4px;
+    border-radius: 3px;
+    font-size: 10px;
+}
+
+.threat-hunting-empty,
+.threat-hunting-error {
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 11px;
+}
+
+/* Keep the hunting workspace visually separate from raw telemetry */
+.threat-hunting-toolbar + .threat-hunting-results {
+    border-bottom: 1px solid rgba(120, 170, 190, 0.10);
+    padding-bottom: 12px;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 1100px) {
+    .threat-hunting-toolbar {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .threat-hunting-toolbar input:first-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .threat-hunting-toolbar {
+        grid-template-columns: 1fr;
+        padding: 10px;
+    }
+
+    .threat-hunting-toolbar input:first-child {
+        grid-column: auto;
+    }
+}
+
+
+/* Security Events — compact desktop toolbar */
+.threat-hunting-toolbar {
+    grid-template-columns: minmax(240px, 1.8fr) minmax(150px, 1.15fr) minmax(135px, 1fr) minmax(135px, 1fr) minmax(115px, 0.8fr) auto auto;
+    gap: 7px;
+    margin: 10px 0 10px;
+    padding: 9px;
+}
+
+.threat-hunting-toolbar input,
+.threat-hunting-toolbar select,
+.threat-hunting-toolbar button {
+    min-height: 32px;
+}
+
+.threat-hunting-toolbar input,
+.threat-hunting-toolbar select {
+    padding: 0 8px;
+    font-size: 11px;
+}
+
+.threat-hunting-toolbar button {
+    padding: 0 11px;
+    font-size: 10px;
+}
+
+@media (max-width: 1250px) {
+    .threat-hunting-toolbar {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+

@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AEGIS X — Security Intelligence</title>
     <link rel="stylesheet" href="/static/style.css?v=40">
+<link rel="stylesheet" href="/static/attack-scenario-lab.css?v=1">
+    <link rel="stylesheet" href="/static/threat-hunting.css?v=1">
     <link rel="stylesheet" href="/static/security-brain.css?v=1">
     <link rel="stylesheet" href="/static/soc.css?v=2">
 </head>
@@ -338,6 +340,78 @@
 
     
 
+<!-- ATTACK SCENARIO LABORATORY -->
+<section id="attack-scenario-lab" class="panel attack-scenario-panel">
+
+    <div class="panel-header">
+        <div>
+            <span class="eyebrow">CONTROLLED SIMULATION</span>
+            <h3>Attack Scenario Laboratory</h3>
+            <p class="panel-description">
+                Generate synthetic security telemetry and observe the existing detection pipeline.
+            </p>
+        </div>
+
+        <span class="tag">SIMULATION ONLY</span>
+    </div>
+
+    <div class="scenario-lab-grid">
+
+        <div class="scenario-lab-form">
+
+            <label for="scenarioType">Scenario</label>
+            <select id="scenarioType">
+                <option value="BRUTE_FORCE">Brute Force</option>
+                <option value="SUSPICIOUS_LOGIN">Suspicious Login</option>
+                <option value="PRIVILEGE_ESCALATION">Privilege Escalation</option>
+                <option value="MALWARE_DETECTED">Malware Detected</option>
+                <option value="FILE_MODIFIED">File Modified</option>
+                <option value="UNUSUAL_ACCESS">Unusual Access</option>
+            </select>
+
+            <label for="scenarioSourceIp">Source IP</label>
+            <input id="scenarioSourceIp" type="text" value="203.0.113.200">
+
+            <label for="scenarioUser">User</label>
+            <input id="scenarioUser" type="text" value="admin">
+
+            <label for="scenarioSource">Telemetry Source</label>
+            <input id="scenarioSource" type="text" value="simulator-security-agent">
+
+            <div class="scenario-lab-row">
+
+                <div>
+                    <label for="scenarioEvents">Events</label>
+                    <input id="scenarioEvents" type="number" min="1" max="20" value="5">
+                </div>
+
+                <div>
+                    <label for="scenarioSeverity">Severity</label>
+                    <input id="scenarioSeverity" type="number" min="1" max="10" value="7">
+                </div>
+
+            </div>
+
+            <button id="runScenarioButton" class="primary-button" type="button">
+                RUN SIMULATION
+            </button>
+
+        </div>
+
+        <div id="scenarioLabResults" class="scenario-lab-results">
+            <div class="scenario-lab-empty">
+                <span class="eyebrow">LAB STATUS</span>
+                <strong>Ready</strong>
+                <p>
+                    Configure a controlled scenario and run synthetic telemetry.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
+
 <!-- CAMPAIGN INTELLIGENCE -->
 <section id="campaigns" class="panel campaign-intelligence-panel">
 
@@ -445,6 +519,7 @@
 
 
 <script src="/static/app.js?v=40"></script>
+<script src="/static/attack-scenario-lab.js?v=1"></script>
 
 
 <!-- CAMPAIGN INVESTIGATION -->
@@ -509,6 +584,11 @@
     <script src="/static/ai-ui-cleanup.js?v=1"></script>
 <script src="/static/auto-fix-command.js?v=2"></script><script src="/static/soc.js?v=2"></script></body>
 </html>
+
+
+
+
+
 
 
 

@@ -1,0 +1,332 @@
+﻿.attack-scenario-panel {
+    margin-top: 24px;
+}
+
+.attack-scenario-panel .panel-description {
+    margin: 6px 0 0;
+    color: #8f9aaa;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.scenario-lab-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.8fr) minmax(360px, 1.2fr);
+    gap: 20px;
+    margin-top: 18px;
+}
+
+.scenario-lab-form {
+    display: grid;
+    gap: 8px;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.scenario-lab-form label {
+    margin-top: 6px;
+    color: #8f9aaa;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.scenario-lab-form input,
+.scenario-lab-form select {
+    width: 100%;
+    min-height: 38px;
+    padding: 8px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.18);
+    color: inherit;
+    font: inherit;
+}
+
+.scenario-lab-form input:focus,
+.scenario-lab-form select:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.28);
+}
+
+.scenario-lab-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.scenario-lab-row > div {
+    display: grid;
+    gap: 8px;
+}
+
+.scenario-lab-form .primary-button {
+    margin-top: 12px;
+    min-height: 40px;
+    cursor: pointer;
+}
+
+.scenario-lab-form .primary-button:disabled {
+    cursor: wait;
+    opacity: 0.55;
+}
+
+.scenario-lab-results {
+    min-width: 0;
+    padding: 18px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.015);
+}
+
+.scenario-lab-empty,
+.scenario-lab-status {
+    display: grid;
+    gap: 8px;
+    min-height: 180px;
+    align-content: center;
+}
+
+.scenario-lab-empty strong,
+.scenario-lab-status strong {
+    font-size: 20px;
+    font-weight: 600;
+}
+
+.scenario-lab-empty p,
+.scenario-lab-status p {
+    margin: 0;
+    max-width: 620px;
+    color: #8f9aaa;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.scenario-result-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.scenario-result-head > div {
+    display: grid;
+    gap: 6px;
+}
+
+.scenario-result-head strong {
+    font-size: 18px;
+}
+
+.scenario-result-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.scenario-result-grid > div {
+    display: grid;
+    gap: 5px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.scenario-result-grid span,
+.scenario-events .eyebrow,
+.scenario-detection .eyebrow {
+    color: #8f9aaa;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+}
+
+.scenario-result-grid strong {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 13px;
+}
+
+.scenario-events {
+    display: grid;
+    gap: 7px;
+}
+
+.scenario-event-row {
+    display: grid;
+    grid-template-columns: 55px 1fr 150px;
+    gap: 10px;
+    padding: 9px 10px;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 12px;
+}
+
+.scenario-event-row span {
+    color: #8f9aaa;
+}
+
+.scenario-event-row strong {
+    font-weight: 600;
+}
+
+.scenario-detection {
+    margin-top: 18px;
+}
+
+.scenario-detection pre {
+    max-height: 220px;
+    margin: 8px 0 0;
+    padding: 12px;
+    overflow: auto;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    background: rgba(0, 0, 0, 0.18);
+    color: #aeb8c5;
+    font-family: Consolas, "Courier New", monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.scenario-safety-note {
+    margin-top: 16px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.07);
+    color: #8f9aaa;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+    .scenario-lab-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .scenario-result-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 560px) {
+    .scenario-result-head {
+        flex-direction: column;
+    }
+
+    .scenario-event-row {
+        grid-template-columns: 45px 1fr;
+    }
+
+    .scenario-event-row span:last-child {
+        grid-column: 2;
+    }
+}
+
+/* Attack Scenario Laboratory — UI refinement */
+.attack-scenario-panel {
+    margin-top: 18px;
+}
+
+.attack-scenario-panel .panel-header {
+    padding-bottom: 14px;
+}
+
+.scenario-lab-grid {
+    align-items: start;
+    gap: 16px;
+    margin-top: 14px;
+}
+
+.scenario-lab-form {
+    gap: 7px;
+    padding: 15px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.012);
+}
+
+.scenario-lab-form label {
+    margin-top: 5px;
+}
+
+.scenario-lab-form input,
+.scenario-lab-form select {
+    min-height: 36px;
+    padding: 7px 10px;
+    border-radius: 5px;
+}
+
+.scenario-lab-row {
+    gap: 10px;
+}
+
+.scenario-lab-form .primary-button {
+    min-height: 38px;
+    margin-top: 10px;
+    border: 1px solid rgba(91, 174, 255, 0.35);
+    border-radius: 5px;
+    background: rgba(91, 174, 255, 0.08);
+    color: #dbeeff;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.scenario-lab-form .primary-button:hover:not(:disabled) {
+    background: rgba(91, 174, 255, 0.14);
+    border-color: rgba(91, 174, 255, 0.55);
+}
+
+.scenario-lab-form .primary-button:disabled {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.scenario-lab-results {
+    padding: 15px;
+    border-radius: 6px;
+}
+
+.scenario-result-head {
+    margin-bottom: 14px;
+}
+
+.scenario-result-grid {
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.scenario-result-grid > div {
+    padding: 10px;
+}
+
+.scenario-event-row {
+    grid-template-columns: 48px 1fr 130px;
+    gap: 8px;
+    padding: 7px 9px;
+    border-radius: 4px;
+}
+
+.scenario-detection {
+    margin-top: 14px;
+}
+
+.scenario-detection pre {
+    max-height: 170px;
+    margin-top: 6px;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 10px;
+}
+
+.scenario-safety-note {
+    margin-top: 12px;
+    padding-top: 10px;
+}
+
+@media (max-width: 900px) {
+    .scenario-lab-grid {
+        gap: 12px;
+    }
+}
+
