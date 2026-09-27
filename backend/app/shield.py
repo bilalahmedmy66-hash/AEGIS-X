@@ -1,4 +1,4 @@
-﻿"""
+"""
 AEGIS SHIELD
 Continuous Security Protection & Integrity Layer
 
@@ -110,6 +110,59 @@ def get_shield_status() -> Dict[str, Any]:
     }
 
 
+
+def assess_shield_response(
+    action: str,
+    risk_score: int,
+    incident_type: str,
+) -> Dict[str, Any]:
+    """
+    Explain and validate a proposed defensive response.
+
+    Shield 2.0 remains simulation-only and requires
+    explicit human approval before response execution.
+    """
+
+    normalized = str(action or "").upper()
+    score = max(0, min(int(risk_score), 100))
+
+    if score >= 75:
+        risk_band = "CRITICAL"
+    elif score >= 50:
+        risk_band = "HIGH"
+    elif score >= 25:
+        risk_band = "MEDIUM"
+    else:
+        risk_band = "LOW"
+
+    rationale_map = {
+        "MONITOR": "Continue observation because the current risk does not justify an active response.",
+        "ALERT": "Escalate analyst attention because the observed risk warrants additional review.",
+        "BLOCK_SOURCE": "Simulate source blocking because the risk level indicates a stronger containment response.",
+        "ISOLATE_SOURCE": "Simulate source isolation because the risk level indicates the strongest available containment response.",
+    }
+
+    guard = guard_response(normalized, score)
+
+    return {
+        "engine": "AEGIS SHIELD",
+        "version": "2.0",
+        "incident_type": str(incident_type or "UNKNOWN"),
+        "risk_score": score,
+        "risk_band": risk_band,
+        "proposed_action": normalized,
+        "allowed": guard["allowed"],
+        "rationale": rationale_map.get(
+            normalized,
+            "No rationale is available for the proposed action.",
+        ),
+        "protection_state": verify_integrity()["status"],
+        "requires_human_approval": True,
+        "simulation_only": True,
+        "real_execution": False,
+        "mode": "SIMULATION",
+    }
+
 def guard_response(action: str, risk_score: int = 0) -> Dict[str, Any]:
     normalized = str(action or "").upper()
 
@@ -137,3 +190,4 @@ def guard_response(action: str, risk_score: int = 0) -> Dict[str, Any]:
         "real_execution": False,
         "reason": "Response approved by the AEGIS SHIELD policy guard.",
     }
+
