@@ -1,4 +1,4 @@
-﻿from .threat_hunting import threat_hunting_router
+from .threat_hunting import threat_hunting_router
 from .rbac_routes import rbac_router
 from .shield_routes import shield_router
 from .ai_routes import ai_router
@@ -14,6 +14,8 @@ from backend.app.database import (
     get_connection,
     initialize_database,
 )
+from backend.app.threat_intelligence_db import initialize_threat_intelligence
+from backend.app.threat_intelligence_routes import threat_intel_router
 
 from backend.app.detection import analyze_events
 from backend.app.events import SecurityEvent
@@ -68,6 +70,7 @@ FRONTEND_DIR = BASE_DIR / "frontend"
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     initialize_database()
+    initialize_threat_intelligence()
     yield
 
 
@@ -907,3 +910,4 @@ def get_campaign_intelligence(source_ip: str):
 
 app.include_router(compatibility_router)
 app.include_router(threat_hunting_router)
+app.include_router(threat_intel_router)
