@@ -1,0 +1,11 @@
+﻿.telemetry-panel{margin:20px 0;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:10px;background:rgba(20,25,35,.35)}
+.telemetry-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.telemetry-header h2{margin:0 0 6px}
+.telemetry-header p{margin:0;opacity:.7}
+.telemetry-refresh{padding:7px 12px;cursor:pointer}
+.telemetry-summary{margin:14px 0;font-weight:600}
+.telemetry-table-wrap{overflow-x:auto}
+.telemetry-panel table{width:100%;border-collapse:collapse}
+.telemetry-panel th,.telemetry-panel td{padding:9px 10px;text-align:left;border-bottom:1px solid rgba(128,128,128,.18)}
+.telemetry-panel th{font-size:.85rem;text-transform:uppercase;opacity:.7}
+@media(max-width:700px){.telemetry-header{flex-direction:column}.telemetry-refresh{width:100%}}
