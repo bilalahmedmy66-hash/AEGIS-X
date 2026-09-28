@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="/static/response-playbook.css?v=1">
     <link rel="stylesheet" href="/static/security-graph-v2.css?v=1">
     <link rel="stylesheet" href="/static/shield-v2.css?v=1">
+    <link rel="stylesheet" href="/static/security-report.css?v=1">
     <link rel="stylesheet" href="/static/security-brain.css?v=1">
     <link rel="stylesheet" href="/static/soc.css?v=2">
 </head>
@@ -232,6 +233,29 @@
         </section>
 
 
+        <!-- SECURITY REPORT -->
+        <section class="security-report-panel" id="aegis-security-report">
+            <div class="security-report-header">
+                <div>
+                    <div class="security-report-kicker">AEGIS X / SECURITY REPORT</div>
+                    <h2>Incident Report Generator</h2>
+                    <p>Generate a read-only evidence report from stored incident telemetry.</p>
+                </div>
+                <div class="security-report-controls">
+                    <select id="security-report-incident">
+                        <option value="">Select incident</option>
+                    </select>
+                    <button id="security-report-generate" type="button">GENERATE REPORT</button>
+                    <button id="security-report-print" type="button" disabled>PRINT REPORT</button>
+                </div>
+            </div>
+            <div id="security-report-status" class="security-report-status">
+                Select an incident to generate its report.
+            </div>
+            <div id="security-report-output" class="security-report-output">
+                <div class="security-report-empty">Report output will appear here.</div>
+            </div>
+        </section>
         <!-- ALERT HISTORY -->
 
         <section class="panel">
@@ -591,6 +615,7 @@
 <script src="/static/evidence-explorer.js?v=1"></script>
 <script src="/static/risk-timeline.js?v=1"></script>
 <script src="/static/shield-v2.js?v=1"></script>
+<script src="/static/security-report.js?v=1"></script>
 <script src="/static/soc.js?v=2"></script></body>
 </html>
 
