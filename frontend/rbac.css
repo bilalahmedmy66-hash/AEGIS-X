@@ -1,0 +1,11 @@
+﻿.rbac-panel{margin:20px 0;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:10px;background:rgba(20,25,35,.35)}
+.rbac-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
+.rbac-header h2{margin:0 0 6px}
+.rbac-header p{margin:0;opacity:.7}
+.rbac-mode{font-size:.75rem;font-weight:700;padding:5px 9px;border:1px solid rgba(128,128,128,.35);border-radius:5px}
+.rbac-summary{margin:14px 0;font-weight:600}
+.rbac-table-wrap{overflow-x:auto}
+.rbac-panel table{width:100%;border-collapse:collapse}
+.rbac-panel th,.rbac-panel td{padding:9px 10px;text-align:left;vertical-align:top;border-bottom:1px solid rgba(128,128,128,.18)}
+.rbac-panel th{font-size:.85rem;text-transform:uppercase;opacity:.7}
+@media(max-width:700px){.rbac-header{flex-direction:column}}

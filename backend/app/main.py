@@ -1,4 +1,5 @@
 ﻿from .threat_hunting import threat_hunting_router
+from .rbac_routes import rbac_router
 from .shield_routes import shield_router
 from .ai_routes import ai_router
 from backend.app.compatibility import router as compatibility_router
@@ -83,6 +84,7 @@ app = FastAPI(
 
 app.include_router(shield_router)
 app.include_router(ai_router)
+app.include_router(rbac_router)
 
 
 # ============================================================
