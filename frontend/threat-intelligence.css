@@ -1,75 +1,237 @@
+/* =========================================================
+   AEGIS X - Threat Intelligence Center
+   UI polish / presentation layer
+   ========================================================= */
+
 .threat-intel-panel {
-    margin: 20px 0;
-    padding: 18px;
-    border: 1px solid rgba(128, 128, 128, .25);
-    border-radius: 10px;
-    background: rgba(20, 25, 35, .35);
+    margin: 18px 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, .16);
+    border-radius: 15px;
+    background:
+        linear-gradient(180deg, rgba(19, 27, 39, .92), rgba(12, 17, 25, .88));
+    box-shadow:
+        0 14px 40px rgba(0, 0, 0, .20),
+        inset 0 1px 0 rgba(255, 255, 255, .025);
+    color: #e8edf5;
 }
 
 .threat-intel-header {
     display: flex;
+    align-items: center;
     justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
+    gap: 20px;
+    padding: 20px 22px 17px;
+    border-bottom: 1px solid rgba(148, 163, 184, .10);
+}
+
+.threat-intel-header > div:first-child {
+    min-width: 0;
 }
 
 .threat-intel-header h2 {
-    margin: 0 0 6px;
+    margin: 0;
+    color: #f4f7fb;
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -.01em;
 }
 
 .threat-intel-header p {
-    margin: 0;
-    opacity: .7;
+    margin: 5px 0 0;
+    color: #9eabba;
+    font-size: 12px;
+    line-height: 1.5;
 }
 
 .threat-intel-mode {
-    font-size: .75rem;
-    font-weight: 700;
-    padding: 5px 9px;
-    border: 1px solid rgba(128, 128, 128, .35);
-    border-radius: 5px;
+    flex: 0 0 auto;
+    padding: 6px 9px;
+    border: 1px solid rgba(64, 217, 255, .22);
+    border-radius: 6px;
+    background: rgba(64, 217, 255, .055);
+    color: #8ddff3;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    white-space: nowrap;
 }
 
 .threat-intel-summary {
-    margin: 14px 0;
-    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 14px 22px;
+    padding: 9px 11px;
+    border: 1px solid rgba(148, 163, 184, .09);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, .025);
+    color: #9eabba;
+    font-size: 11px;
+}
+
+.threat-intel-summary strong {
+    color: #f4f7fb;
+    font-size: 13px;
 }
 
 .threat-intel-table-wrap {
     overflow-x: auto;
+    border-top: 1px solid rgba(148, 163, 184, .07);
 }
 
 .threat-intel-panel table {
     width: 100%;
+    min-width: 820px;
     border-collapse: collapse;
 }
 
-.threat-intel-panel th,
-.threat-intel-panel td {
-    padding: 9px 10px;
+.threat-intel-panel th {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, .12);
+    background: rgba(255, 255, 255, .018);
+    color: #7f8da0;
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
     text-align: left;
-    vertical-align: top;
-    border-bottom: 1px solid rgba(128, 128, 128, .18);
+    text-transform: uppercase;
+    white-space: nowrap;
 }
 
-.threat-intel-panel th {
-    font-size: .85rem;
-    text-transform: uppercase;
-    opacity: .7;
+.threat-intel-panel td {
+    padding: 11px 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, .07);
+    color: #d8e0eb;
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+.threat-intel-panel tbody tr {
+    transition: background .15s ease;
+}
+
+.threat-intel-panel tbody tr:hover {
+    background: rgba(64, 217, 255, .025);
+}
+
+.threat-intel-panel tbody tr:last-child td {
+    border-bottom: 0;
 }
 
 .threat-intel-panel code {
-    font-family: monospace;
+    display: inline-block;
+    max-width: 260px;
+    overflow: hidden;
+    padding: 4px 7px;
+    border: 1px solid rgba(148, 163, 184, .10);
+    border-radius: 5px;
+    background: rgba(0, 0, 0, .18);
+    color: #dcecff;
+    font-family: "Cascadia Code", "Consolas", monospace;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .threat-intel-empty {
-    text-align: center;
-    opacity: .65;
-    padding: 20px !important;
+    padding: 28px 20px !important;
+    color: #8f9caf !important;
+    font-size: 11px !important;
+    text-align: center !important;
+}
+
+/* Subtle column hierarchy */
+.threat-intel-panel td:nth-child(2) {
+    color: #9fd9e7;
+    font-weight: 700;
+    font-size: 10px;
+    text-transform: uppercase;
+}
+
+.threat-intel-panel td:nth-child(3) {
+    color: #c7d0dc;
+}
+
+.threat-intel-panel td:nth-child(4) {
+    color: #f0c674;
+    font-weight: 700;
+}
+
+.threat-intel-panel td:nth-child(5) {
+    color: #9fe2b5;
+    font-weight: 700;
+}
+
+.threat-intel-panel td:nth-child(6) {
+    color: #aeb8c7;
+}
+
+.threat-intel-panel td:nth-child(7) {
+    color: #8794a6;
+    white-space: nowrap;
 }
 
 @media (max-width: 700px) {
     .threat-intel-header {
+        align-items: flex-start;
         flex-direction: column;
+        padding: 17px;
     }
+
+    .threat-intel-summary {
+        margin: 12px 17px;
+    }
+
+    .threat-intel-panel th,
+    .threat-intel-panel td {
+        padding: 9px 10px;
+    }
+}
+
+/* Threat Intelligence — compact empty state */
+.threat-intel-panel .threat-intel-empty {
+    height: 78px;
+    padding: 0 20px !important;
+    color: #7f8da0 !important;
+    font-size: 11px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    background: rgba(255, 255, 255, .008);
+}
+
+
+/* Threat Intelligence — security data emphasis */
+.threat-intel-panel td:nth-child(2),
+.threat-intel-panel td:nth-child(4),
+.threat-intel-panel td:nth-child(5) {
+    white-space: nowrap;
+}
+
+.threat-intel-panel td:nth-child(2) {
+    display: table-cell;
+}
+
+.threat-intel-panel td:nth-child(4),
+.threat-intel-panel td:nth-child(5) {
+    letter-spacing: .02em;
+}
+
+.threat-intel-panel td:nth-child(4)::before,
+.threat-intel-panel td:nth-child(5)::before {
+    content: "";
+    display: inline-block;
+    width: 5px;
+    height: 5px;
+    margin-right: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    vertical-align: middle;
+    opacity: .8;
+}
+
+.threat-intel-panel tbody tr:hover td:first-child code {
+    border-color: rgba(64, 217, 255, .22);
+    background: rgba(64, 217, 255, .035);
 }
