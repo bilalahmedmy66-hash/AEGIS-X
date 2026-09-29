@@ -1,0 +1,134 @@
+﻿/* ============================================================
+   AEGIS X — UEBA UI POLISH
+   Investigation panel only
+   ============================================================ */
+
+#uebaInvestigationSection.aegis-ueba-section {
+    margin: 18px 0;
+    padding: 22px;
+    border-radius: 16px;
+    border: 1px solid rgba(148,163,184,.16);
+    background: linear-gradient(180deg, rgba(15,23,42,.98), rgba(10,17,30,.98));
+    box-shadow: 0 12px 32px rgba(0,0,0,.18);
+}
+
+#uebaInvestigationSection .aegis-ueba-header {
+    margin-bottom: 16px;
+}
+
+#uebaInvestigationSection .aegis-ueba-title {
+    font-size: 23px;
+    letter-spacing: -.025em;
+}
+
+#uebaInvestigationSection .aegis-ueba-subtitle {
+    opacity: .72;
+}
+
+#uebaInvestigationSection .aegis-ueba-risk-badge {
+    min-width: 112px;
+    text-align: center;
+    padding: 8px 13px;
+    border-radius: 999px;
+    letter-spacing: .04em;
+}
+
+#uebaInvestigationSection .aegis-ueba-entity-bar {
+    margin: 14px 0 18px;
+    padding: 12px 15px;
+    min-height: 44px;
+    border-radius: 11px;
+    background: rgba(30,41,59,.62);
+    border: 1px solid rgba(148,163,184,.12);
+}
+
+#uebaInvestigationSection .aegis-ueba-entity-value {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    letter-spacing: .01em;
+}
+
+#uebaInvestigationSection .aegis-ueba-score-grid {
+    gap: 12px;
+}
+
+#uebaInvestigationSection .aegis-ueba-score-card,
+#uebaInvestigationSection .aegis-ueba-stat,
+#uebaInvestigationSection .aegis-ueba-signal-row,
+#uebaInvestigationSection .aegis-ueba-comparison-card {
+    border-radius: 12px;
+    border: 1px solid rgba(148,163,184,.11);
+    background: rgba(30,41,59,.48);
+}
+
+#uebaInvestigationSection .aegis-ueba-score-card {
+    padding: 18px;
+}
+
+#uebaInvestigationSection .aegis-ueba-card-label,
+#uebaInvestigationSection .aegis-ueba-section-label {
+    letter-spacing: .08em;
+}
+
+#uebaInvestigationSection .aegis-ueba-score-value {
+    font-size: 31px;
+    letter-spacing: -.035em;
+}
+
+#uebaInvestigationSection .aegis-ueba-score-bar {
+    height: 6px;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+#uebaInvestigationSection .aegis-ueba-behavior-grid {
+    gap: 10px;
+    margin-top: 10px;
+}
+
+#uebaInvestigationSection .aegis-ueba-stat {
+    padding: 12px 14px;
+    min-height: 48px;
+}
+
+#uebaInvestigationSection .aegis-ueba-signal-list {
+    gap: 7px;
+}
+
+#uebaInvestigationSection .aegis-ueba-signal-row {
+    padding: 11px 14px;
+    min-height: 42px;
+}
+
+#uebaInvestigationSection .aegis-ueba-reasons {
+    gap: 7px;
+}
+
+#uebaInvestigationSection .aegis-ueba-reason {
+    padding: 10px 12px;
+    border-radius: 9px;
+    background: rgba(30,41,59,.42);
+    border: 1px solid rgba(148,163,184,.09);
+}
+
+#uebaInvestigationSection .aegis-ueba-comparison-grid {
+    gap: 10px;
+}
+
+#uebaInvestigationSection .aegis-ueba-comparison-card {
+    padding: 14px;
+}
+
+@media (max-width: 760px) {
+    #uebaInvestigationSection.aegis-ueba-section {
+        padding: 16px;
+        border-radius: 13px;
+    }
+
+    #uebaInvestigationSection .aegis-ueba-header {
+        gap: 12px;
+    }
+
+    #uebaInvestigationSection .aegis-ueba-title {
+        font-size: 20px;
+    }
+}
