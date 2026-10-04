@@ -1,4 +1,4 @@
-﻿.telemetry-panel{margin:20px 0;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:10px;background:rgba(20,25,35,.35)}
+.telemetry-panel{margin:20px 0;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:10px;background:rgba(20,25,35,.35)}
 .telemetry-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
 .telemetry-header h2{margin:0 0 6px}
 .telemetry-header p{margin:0;opacity:.7}
@@ -9,3 +9,38 @@
 .telemetry-panel th,.telemetry-panel td{padding:9px 10px;text-align:left;border-bottom:1px solid rgba(128,128,128,.18)}
 .telemetry-panel th{font-size:.85rem;text-transform:uppercase;opacity:.7}
 @media(max-width:700px){.telemetry-header{flex-direction:column}.telemetry-refresh{width:100%}}
+
+/* AEGIS X dashboard contrast fix */
+.telemetry-panel,
+.telemetry-panel h2,
+.telemetry-panel p,
+.telemetry-panel strong,
+.telemetry-panel th,
+.telemetry-panel td {
+    color: #e8edf5;
+}
+
+.telemetry-panel h2 {
+    color: #f4f7fb;
+}
+
+.telemetry-panel p {
+    color: #aeb8c7;
+}
+
+.telemetry-panel th {
+    color: #8f9caf;
+}
+
+.telemetry-refresh {
+    color: #e8edf5;
+    background: rgba(20, 25, 35, .75);
+    border: 1px solid rgba(148, 163, 184, .35);
+    border-radius: 7px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.telemetry-refresh:hover {
+    background: rgba(35, 42, 55, .9);
+}

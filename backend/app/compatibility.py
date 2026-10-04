@@ -1,9 +1,11 @@
-﻿from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException
 from typing import Any
 import sqlite3
 
 from backend.app.database import get_connection
 from backend.app.response import determine_response, execute_response
+from backend.app.ai_core import analyze_security_context
+from backend.app.security_brain import build_security_brain
 
 router = APIRouter(prefix="/api/v1")
 
@@ -165,6 +167,28 @@ def auto_fix_preview(incident_id: int):
         incident_type=incident["incident_type"],
     )
 
+    ai_assessment = analyze_security_context(
+        incident_id=incident_id,
+        question=(
+            "Assess the defensive response for this incident. "
+            "Use the supplied telemetry to explain whether the "
+            "deterministic AEGIS response recommendation is supported. "
+            "Do not execute or authorize any real-world action. "
+            "Return evidence, uncertainty, and response-safety reasoning."
+        ),
+    )
+
+    local_brain = None
+
+    if not ai_assessment.get("available", False):
+        try:
+            local_brain = build_security_brain(incident_id)
+        except Exception as exc:
+            local_brain = {
+                "status": "UNAVAILABLE",
+                "error": str(exc),
+            }
+
     return {
         "success": True,
         "preview": {
@@ -177,6 +201,13 @@ def auto_fix_preview(incident_id: int):
             "execution_mode": response.get("mode", "SIMULATION"),
             "simulation_only": True,
             "requires_confirmation": True,
+            "ai_assessment": ai_assessment,
+            "security_brain": local_brain,
+            "intelligence_source": (
+                "GEMINI_AI"
+                if ai_assessment.get("available", False)
+                else "AEGIS_LOCAL_SECURITY_BRAIN"
+            ),
         },
     }
 
@@ -198,6 +229,28 @@ def auto_fix(incident_id: int):
         incident_type=incident["incident_type"],
     )
 
+    ai_assessment = analyze_security_context(
+        incident_id=incident_id,
+        question=(
+            "Assess the defensive response for this incident before Auto-Fix. "
+            "Use only supplied telemetry. Explain the evidence supporting "
+            "the deterministic response recommendation, identify uncertainty, "
+            "and confirm that the response remains simulation-only. "
+            "Do not execute or authorize any real-world action."
+        ),
+    )
+
+    local_brain = None
+
+    if not ai_assessment.get("available", False):
+        try:
+            local_brain = build_security_brain(incident_id)
+        except Exception as exc:
+            local_brain = {
+                "status": "UNAVAILABLE",
+                "error": str(exc),
+            }
+
     execution = execute_response(
         incident_id=incident_id,
         action=response.get("action"),
@@ -208,8 +261,15 @@ def auto_fix(incident_id: int):
         "success": True,
         "incident": incident,
         "response": response,
+        "ai_assessment": ai_assessment,
+        "security_brain": local_brain,
+        "intelligence_source": (
+            "GEMINI_AI"
+            if ai_assessment.get("available", False)
+            else "AEGIS_LOCAL_SECURITY_BRAIN"
+        ),
         "execution": execution,
-        "audit_verified": execution.get("id") is not None,
+        "audit_verified": execution.get("response_id") is not None,
         "simulation_only": True,
     }
 
@@ -306,4 +366,3 @@ def campaign(source_ip: str):
         "events": events,
         "alerts": alerts,
     }
-

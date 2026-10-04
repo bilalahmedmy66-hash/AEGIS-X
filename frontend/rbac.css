@@ -1,4 +1,4 @@
-﻿.rbac-panel{margin:20px 0;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:10px;background:rgba(20,25,35,.35)}
+.rbac-panel{margin:20px 0;padding:18px;border:1px solid rgba(128,128,128,.25);border-radius:10px;background:rgba(20,25,35,.35)}
 .rbac-header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px}
 .rbac-header h2{margin:0 0 6px}
 .rbac-header p{margin:0;opacity:.7}
@@ -9,3 +9,56 @@
 .rbac-panel th,.rbac-panel td{padding:9px 10px;text-align:left;vertical-align:top;border-bottom:1px solid rgba(128,128,128,.18)}
 .rbac-panel th{font-size:.85rem;text-transform:uppercase;opacity:.7}
 @media(max-width:700px){.rbac-header{flex-direction:column}}
+
+/* AEGIS X dashboard contrast fix */
+.rbac-panel,
+.telemetry-panel,
+.threat-intel-panel {
+    color: #e8edf5;
+}
+
+.rbac-panel h2,
+.telemetry-panel h2,
+.threat-intel-panel h2 {
+    color: #f4f7fb;
+}
+
+.rbac-panel p,
+.telemetry-panel p,
+.threat-intel-panel p {
+    color: #aeb8c7;
+}
+
+.rbac-panel strong,
+.telemetry-panel strong,
+.threat-intel-panel strong {
+    color: #e8edf5;
+}
+
+.rbac-panel th,
+.rbac-panel td,
+.telemetry-panel th,
+.telemetry-panel td,
+.threat-intel-panel th,
+.threat-intel-panel td {
+    color: #d8e0eb;
+}
+
+.rbac-panel th,
+.telemetry-panel th,
+.threat-intel-panel th {
+    color: #8f9caf;
+}
+
+.telemetry-refresh {
+    color: #e8edf5;
+    background: rgba(20, 25, 35, .75);
+    border: 1px solid rgba(148, 163, 184, .35);
+    border-radius: 7px;
+    padding: 8px 14px;
+    cursor: pointer;
+}
+
+.telemetry-refresh:hover {
+    background: rgba(35, 42, 55, .9);
+}
