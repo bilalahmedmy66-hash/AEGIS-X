@@ -1,0 +1,495 @@
+/* ============================================================
+   AEGIS X — SECURITY BRAIN COMMAND UI
+   Visual layer only — does not modify application logic
+   ============================================================ */
+
+:root {
+    --brain-bg: #071019;
+    --brain-panel: #0b1621;
+    --brain-panel-2: #0e1c28;
+    --brain-border: rgba(120, 160, 190, 0.18);
+    --brain-text: #e7f0f7;
+    --brain-muted: #8295a6;
+    --brain-cyan: #54d8ff;
+    --brain-green: #48d597;
+    --brain-yellow: #f2c866;
+    --brain-red: #ff6878;
+    --brain-purple: #9d8cff;
+}
+
+/* Main brain container */
+.aegis-security-brain {
+    width: 100%;
+    margin: 24px 0 30px;
+    padding: 0;
+    color: var(--brain-text);
+}
+
+/* Header */
+.aegis-brain-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 20px 22px;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(16, 38, 54, 0.96),
+            rgba(7, 16, 25, 0.98)
+        );
+    border: 1px solid var(--brain-border);
+    border-radius: 16px 16px 0 0;
+}
+
+.aegis-brain-title {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.aegis-brain-core {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--brain-green);
+    box-shadow:
+        0 0 0 5px rgba(72, 213, 151, 0.08),
+        0 0 22px rgba(72, 213, 151, 0.45);
+}
+
+.aegis-brain-title h2 {
+    margin: 0;
+    font-size: 18px;
+    letter-spacing: 0.08em;
+    font-weight: 700;
+}
+
+.aegis-brain-title p {
+    margin: 4px 0 0;
+    color: var(--brain-muted);
+    font-size: 12px;
+}
+
+.aegis-brain-status {
+    padding: 7px 11px;
+    border: 1px solid rgba(72, 213, 151, 0.25);
+    border-radius: 999px;
+    color: var(--brain-green);
+    background: rgba(72, 213, 151, 0.07);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+}
+
+/* Main command grid */
+.aegis-brain-grid {
+    display: grid;
+    grid-template-columns: 1.25fr 0.75fr;
+    gap: 1px;
+    background: var(--brain-border);
+    border-left: 1px solid var(--brain-border);
+    border-right: 1px solid var(--brain-border);
+}
+
+/* Cards */
+.aegis-brain-card {
+    min-width: 0;
+    padding: 20px;
+    background: var(--brain-panel);
+}
+
+.aegis-brain-card h3 {
+    margin: 0 0 13px;
+    color: var(--brain-muted);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.aegis-brain-card p {
+    margin: 0;
+}
+
+/* Situation */
+.aegis-brain-situation {
+    min-height: 145px;
+}
+
+.aegis-brain-state {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.aegis-brain-state-value {
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 750;
+    letter-spacing: -0.02em;
+}
+
+.aegis-brain-state-meta {
+    color: var(--brain-muted);
+    font-size: 12px;
+}
+
+/* Risk */
+.aegis-brain-risk {
+    display: flex;
+    align-items: center;
+    gap: 17px;
+}
+
+.aegis-risk-ring {
+    position: relative;
+    width: 76px;
+    height: 76px;
+    flex: 0 0 76px;
+    display: grid;
+    place-items: center;
+    border-radius: 50%;
+    background:
+        radial-gradient(
+            circle at center,
+            var(--brain-panel-2) 57%,
+            transparent 58%
+        ),
+        conic-gradient(
+            var(--brain-red) 0deg,
+            var(--brain-red) var(--risk-angle, 216deg),
+            rgba(255,255,255,0.06) var(--risk-angle, 216deg)
+        );
+}
+
+.aegis-risk-number {
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.aegis-risk-label {
+    color: var(--brain-red);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+}
+
+/* Metrics */
+.aegis-brain-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.aegis-brain-metric {
+    padding: 13px;
+    border: 1px solid var(--brain-border);
+    border-radius: 10px;
+    background: rgba(255,255,255,0.015);
+}
+
+.aegis-brain-metric-value {
+    display: block;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.aegis-brain-metric-label {
+    display: block;
+    margin-top: 4px;
+    color: var(--brain-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+}
+
+/* Attack progression */
+.aegis-attack-chain {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    overflow-x: auto;
+    padding-bottom: 3px;
+}
+
+.aegis-attack-node {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    border: 1px solid var(--brain-border);
+    border-radius: 9px;
+    background: rgba(255,255,255,0.025);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.aegis-attack-node.active {
+    border-color: rgba(84,216,255,0.4);
+    background: rgba(84,216,255,0.07);
+    color: var(--brain-cyan);
+}
+
+.aegis-attack-arrow {
+    color: #536777;
+    font-size: 14px;
+}
+
+/* Evidence */
+.aegis-evidence-list {
+    display: grid;
+    gap: 7px;
+}
+
+.aegis-evidence-item {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.025);
+    font-size: 11px;
+}
+
+.aegis-evidence-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--brain-green);
+}
+
+.aegis-evidence-dot.inferred {
+    background: var(--brain-yellow);
+}
+
+.aegis-evidence-dot.unknown {
+    background: #647687;
+}
+
+/* Decision */
+.aegis-brain-decision {
+    border-top: 1px solid var(--brain-border);
+    background: var(--brain-panel-2);
+}
+
+.aegis-decision-action {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+}
+
+.aegis-decision-name {
+    font-size: 17px;
+    font-weight: 750;
+    color: var(--brain-cyan);
+}
+
+.aegis-decision-mode {
+    color: var(--brain-muted);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+/* Shield */
+.aegis-brain-shield {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.aegis-shield-state {
+    color: var(--brain-green);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.aegis-shield-meta {
+    color: var(--brain-muted);
+    font-size: 11px;
+}
+
+/* Unknowns */
+.aegis-unknowns {
+    display: grid;
+    gap: 7px;
+}
+
+.aegis-unknown {
+    padding: 9px 11px;
+    border-left: 2px solid #596b7a;
+    color: #a8b7c4;
+    background: rgba(255,255,255,0.018);
+    font-size: 11px;
+}
+
+/* Footer */
+.aegis-brain-footer {
+    padding: 12px 20px;
+    border: 1px solid var(--brain-border);
+    border-top: 0;
+    border-radius: 0 0 16px 16px;
+    background: #071019;
+    color: var(--brain-muted);
+    font-size: 10px;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    .aegis-brain-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .aegis-brain-metrics {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .aegis-brain-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .aegis-brain-metrics {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .aegis-brain-card {
+        padding: 15px;
+    }
+}
+/* ============================================================
+   AEGIS X — SECURITY BRAIN COMMAND OVERRIDES
+   External visual layer — intentionally overrides legacy inline
+   brain styling without changing application logic.
+   ============================================================ */
+
+#aegis-security-brain {
+    margin: 22px 0 30px !important;
+    border-radius: 16px !important;
+    border: 1px solid rgba(120,160,190,.18) !important;
+    background: #071019 !important;
+    box-shadow: 0 18px 55px rgba(0,0,0,.22) !important;
+    color: #e7f0f7 !important;
+}
+
+#aegis-security-brain .aegis-brain-header {
+    padding: 20px 22px !important;
+    background: linear-gradient(135deg,rgba(16,38,54,.96),rgba(7,16,25,.98)) !important;
+    border-bottom: 1px solid rgba(120,160,190,.18) !important;
+    border-radius: 16px 16px 0 0 !important;
+}
+
+#aegis-security-brain .aegis-brain-title {
+    font-size: 18px !important;
+}
+
+#aegis-security-brain .aegis-brain-kicker {
+    color: #8295a6 !important;
+    letter-spacing: .14em !important;
+}
+
+#aegis-security-brain .aegis-brain-title {
+    color: #e7f0f7 !important;
+}
+
+#aegis-security-brain .aegis-brain-subtitle {
+    color: #8295a6 !important;
+}
+
+#aegis-security-brain .aegis-brain-active {
+    color: #48d597 !important;
+    background: rgba(72,213,151,.07) !important;
+    border-color: rgba(72,213,151,.25) !important;
+}
+
+#aegis-security-brain .aegis-brain-body {
+    padding: 0 !important;
+    gap: 1px !important;
+    background: rgba(120,160,190,.12) !important;
+}
+
+#aegis-security-brain .aegis-brain-top {
+    grid-template-columns: 150px 1fr !important;
+    padding: 22px !important;
+    border-radius: 0 !important;
+    background: #0b1621 !important;
+    border: 0 !important;
+}
+
+#aegis-security-brain .aegis-brain-stat-grid {
+    gap: 1px !important;
+}
+
+#aegis-security-brain .aegis-brain-stat {
+    padding: 15px !important;
+    border-radius: 0 !important;
+    background: #0e1c28 !important;
+    border: 0 !important;
+}
+
+#aegis-security-brain .aegis-brain-risk {
+    width: 104px !important;
+    height: 104px !important;
+}
+
+#aegis-security-brain .aegis-brain-risk::after {
+    background: #0b1621 !important;
+}
+
+#aegis-security-brain .aegis-brain-risk-inner strong {
+    font-size: 28px !important;
+}
+
+#aegis-security-brain .aegis-brain-threat {
+    color: #8295a6 !important;
+}
+
+#aegis-security-brain .aegis-brain-incident {
+    color: #e7f0f7 !important;
+}
+
+#aegis-security-brain .aegis-brain-source {
+    color: #8295a6 !important;
+}
+
+#aegis-security-brain .aegis-brain-card {
+    background: #0b1621 !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+}
+
+#aegis-security-brain .aegis-brain-card h3 {
+    color: #8295a6 !important;
+}
+
+#aegis-security-brain .aegis-brain-card,
+#aegis-security-brain .aegis-brain-section {
+    border-color: rgba(120,160,190,.16) !important;
+}
+
+#aegis-security-brain .aegis-brain-decision {
+    background: #0e1c28 !important;
+    border-top: 1px solid rgba(120,160,190,.18) !important;
+}
+
+/* Remove the old floating AI/chat presentation if anything remains. */
+#aegis-ai-copilot-button,
+#aegis-ai-button,
+.aegis-ai-button,
+.ai-copilot-button,
+[class*="ai-copilot"][class*="button"],
+[class*="copilot"][class*="button"] {
+    display: none !important;
+}
+
+@media (max-width: 800px) {
+    #aegis-security-brain .aegis-brain-top {
+        grid-template-columns: 1fr !important;
+    }
+
+    #aegis-security-brain .aegis-brain-stat-grid {
+        grid-template-columns: repeat(2,1fr) !important;
+    }
+}

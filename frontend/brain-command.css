@@ -1,0 +1,301 @@
+﻿(() => {
+  const STYLE_ID = "aegis-brain-command-style";
+
+  if (document.getElementById(STYLE_ID)) return;
+
+  const style = document.createElement("style");
+  style.id = STYLE_ID;
+
+  style.textContent = `
+    .aegis-brain-command {
+      margin-top: 18px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .aegis-brain-hero {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 22px;
+      align-items: center;
+      padding: 22px;
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,.09);
+      background:
+        radial-gradient(circle at 15% 20%, rgba(110,80,255,.20), transparent 36%),
+        linear-gradient(145deg,#202027,#15151a);
+    }
+
+    .aegis-brain-ring {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      margin: auto;
+      position: relative;
+      background: conic-gradient(
+        #ff9f0a 0deg,
+        #ff9f0a 216deg,
+        rgba(255,255,255,.08) 216deg,
+        rgba(255,255,255,.08) 360deg
+      );
+    }
+
+    .aegis-brain-ring::after {
+      content: "";
+      position: absolute;
+      inset: 9px;
+      border-radius: 50%;
+      background: #17171d;
+    }
+
+    .aegis-brain-score {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+    }
+
+    .aegis-brain-score strong {
+      display: block;
+      font-size: 32px;
+      line-height: 1;
+    }
+
+    .aegis-brain-score span {
+      display: block;
+      margin-top: 5px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      opacity: .6;
+    }
+
+    .aegis-brain-kicker {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .16em;
+      opacity: .5;
+    }
+
+    .aegis-brain-title {
+      margin-top: 6px;
+      font-size: 25px;
+      font-weight: 800;
+    }
+
+    .aegis-brain-subtitle {
+      margin-top: 7px;
+      font-size: 12px;
+      opacity: .55;
+    }
+
+    .aegis-brain-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 13px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(52,211,153,.08);
+      border: 1px solid rgba(52,211,153,.22);
+      color: #6ee7b7;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .08em;
+    }
+
+    .aegis-brain-live i {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #34d399;
+      box-shadow: 0 0 12px #34d399;
+    }
+
+    .aegis-brain-grid {
+      display: grid;
+      grid-template-columns: repeat(4,1fr);
+      gap: 10px;
+    }
+
+    .aegis-brain-stat {
+      padding: 15px;
+      border-radius: 17px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.025);
+    }
+
+    .aegis-brain-stat span {
+      display: block;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: .12em;
+      opacity: .45;
+    }
+
+    .aegis-brain-stat strong {
+      display: block;
+      margin-top: 7px;
+      font-size: 21px;
+    }
+
+    .aegis-brain-card {
+      padding: 18px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.025);
+    }
+
+    .aegis-brain-label {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      opacity: .48;
+      margin-bottom: 13px;
+    }
+
+    .aegis-brain-chain {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 4px 0 7px;
+    }
+
+    .aegis-brain-node {
+      min-width: 112px;
+      padding: 13px;
+      text-align: center;
+      border-radius: 15px;
+      border: 1px solid rgba(124,92,255,.25);
+      background: rgba(124,92,255,.07);
+    }
+
+    .aegis-brain-node strong {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .06em;
+    }
+
+    .aegis-brain-node small {
+      display: block;
+      margin-top: 5px;
+      opacity: .45;
+      font-size: 9px;
+    }
+
+    .aegis-brain-arrow {
+      opacity: .35;
+    }
+
+    .aegis-brain-evidence {
+      display: grid;
+      gap: 7px;
+    }
+
+    .aegis-brain-evidence-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.035);
+    }
+
+    .aegis-brain-evidence-row b {
+      font-size: 11px;
+    }
+
+    .aegis-brain-evidence-row span {
+      font-size: 10px;
+      opacity: .45;
+    }
+
+    .aegis-brain-decision {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 15px;
+      align-items: center;
+      padding: 16px;
+      border-radius: 17px;
+      background: linear-gradient(
+        100deg,
+        rgba(124,92,255,.10),
+        rgba(52,211,153,.05)
+      );
+      border: 1px solid rgba(124,92,255,.17);
+    }
+
+    .aegis-brain-decision strong {
+      display: block;
+      font-size: 18px;
+    }
+
+    .aegis-brain-decision small {
+      display: block;
+      margin-top: 4px;
+      opacity: .45;
+    }
+
+    .aegis-brain-shield {
+      color: #6ee7b7;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: .1em;
+    }
+
+    .aegis-brain-unknown {
+      display: grid;
+      gap: 7px;
+    }
+
+    .aegis-brain-unknown div {
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.03);
+      font-size: 11px;
+      opacity: .65;
+    }
+
+    @media(max-width:700px) {
+      .aegis-brain-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .aegis-brain-grid {
+        grid-template-columns: repeat(2,1fr);
+      }
+
+      .aegis-brain-decision {
+        grid-template-columns: 1fr;
+      }
+    }
+  `;
+
+  document.head.appendChild(style);
+})();
+
+/* AEGIS SECURITY BRAIN — PRIMARY SECURITY INTERFACE */
+#aegis-security-command-center {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 999999 !important;
+  overflow-y: auto !important;
+  padding: 28px !important;
+  box-sizing: border-box !important;
+  background:
+    radial-gradient(circle at 15% 10%, rgba(100,80,255,.14), transparent 30%),
+    radial-gradient(circle at 85% 20%, rgba(52,211,153,.06), transparent 28%),
+    #0b0b0f !important;
+}
+
+#aegis-ai-copilot {
+  display: none !important;
+}
+
+#aegis-ai-copilot *,
+#aegis-ai-copilot-overlay,
+#aegis-ai-copilot-drawer {
+  display: none !important;
+}
