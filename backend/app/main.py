@@ -1,6 +1,10 @@
+from .brain_routes import brain_router
+from .soc_routes import soc_router
 from .threat_hunting import threat_hunting_router
-from .rbac_routes import rbac_router
 from .shield_routes import shield_router
+from .security_report_routes import security_report_router
+from .telemetry_routes import telemetry_router
+from .rbac_routes import rbac_router
 from .ai_routes import ai_router
 from backend.app.compatibility import router as compatibility_router
 from contextlib import asynccontextmanager
@@ -45,7 +49,6 @@ from backend.app.timeline import get_incident_timeline
 from backend.app.graph import build_security_graph
 from .attack_chain import build_attack_chain
 from .investigation import build_ai_investigation
-from .investigation import build_investigation
 from backend.app.correlation import (
     build_correlation,
     build_source_correlation,
@@ -87,6 +90,7 @@ app = FastAPI(
 
 app.include_router(shield_router)
 app.include_router(ai_router)
+app.include_router(telemetry_router)
 app.include_router(rbac_router)
 
 
@@ -282,15 +286,15 @@ def analyze_detections():
     Pipeline:
 
         Security Events
-              â†“
+              ↓
         Detection Engine
-              â†“
+              ↓
         Risk Engine
-              â†“
+              ↓
         Alert Management
-              â†“
+              ↓
         Incident Management
-              â†“
+              ↓
         Response Decision
     """
 
@@ -535,7 +539,7 @@ def list_incidents():
 
 
 # ============================================================
-# PHASE 2.1 â€” INCIDENT TIMELINE
+# PHASE 2.1 — INCIDENT TIMELINE
 # ============================================================
 
 @app.get("/api/v1/incidents/{incident_id}/timeline")
@@ -547,13 +551,13 @@ def incident_timeline(incident_id: int):
     Correlation:
 
         EVENT
-          â†“
+          ↓
         ALERT
-          â†“
+          ↓
         INCIDENT
-          â†“
+          ↓
         RESPONSE
-          â†“
+          ↓
         STATUS
     """
 
@@ -762,19 +766,8 @@ def get_investigation(incident_id: int):
         )
 
     return result
-@app.get("/api/v1/incidents/{incident_id}/investigation")
-def get_incident_investigation(incident_id: int):
-    result = build_investigation(incident_id)
-
-    if result is None:
-        raise HTTPException(
-            status_code=404,
-            detail=f"Incident {incident_id} not found",
-        )
-
-    return result
 # ============================================================
-# AEGIS X â€” UEBA BEHAVIORAL INTELLIGENCE API
+# AEGIS X — UEBA BEHAVIORAL INTELLIGENCE API
 # ============================================================
 
 @app.get("/api/v1/ueba")
@@ -909,5 +902,24 @@ def get_campaign_intelligence(source_ip: str):
     return result
 
 app.include_router(compatibility_router)
+app.include_router(brain_router)
+app.include_router(soc_router)
 app.include_router(threat_hunting_router)
+app.include_router(security_report_router)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 app.include_router(threat_intel_router)
