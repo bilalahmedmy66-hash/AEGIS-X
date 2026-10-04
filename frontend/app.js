@@ -122,7 +122,7 @@ window.autoFixIncident = autoFixIncident;
 
 let activeInvestigationIncidentId = null;
 /* ============================================================
-   AEGIS X — FRONTEND CONTROLLER
+   AEGIS X â€” FRONTEND CONTROLLER
    ============================================================ */
 
 const $ = id => document.getElementById(id);
@@ -201,7 +201,7 @@ function esc(value) {
 function time(value) {
 
     if (!value) {
-        return "—";
+        return "â€”";
     }
 
     try {
@@ -334,7 +334,7 @@ function renderDetections(
                                 "N/A"
                             )}
 
-                            · Risk:
+                            Â· Risk:
                             ${esc(
                                 item.risk_score ??
                                 0
@@ -412,14 +412,14 @@ function renderResponses(
                                 "N/A"
                             )}
 
-                            ·
+                            Â·
 
                             ${esc(
                                 item.source_ip ||
                                 "N/A"
                             )}
 
-                            ·
+                            Â·
 
                             ${esc(
                                 time(
@@ -1150,9 +1150,10 @@ async function investigate(
     id
 ) {
     activeInvestigationIncidentId = id;
+    window.activeInvestigationIncidentId = id;
 
-    currentIncidentId =
-        id;
+    currentIncidentId = id;
+    window.currentIncidentId = id;
 
 
     const overlay =
@@ -1316,11 +1317,11 @@ function renderInvestigation(
 
 
     $("investigationTitle").textContent =
-        `Incident #${incident.id ?? "—"}`;
+        `Incident #${incident.id ?? "â€”"}`;
 
 
     $("investigationSubtitle").textContent =
-        `${incident.incident_type || "SECURITY INCIDENT"} · ${incident.source_ip || "Unknown source"}`;
+        `${incident.incident_type || "SECURITY INCIDENT"} Â· ${incident.source_ip || "Unknown source"}`;
 
 
     const content =
@@ -1729,7 +1730,7 @@ function renderInvestigationEvidenceChain(
                 <strong>INVESTIGATE</strong>
                 <small>
                     Incident #${esc(
-                        incident.id ?? "—"
+                        incident.id ?? "â€”"
                     )}
                 </small>
             </div>
@@ -1996,7 +1997,7 @@ function renderAIInvestigation(
                                         progression.length - 1
                                             ? `
                                                 <span class="ai-stage-arrow">
-                                                    →
+                                                    â†’
                                                 </span>
                                               `
                                             : ""
@@ -2053,7 +2054,7 @@ function renderAIInvestigation(
                                     <span class="mitre-tag">
 
                                         ${esc(tactic.id)}
-                                        ·
+                                        Â·
                                         ${esc(tactic.name)}
 
                                     </span>
@@ -2441,7 +2442,7 @@ function renderAttackStory(
                         incident.risk_score ??
                         0
                     )}
-                    ·
+                    Â·
                     ${esc(
                         risk.level ??
                         incident.risk_level ??
@@ -2494,7 +2495,7 @@ function renderAttackStory(
                                     progression.length - 1
                                         ? `
                                             <div class="attack-stage-connector">
-                                                →
+                                                â†’
                                             </div>
                                           `
                                         : ""
@@ -2527,7 +2528,7 @@ function renderAttackStory(
             </div>
 
             <div class="attack-flow-arrow">
-                →
+                â†’
             </div>
 
             <div class="attack-flow-node">
@@ -2541,7 +2542,7 @@ function renderAttackStory(
             </div>
 
             <div class="attack-flow-arrow">
-                →
+                â†’
             </div>
 
             <div class="attack-flow-node">
@@ -2559,7 +2560,7 @@ function renderAttackStory(
             </div>
 
             <div class="attack-flow-arrow">
-                →
+                â†’
             </div>
 
             <div class="attack-flow-node">
@@ -2900,7 +2901,7 @@ function renderSecurityGraph(
                                         )}
                                     </span>
 
-                                    <b>→</b>
+                                    <b>â†’</b>
 
                                     <strong>
                                         ${esc(
@@ -2911,7 +2912,7 @@ function renderSecurityGraph(
                                         )}
                                     </strong>
 
-                                    <b>→</b>
+                                    <b>â†’</b>
 
                                     <span>
                                         ${esc(
@@ -3212,7 +3213,7 @@ document.addEventListener(
 
 
 /* ============================================================
-   AEGIS X V5 — VISUAL SECURITY INTELLIGENCE GRAPH
+   AEGIS X V5 â€” VISUAL SECURITY INTELLIGENCE GRAPH
    ============================================================ */
 
 function renderSecurityGraph(data) {
@@ -3293,7 +3294,7 @@ function renderSecurityGraph(data) {
         esc(
             value === null ||
             value === undefined
-                ? "—"
+                ? "â€”"
                 : String(value)
         );
 
@@ -3301,7 +3302,7 @@ function renderSecurityGraph(data) {
     const nodeTitle = node => {
 
         if (!node) {
-            return "—";
+            return "â€”";
         }
 
         return (
@@ -3466,7 +3467,7 @@ function renderSecurityGraph(data) {
 
 
     /*
-     * Source → Event
+     * Source â†’ Event
      */
 
     if (source && event) {
@@ -3482,7 +3483,7 @@ function renderSecurityGraph(data) {
 
 
     /*
-     * Event → Detection
+     * Event â†’ Detection
      */
 
     if (event && detection) {
@@ -3498,7 +3499,7 @@ function renderSecurityGraph(data) {
 
 
     /*
-     * Detection → Alert
+     * Detection â†’ Alert
      */
 
     if (detection && alert) {
@@ -3515,7 +3516,7 @@ function renderSecurityGraph(data) {
 
 
     /*
-     * Alert → Incident
+     * Alert â†’ Incident
      */
 
     if (alert && incident) {
@@ -3532,7 +3533,7 @@ function renderSecurityGraph(data) {
 
 
     /*
-     * Incident → Risk
+     * Incident â†’ Risk
      */
 
     if (incident && risk) {
@@ -3549,7 +3550,7 @@ function renderSecurityGraph(data) {
 
 
     /*
-     * Incident → Response
+     * Incident â†’ Response
      */
 
     if (incident && response) {
@@ -3847,7 +3848,7 @@ function renderSecurityGraph(data) {
 
 
 /* ============================================================
-   AEGIS X — UEBA INVESTIGATION UI
+   AEGIS X â€” UEBA INVESTIGATION UI
    Phase 3.5
    ============================================================ */
 
@@ -3950,7 +3951,7 @@ function renderSecurityGraph(data) {
                     id="uebaEntityValue"
                     class="aegis-ueba-entity-value"
                 >
-                    —
+                    â€”
                 </span>
             </div>
 
@@ -3965,7 +3966,7 @@ function renderSecurityGraph(data) {
                         id="uebaScore"
                         class="aegis-ueba-score"
                     >
-                        —
+                        â€”
                     </div>
 
                     <div class="aegis-ueba-progress">
@@ -3985,7 +3986,7 @@ function renderSecurityGraph(data) {
                         id="uebaRiskLevel"
                         class="aegis-ueba-mini-value"
                     >
-                        —
+                        â€”
                     </div>
                 </div>
 
@@ -3998,7 +3999,7 @@ function renderSecurityGraph(data) {
                         id="uebaBaseline"
                         class="aegis-ueba-mini-value"
                     >
-                        —
+                        â€”
                     </div>
                 </div>
 
@@ -4011,7 +4012,7 @@ function renderSecurityGraph(data) {
                         id="uebaConfidence"
                         class="aegis-ueba-mini-value"
                     >
-                        —
+                        â€”
                     </div>
                 </div>
 
@@ -4026,22 +4027,22 @@ function renderSecurityGraph(data) {
 
                 <div class="aegis-ueba-stat">
                     <span>Events</span>
-                    <strong id="uebaEvents">—</strong>
+                    <strong id="uebaEvents">â€”</strong>
                 </div>
 
                 <div class="aegis-ueba-stat">
                     <span>Failed Auth</span>
-                    <strong id="uebaFailedAuth">—</strong>
+                    <strong id="uebaFailedAuth">â€”</strong>
                 </div>
 
                 <div class="aegis-ueba-stat">
                     <span>Failure Rate</span>
-                    <strong id="uebaFailureRate">—</strong>
+                    <strong id="uebaFailureRate">â€”</strong>
                 </div>
 
                 <div class="aegis-ueba-stat">
                     <span>5-Min Burst</span>
-                    <strong id="uebaBurst">—</strong>
+                    <strong id="uebaBurst">â€”</strong>
                 </div>
 
             </div>
@@ -4098,11 +4099,11 @@ function renderSecurityGraph(data) {
                     </span>
 
                     <strong id="uebaDetectionRisk">
-                        —
+                        â€”
                     </strong>
 
                     <small id="uebaDetectionScore">
-                        —
+                        â€”
                     </small>
                 </div>
 
@@ -4116,11 +4117,11 @@ function renderSecurityGraph(data) {
                     </span>
 
                     <strong id="uebaBehaviorRisk">
-                        —
+                        â€”
                     </strong>
 
                     <small id="uebaBehaviorScore">
-                        —
+                        â€”
                     </small>
                 </div>
 
@@ -4131,7 +4132,7 @@ function renderSecurityGraph(data) {
 
                 <span>
                     AEGIS X behavioral analysis
-                    • local deterministic engine
+                    â€¢ local deterministic engine
                 </span>
             </div>
         `;
@@ -4324,7 +4325,7 @@ function renderSecurityGraph(data) {
          */
         setText(
             "uebaDetectionRisk",
-            incident.risk_level || "—"
+            incident.risk_level || "â€”"
         );
 
         setText(
@@ -4373,7 +4374,7 @@ function renderSecurityGraph(data) {
                 (reason) => `
                     <div class="aegis-ueba-reason">
                         <span class="aegis-ueba-reason-icon">
-                            ✓
+                            âœ“
                         </span>
 
                         <span>
@@ -4537,7 +4538,7 @@ function renderSecurityGraph(data) {
 
 
 /* ============================================================
-   AEGIS X — UEBA VISUAL STYLES
+   AEGIS X â€” UEBA VISUAL STYLES
    ============================================================ */
 
 (function () {
@@ -4915,7 +4916,7 @@ function renderSecurityGraph(data) {
 
 
 /* ============================================================
-   AEGIS X — SIMPLE UEBA LAUNCHER
+   AEGIS X â€” SIMPLE UEBA LAUNCHER
    ============================================================ */
 
 (function () {
@@ -4930,7 +4931,7 @@ function renderSecurityGraph(data) {
         const button = document.createElement("button");
 
         button.id = "aegisSimpleUEBAButton";
-        button.innerHTML = "◉ RUN UEBA";
+        button.innerHTML = "â—‰ RUN UEBA";
         
         button.style.cssText = `
             position: fixed;
@@ -4952,14 +4953,12 @@ function renderSecurityGraph(data) {
 
         button.addEventListener("click", async function () {
 
-            button.textContent = "◌ ANALYZING...";
+            button.textContent = "â—Œ ANALYZING...";
             button.disabled = true;
 
             try {
 
-                const response = await fetch(
-                    "/api/v1/incidents/2/ueba"
-                );
+                const incidentId = window.activeInvestigationIncidentId || window.currentIncidentId; if (!incidentId) { throw new Error("No active incident selected"); } const response = await fetch( "/api/v1/incidents/" + incidentId + "/ueba" );
 
                 if (!response.ok) {
                     throw new Error(
@@ -4976,7 +4975,7 @@ function renderSecurityGraph(data) {
                  */
                 if (typeof window.investigate === "function") {
                     try {
-                        await window.investigate(2);
+                        await window.investigate(incidentId);
                     } catch (e) {
                         console.warn(
                             "Investigation drawer could not be opened:",
@@ -5005,10 +5004,10 @@ function renderSecurityGraph(data) {
 
                 }, 300);
 
-                button.textContent = "✓ UEBA LOADED";
+                button.textContent = "âœ“ UEBA LOADED";
 
                 setTimeout(function () {
-                    button.textContent = "◉ RUN UEBA";
+                    button.textContent = "â—‰ RUN UEBA";
                     button.disabled = false;
                 }, 2000);
 
@@ -5019,10 +5018,10 @@ function renderSecurityGraph(data) {
                     error
                 );
 
-                button.textContent = "⚠ UEBA ERROR";
+                button.textContent = "âš  UEBA ERROR";
 
                 setTimeout(function () {
-                    button.textContent = "◉ RUN UEBA";
+                    button.textContent = "â—‰ RUN UEBA";
                     button.disabled = false;
                 }, 2000);
             }
@@ -5113,7 +5112,7 @@ function renderSecurityGraph(data) {
                         cursor:pointer;
                     "
                 >
-                    ×
+                    Ã—
                 </button>
             </div>
 
@@ -5316,7 +5315,7 @@ function renderSecurityGraph(data) {
                             font-size:11px;
                             line-height:1.4;
                         ">
-                            ✓ ${reason}
+                            âœ“ ${reason}
                         </div>
                     `
                 ).join("")}
@@ -5329,11 +5328,11 @@ function renderSecurityGraph(data) {
                 font-size:10px;
                 opacity:.4;
             ">
-                Detection: ${incident.risk_level || "—"}
-                • ${incident.risk_score ?? "—"}/100
+                Detection: ${incident.risk_level || "â€”"}
+                â€¢ ${incident.risk_score ?? "â€”"}/100
                 &nbsp;&nbsp;|&nbsp;&nbsp;
-                UEBA: ${entity.risk_level || "—"}
-                • ${entity.score || 0}/100
+                UEBA: ${entity.risk_level || "â€”"}
+                â€¢ ${entity.score || 0}/100
             </div>
         `;
     }
@@ -5370,7 +5369,7 @@ function renderSecurityGraph(data) {
     const button = document.createElement("button");
 
     button.id = "aegisSimpleUEBAButton";
-    button.textContent = "◉ RUN UEBA";
+    button.textContent = "â—‰ RUN UEBA";
 
     button.style.cssText = `
         position: fixed;
@@ -5391,14 +5390,12 @@ function renderSecurityGraph(data) {
 
     button.onclick = async function () {
 
-        button.textContent = "◌ ANALYZING...";
+        button.textContent = "â—Œ ANALYZING...";
         button.disabled = true;
 
         try {
 
-            const response = await fetch(
-                "/api/v1/incidents/2/ueba"
-            );
+            const incidentId = window.activeInvestigationIncidentId || window.currentIncidentId; if (!incidentId) { throw new Error("No active incident selected"); } const response = await fetch( "/api/v1/incidents/" + incidentId + "/ueba" );
 
             if (!response.ok) {
                 throw new Error(
@@ -5410,10 +5407,10 @@ function renderSecurityGraph(data) {
 
             showUEBAModal(data);
 
-            button.textContent = "✓ UEBA COMPLETE";
+            button.textContent = "âœ“ UEBA COMPLETE";
 
             setTimeout(() => {
-                button.textContent = "◉ RUN UEBA";
+                button.textContent = "â—‰ RUN UEBA";
                 button.disabled = false;
             }, 1500);
 
@@ -5421,10 +5418,10 @@ function renderSecurityGraph(data) {
 
             console.error(error);
 
-            button.textContent = "⚠ UEBA ERROR";
+            button.textContent = "âš  UEBA ERROR";
 
             setTimeout(() => {
-                button.textContent = "◉ RUN UEBA";
+                button.textContent = "â—‰ RUN UEBA";
                 button.disabled = false;
             }, 2000);
         }
@@ -5508,7 +5505,7 @@ function renderSecurityGraph(data) {
                             font-weight:900;
                             letter-spacing:.18em;
                         ">
-                            AEGIS X • BEHAVIORAL INTELLIGENCE
+                            AEGIS X â€¢ BEHAVIORAL INTELLIGENCE
                         </div>
 
                         <h1 style="
@@ -5540,7 +5537,7 @@ function renderSecurityGraph(data) {
                             cursor:pointer;
                         "
                     >
-                        ×
+                        Ã—
                     </button>
 
                 </div>
@@ -5799,7 +5796,7 @@ function renderSecurityGraph(data) {
                                 margin-right:8px;
                                 color:#62c9ff;
                             ">
-                                ✓
+                                âœ“
                             </span>
                             ${reason}
                         </div>
@@ -5833,11 +5830,11 @@ function renderSecurityGraph(data) {
                             margin-top:7px;
                             font-size:18px;
                         ">
-                            ${incident.risk_level || "—"}
+                            ${incident.risk_level || "â€”"}
                         </strong>
 
                         <small style="opacity:.5;">
-                            ${incident.risk_score ?? "—"}/100
+                            ${incident.risk_score ?? "â€”"}/100
                         </small>
                     </div>
 
@@ -5887,8 +5884,8 @@ function renderSecurityGraph(data) {
                     opacity:.4;
                 ">
                     AEGIS X UEBA Engine v1.0
-                    • Local deterministic behavioral analysis
-                    • Incident #${incident.id || 2}
+                    â€¢ Local deterministic behavioral analysis
+                    â€¢ Incident #${incident.id || 2}
                 </div>
 
             </div>
@@ -5909,7 +5906,7 @@ function renderSecurityGraph(data) {
 
 })();
 /* ============================================================
-   AEGIS X — UNIFIED SECURITY INTELLIGENCE CORRELATION
+   AEGIS X â€” UNIFIED SECURITY INTELLIGENCE CORRELATION
    Phase 3.6
    ============================================================ */
 
@@ -5952,8 +5949,8 @@ function renderSecurityGraph(data) {
 
             const [uebaResponse, attackResponse] =
                 await Promise.all([
-                    fetch("/api/v1/incidents/2/ueba"),
-                    fetch("/api/v1/incidents/2/attack-chain")
+                    fetch("/api/v1/incidents/" + (window.activeInvestigationIncidentId || window.currentIncidentId) + "/ueba"),
+                    fetch("/api/v1/incidents/" + (window.activeInvestigationIncidentId || window.currentIncidentId) + "/attack-chain")
                 ]);
 
             if (!uebaResponse.ok) {
@@ -6100,7 +6097,7 @@ function renderSecurityGraph(data) {
                 </div>
 
                 <div class="aegis-chain-arrow">
-                    →
+                    â†’
                 </div>
 
                 <div class="aegis-chain-node">
@@ -6112,7 +6109,7 @@ function renderSecurityGraph(data) {
                 </div>
 
                 <div class="aegis-chain-arrow">
-                    →
+                    â†’
                 </div>
 
                 <div class="aegis-chain-node">
@@ -6126,7 +6123,7 @@ function renderSecurityGraph(data) {
                 </div>
 
                 <div class="aegis-chain-arrow">
-                    →
+                    â†’
                 </div>
 
                 <div class="aegis-chain-node">
@@ -6137,7 +6134,7 @@ function renderSecurityGraph(data) {
                 </div>
 
                 <div class="aegis-chain-arrow">
-                    →
+                    â†’
                 </div>
 
                 <div class="aegis-chain-node">
@@ -6240,7 +6237,7 @@ function renderSecurityGraph(data) {
                             ${
                                 index <
                                 progression.length - 1
-                                ? `<div class="aegis-progression-arrow">→</div>`
+                                ? `<div class="aegis-progression-arrow">â†’</div>`
                                 : ""
                             }
                         `
@@ -6354,7 +6351,7 @@ function renderSecurityGraph(data) {
             <div class="aegis-unified-conclusion">
 
                 <div class="aegis-conclusion-icon">
-                    ✓
+                    âœ“
                 </div>
 
                 <div>
@@ -6391,7 +6388,7 @@ function renderSecurityGraph(data) {
 
             <div class="aegis-unified-footer">
                 AEGIS X Intelligence Fabric
-                • Detection + UEBA + Attack Chain + MITRE
+                â€¢ Detection + UEBA + Attack Chain + MITRE
             </div>
         `;
 
@@ -6817,7 +6814,7 @@ function renderSecurityGraph(data) {
     "use strict";
 
     /* ============================================
-       AEGIS X — UEBA CLEANUP / SINGLE-PANEL MODE
+       AEGIS X â€” UEBA CLEANUP / SINGLE-PANEL MODE
        ============================================ */
 
     function cleanupUEBA() {
@@ -6925,7 +6922,7 @@ function renderSecurityGraph(data) {
 
 
     console.log(
-        "AEGIS X — UEBA single-panel mode enabled."
+        "AEGIS X â€” UEBA single-panel mode enabled."
     );
 
 })();
@@ -7032,14 +7029,14 @@ async function loadCampaigns() {
                             </div>
 
                             <div class="campaign-source">
-                                SOURCE · ${esc(source)}
+                                SOURCE Â· ${esc(source)}
                             </div>
 
                         </div>
 
                         <div class="campaign-risk ${riskClass}">
                             ${esc(riskLevel)}
-                            · ${esc(String(riskScore))}
+                            Â· ${esc(String(riskScore))}
                         </div>
 
                     </div>
@@ -7410,7 +7407,7 @@ async function loadCampaigns() {
         );
 
         summary.innerHTML = `
-            <strong>—</strong>
+            <strong>â€”</strong>
             <span>UNAVAILABLE</span>
         `;
 
@@ -7563,7 +7560,7 @@ async function openCampaignInvestigation(sourceIp) {
 
         title.textContent = classification;
         source.textContent =
-            `SOURCE · ${sourceIp}`;
+            `SOURCE Â· ${sourceIp}`;
 
         body.innerHTML = `
 
@@ -7681,7 +7678,7 @@ async function openCampaignInvestigation(sourceIp) {
                                                 incident.severity ||
                                                 "UNKNOWN"
                                             )}
-                                            ·
+                                            Â·
                                             ${esc(
                                                 String(
                                                     incident.risk_score ??
@@ -7866,7 +7863,7 @@ document.addEventListener(
 
 
 /* =========================================================
-   CAMPAIGN INVESTIGATION — READABLE INTELLIGENCE RENDERER
+   CAMPAIGN INVESTIGATION â€” READABLE INTELLIGENCE RENDERER
    ========================================================= */
 
 function renderCampaignIntelligence(data, sourceIp) {
@@ -8222,7 +8219,7 @@ function renderCampaignIntelligence(data, sourceIp) {
                                             class="campaign-incident-risk"
                                         >
                                             ${esc(incidentRisk)}
-                                            ·
+                                            Â·
                                             ${esc(
                                                 String(
                                                     incident.risk_score ??
@@ -8354,7 +8351,7 @@ function renderCampaignIntelligence(data, sourceIp) {
 
 
 /* =========================================================
-   CAMPAIGN INVESTIGATION — RENDER HOOK
+   CAMPAIGN INVESTIGATION â€” RENDER HOOK
    ========================================================= */
 
 const originalOpenCampaignInvestigation =
@@ -8397,7 +8394,7 @@ window.openCampaignInvestigation =
             "Campaign Investigation";
 
         source.textContent =
-            `SOURCE · ${sourceIp}`;
+            `SOURCE Â· ${sourceIp}`;
 
         body.innerHTML = `
             <div class="campaign-investigation-loading">
@@ -8431,7 +8428,7 @@ window.openCampaignInvestigation =
                 "Campaign Investigation";
 
             source.textContent =
-                `SOURCE · ${sourceIp}`;
+                `SOURCE Â· ${sourceIp}`;
 
             renderCampaignIntelligence(
                 data,
@@ -8682,7 +8679,7 @@ function renderCampaignSecurityGraph(data) {
                     class="campaign-graph-control"
                     data-graph-action="zoom-out"
                     title="Zoom out"
-                >−</button>
+                >âˆ’</button>
 
                 <button
                     type="button"
@@ -8803,9 +8800,9 @@ function renderCampaignSecurityGraph(data) {
 
             <div class="campaign-graph-hint">
                 <span>Drag</span> to pan
-                <span>•</span>
+                <span>â€¢</span>
                 <span>Scroll</span> to zoom
-                <span>•</span>
+                <span>â€¢</span>
                 <span>Click</span> a node to isolate its path
             </div>
         </div>
@@ -9254,7 +9251,7 @@ function renderCampaignSecurityGraph(data) {
             return text;
         }
 
-        return text.slice(0, max - 1) + "…";
+        return text.slice(0, max - 1) + "â€¦";
     }
 
 
@@ -9858,7 +9855,7 @@ function fitCampaignSecurityGraphViewport() {
 
 
 /* =========================================================
-   AEGIS X — TIGHT CAMPAIGN GRAPH AUTO-FIT
+   AEGIS X â€” TIGHT CAMPAIGN GRAPH AUTO-FIT
    Keeps the full campaign graph visible while minimizing
    unnecessary empty SVG space.
    ========================================================= */
@@ -10139,9 +10136,9 @@ async function autoFixIncident(incidentId) {
                 verified
 
                     ? (
-                        `AUTO-FIX VERIFIED — Incident #${
+                        `AUTO-FIX VERIFIED â€” Incident #${
                             incidentId
-                        } — ${
+                        } â€” ${
                             result.response?.action ||
                             "response"
                         } simulated and audited.`
@@ -10243,7 +10240,7 @@ async function autoFixIncident(incidentId) {
 
 
 /* ============================================================
-   AEGIS X — AUTO-FIX DIALOG UI
+   AEGIS X â€” AUTO-FIX DIALOG UI
    Clean simulation-only response interface
    ============================================================ */
 
@@ -10537,7 +10534,7 @@ async function autoFixIncident(incidentId) {
 
     function valueOrDash(value) {
         return value === undefined || value === null || value === ""
-            ? "—"
+            ? "â€”"
             : String(value);
     }
 
@@ -10554,7 +10551,7 @@ async function autoFixIncident(incidentId) {
                 <div class="aegis-af-header">
                     <div>
                         <div class="aegis-af-eyebrow">
-                            AEGIS X · RESPONSE ENGINE
+                            AEGIS X Â· RESPONSE ENGINE
                         </div>
 
                         <h2 class="aegis-af-title">
@@ -10567,7 +10564,7 @@ async function autoFixIncident(incidentId) {
                         class="aegis-af-close"
                         id="aegisAutoFixClose"
                         aria-label="Close"
-                    >×</button>
+                    >Ã—</button>
                 </div>
 
                 <div class="aegis-af-body">
@@ -10576,7 +10573,7 @@ async function autoFixIncident(incidentId) {
                         <span class="aegis-af-dot"></span>
                         <div>
                             <strong>SIMULATION MODE</strong>
-                            <span> — no real system changes will be made.</span>
+                            <span> â€” no real system changes will be made.</span>
                         </div>
                     </div>
 
@@ -10735,13 +10732,13 @@ async function autoFixIncident(incidentId) {
                 decision.risk_score ??
                 data.risk_score ??
                 data.score ??
-                "—";
+                "â€”";
 
             const sourceIp =
                 incident.source_ip ??
                 decision.source_ip ??
                 data.source_ip ??
-                "—";
+                "â€”";
 
             const incidentStatus =
                 incident.status ??
@@ -10857,7 +10854,7 @@ async function autoFixIncident(incidentId) {
                                     <div class="aegis-af-result-box">
 
                                         <div class="aegis-af-result-title">
-                                            ✓ Response Recorded
+                                            âœ“ Response Recorded
                                         </div>
 
                                         <div class="aegis-af-result-text">
@@ -10977,7 +10974,7 @@ async function autoFixIncident(incidentId) {
 
 
 /* ============================================================
-   AEGIS SHIELD — Dashboard Protection Center
+   AEGIS SHIELD â€” Dashboard Protection Center
    ============================================================ */
 
 (function () {
@@ -11002,7 +10999,7 @@ async function autoFixIncident(incidentId) {
             <div class="shield-header">
                 <div>
                     <div class="shield-kicker">AEGIS SECURITY LAYER</div>
-                    <h2>🛡 AEGIS SHIELD</h2>
+                    <h2>ðŸ›¡ AEGIS SHIELD</h2>
                     <p>Continuous Security Protection & Integrity Layer</p>
                 </div>
                 <div class="shield-state ${shieldStateClass(state)}">
@@ -11296,7 +11293,7 @@ async function autoFixIncident(incidentId) {
             const data = await response.json();
 
             result.textContent =
-                `Integrity check: ${data.status} — ` +
+                `Integrity check: ${data.status} â€” ` +
                 `${data.verified_files}/${data.protected_files} files verified.`;
         } catch (error) {
             result.textContent =
@@ -11633,7 +11630,7 @@ async function autoFixIncident(incidentId) {
 
         const button = document.createElement("button");
         button.id = AI_ID + "-button";
-        button.innerHTML = "✦ AEGIS AI";
+        button.innerHTML = "âœ¦ AEGIS AI";
         document.body.appendChild(button);
 
         const overlay = document.createElement("div");
@@ -11649,13 +11646,13 @@ async function autoFixIncident(incidentId) {
                             Gemini-powered security reasoning over AEGIS evidence
                         </div>
                     </div>
-                    <button class="aegis-ai-close" id="${AI_ID}-close">×</button>
+                    <button class="aegis-ai-close" id="${AI_ID}-close">Ã—</button>
                 </header>
 
                 <div class="aegis-ai-body">
                     <div class="aegis-ai-status">
                         <span class="aegis-ai-dot"></span>
-                        <span id="${AI_ID}-status">Checking AI Core…</span>
+                        <span id="${AI_ID}-status">Checking AI Coreâ€¦</span>
                         <span class="aegis-ai-badge">HUMAN IN THE LOOP</span>
                     </div>
 
@@ -11674,7 +11671,7 @@ async function autoFixIncident(incidentId) {
                         <textarea
                             id="${AI_ID}-question"
                             class="aegis-ai-textarea"
-                            placeholder="Ask about the incident, evidence, attack progression, risk, MITRE context, or next investigation steps…"
+                            placeholder="Ask about the incident, evidence, attack progression, risk, MITRE context, or next investigation stepsâ€¦"
                         ></textarea>
 
                         <div style="height:12px"></div>
@@ -11740,9 +11737,9 @@ async function autoFixIncident(incidentId) {
                 const data = await response.json();
 
                 if (data.available) {
-                    status.textContent = "AI Core Online · " + data.model;
+                    status.textContent = "AI Core Online Â· " + data.model;
                 } else {
-                    status.textContent = "AI Core unavailable · configure backend key";
+                    status.textContent = "AI Core unavailable Â· configure backend key";
                 }
             } catch (error) {
                 status.textContent = "AI Core connection unavailable";
@@ -11766,10 +11763,10 @@ async function autoFixIncident(incidentId) {
                 document.getElementById(AI_ID + "-analyze");
 
             analyzeButton.disabled = true;
-            analyzeButton.textContent = "Analyzing Security Context…";
+            analyzeButton.textContent = "Analyzing Security Contextâ€¦";
 
             result.innerHTML =
-                "AEGIS AI is correlating the available security evidence…";
+                "AEGIS AI is correlating the available security evidenceâ€¦";
 
             try {
                 const body = {};
@@ -11815,7 +11812,7 @@ async function autoFixIncident(incidentId) {
                                 <span>Incidents</span>
                             </div>
                             <div class="aegis-ai-metric">
-                                <strong>${escapeHtml(summary.shield_state || "—")}</strong>
+                                <strong>${escapeHtml(summary.shield_state || "â€”")}</strong>
                                 <span>Shield</span>
                             </div>
                         </div>
@@ -11852,7 +11849,7 @@ async function autoFixIncident(incidentId) {
 /* ============================================================
    AEGIS AI COPILOT 2.0
    High-tech evidence intelligence presentation layer
-   Frontend-only enhancement — preserves existing AI Core
+   Frontend-only enhancement â€” preserves existing AI Core
    ============================================================ */
 
 (function () {
@@ -11870,7 +11867,7 @@ async function autoFixIncident(incidentId) {
 
         style.textContent = `
         /* ========================================================
-           AEGIS AI 2.0 — visual system
+           AEGIS AI 2.0 â€” visual system
            ======================================================== */
 
         #aegis-ai-result {
@@ -12463,9 +12460,9 @@ async function autoFixIncident(incidentId) {
             ? context.querySelectorAll(".aegis-ai-metric strong")
             : [];
 
-        const events = metrics[0] ? cleanText(metrics[0].textContent) : "—";
-        const alerts = metrics[1] ? cleanText(metrics[1].textContent) : "—";
-        const incidents = metrics[2] ? cleanText(metrics[2].textContent) : "—";
+        const events = metrics[0] ? cleanText(metrics[0].textContent) : "â€”";
+        const alerts = metrics[1] ? cleanText(metrics[1].textContent) : "â€”";
+        const incidents = metrics[2] ? cleanText(metrics[2].textContent) : "â€”";
         const shield = metrics[3] ? cleanText(metrics[3].textContent) : "PROTECTED";
 
         const stages = stageList(parsed.progression);
@@ -12480,7 +12477,7 @@ async function autoFixIncident(incidentId) {
 
         const stageHTML = stages.length
             ? stages.map((stage, index) => `
-                ${index ? '<span class="aegis-ai-v2-arrow">→</span>' : ""}
+                ${index ? '<span class="aegis-ai-v2-arrow">â†’</span>' : ""}
                 <span class="aegis-ai-v2-stage">${escape(stage.replace(/_/g, " "))}</span>
             `).join("")
             : `<span class="aegis-ai-v2-stage">Evidence correlation in progress</span>`;
@@ -12659,19 +12656,19 @@ async function autoFixIncident(incidentId) {
                 <section class="aegis-ai-v2-section">
                     <div class="aegis-ai-v2-section-head">
                         <span class="aegis-ai-v2-section-title">Evidence Trace</span>
-                        <span class="aegis-ai-v2-chip">SOURCE → AI</span>
+                        <span class="aegis-ai-v2-chip">SOURCE â†’ AI</span>
                     </div>
 
                     <div class="aegis-ai-v2-trace">
                         <div class="aegis-ai-v2-trace-line">
                             <span class="aegis-ai-v2-trace-node">SECURITY EVENTS</span>
-                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-arrow">â†’</span>
                             <span class="aegis-ai-v2-trace-node">DETECTIONS</span>
-                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-arrow">â†’</span>
                             <span class="aegis-ai-v2-trace-node">ALERTS</span>
-                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-arrow">â†’</span>
                             <span class="aegis-ai-v2-trace-node">INCIDENT</span>
-                            <span class="aegis-ai-v2-trace-arrow">→</span>
+                            <span class="aegis-ai-v2-trace-arrow">â†’</span>
                             <span class="aegis-ai-v2-trace-node ai">AEGIS AI</span>
                         </div>
                     </div>
@@ -12736,5 +12733,3 @@ async function autoFixIncident(incidentId) {
     }
 
 })();
-
-
